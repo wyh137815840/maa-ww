@@ -1,0 +1,8 @@
+{
+    "description": "Wuthering Waves automation on MaaFramework (feature parity with ok-ww; ADB emulator first).",
+    "controller.ADB.label": "ADB (emulator)",
+    "controller.ADB.description": "Connect an Android emulator via ADB. Use 1280×720 (16:9).",
+    "resource.Official.label": "Official",
+    "task.SkipDialog.label": "Skip Dialog (placeholder)",
+    "task.SkipDialog.description": "Phase-1 placeholder. Needs screenshots and a real Pipeline."
+}

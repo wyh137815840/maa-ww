@@ -1,0 +1,47 @@
+{
+    "interface_version": 2,
+    "name": "MaaWW",
+    "version": "v0.0.1",
+    "description": "$description",
+    "github": "https://cursor.com/codebase/yuanhao-wei/maa-ww",
+    "languages": {
+        "zh_cn": "locales/zh_cn.json",
+        "en_us": "locales/en_us.json"
+    },
+    "controller": [
+        {
+            "name": "ADB",
+            "label": "$controller.ADB.label",
+            "description": "$controller.ADB.description",
+            "type": "Adb",
+            "attach_resource_path": [
+                "./resource_adb"
+            ]
+        }
+    ],
+    "resource": [
+        {
+            "name": "Official",
+            "label": "$resource.Official.label",
+            "path": [
+                "./resource"
+            ]
+        }
+    ],
+    "agent": {
+        "child_exec": "maa-ww-agent",
+        "child_args": [],
+        "timeout": 60000
+    },
+    "task": [
+        {
+            "name": "SkipDialog",
+            "label": "$task.SkipDialog.label",
+            "description": "$task.SkipDialog.description",
+            "entry": "SkipDialogMain",
+            "controller": [
+                "ADB"
+            ]
+        }
+    ]
+}

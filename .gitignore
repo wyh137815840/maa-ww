@@ -1,0 +1,44 @@
+# Build / deps
+node_modules/
+.gocache/
+build/
+build-*/
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.so
+*.dylib
+__debug_bin*
+.vs/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Graphify / local caches
+graphify-out/cache/
+*.log
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Install / runtime outputs
+install/
+debug/
+on_error/
+config/
+*.dmp

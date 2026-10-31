@@ -1,0 +1,6 @@
+{
+    "SkipDialog": {
+        "label": "$task.SkipDialog.label",
+        "description": "$task.SkipDialog.description"
+    }
+}

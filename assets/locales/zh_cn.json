@@ -1,0 +1,8 @@
+{
+    "description": "基于 MaaFramework 的鸣潮自动化（功能对标 ok-ww，首期 ADB 模拟器）。",
+    "controller.ADB.label": "ADB（模拟器）",
+    "controller.ADB.description": "通过 ADB 连接安卓模拟器。分辨率请设为 1280×720（16:9）。",
+    "resource.Official.label": "官服",
+    "task.SkipDialog.label": "跳过剧情（占位）",
+    "task.SkipDialog.description": "第一期占位任务。补齐截图与 Pipeline 后可用。"
+}
