@@ -14,7 +14,9 @@
 - [x] 独立仓库与目录骨架
 - [x] `interface.json`（仅 ADB）
 - [x] 功能对标表 `FEATURES.md`
-- [ ] 本地能拉起 MXU / 调试器并连上模拟器 ADB（待你安装模拟器）
+- [x] 模拟器 ADB 联通（MuMu `127.0.0.1:16384`）
+- [x] 触屏审查工具 `tools/touch-review/`
+- [ ] 本地能拉起 MXU / 调试器跑通占位任务
 
 ### M1 — 场景与轻任务
 

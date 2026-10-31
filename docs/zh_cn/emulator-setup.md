@@ -33,6 +33,17 @@ adb -s 127.0.0.1:16384 shell wm size 1280x720
 
 当前机器上还可能连着真机（如 `Odin3`）。自动化请固定用模拟器序列号，例如 `127.0.0.1:16384`，不要用手机。
 
+## 触屏审查工具
+
+游戏可进主界面后，用本地标注工具截图并告诉我该点哪里：
+
+```bat
+python tools\touch-review\capture.py --label home
+python tools\touch-review\serve.py
+```
+
+说明见 [`tools/touch-review/README.md`](../../tools/touch-review/README.md)。
+
 ## 当前状态
 
 鸣潮仍在下载资源时，只做 ADB / 分辨率联调；进入游戏主界面后再截图写 Pipeline。

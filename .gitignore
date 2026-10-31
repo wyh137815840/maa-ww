@@ -42,3 +42,8 @@ debug/
 on_error/
 config/
 *.dmp
+
+# Touch-review captures (keep cards JSON; ignore bulky screenshots)
+review/inbox/**
+!review/inbox/.gitkeep
+review/cards/**/*.png
