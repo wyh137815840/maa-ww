@@ -1,0 +1,22 @@
+---
+description: Git push/pull against Cursor Origin must use WSL origin CLI only
+alwaysApply: true
+---
+
+# WSL + origin 推送（强制）
+
+本仓库远程在 `origin.cursor.com`。**永远不要**在原生 Windows / PowerShell 里对 Origin 执行 `git push` / `git pull`（GCM 易卡死、且 Origin 官方不支持原生 Windows）。
+
+## 正确做法
+
+1. 所有 Origin 认证与推送一律走 **WSL**：
+   ```bash
+   wsl -e bash -lc 'export PATH="$HOME/.local/bin:$PATH"; origin auth status; cd /mnt/d/git/maa-ww && git push -u origin HEAD'
+   ```
+2. 若认证失效：在 WSL 里跑 `origin auth login`，等浏览器完成后再 push。
+3. 需要 `origin` 子命令时，先在 WSL 执行 `origin agent prompt`。
+
+## 禁止
+
+- `pwsh` / `cmd` 下直接 `git push` 到 `origin.cursor.com`
+- 为绕过 Origin 而改 remote、改用 GitHub mirror 推送（除非用户明确要求）

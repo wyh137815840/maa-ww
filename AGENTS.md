@@ -9,6 +9,7 @@
 3. **分辨率基准**：坐标与图片一律按 **1280×720**。
 4. **职责分离**：流程在 Pipeline JSON；复杂算法 / 战斗循环在 Go Service。
 5. **第一期控制器**：只面向 **ADB（模拟器）**，资源放在 `assets/resource_adb/`。
+6. **Git 推送**：远程为 Cursor Origin；**永远在 WSL 用 `origin` 登录后 `git push`**，禁止原生 Windows / PowerShell 直推。
 
 ## 关键路径
 

@@ -14,16 +14,23 @@
 | AutoCombatTask | 自动战斗（先 1～2 角色） | todo |
 | BaseCombatTask / BaseChar | 战斗与角色基类（移植为 Go） | todo |
 
+## 优先推进（用户指定）
+
+| 任务 | 对标 / 说明 | 状态 | 前置依赖 |
+| --- | --- | --- | --- |
+| TacetTask（无音区） | ok-ww `TacetTask`：F2 导能手册 → 无音区 → 进战 → 领奖耗体力 | todo | 大世界 HUD、F2 手册 UI 卡、进战/领奖 UI、基础战斗 |
+| SettlementQuest（聚落任务） | ok-ww 无同名任务；指聚落侧可自动任务流（接取/完成/交付）。界面卡待标 | todo | 大世界 HUD、聚落 NPC/任务 UI 卡；复杂战斗可后置 |
+
 ## 第二期（刷本 / 体力）
 
 | ok-ww 任务 | 说明 | 状态 |
 | --- | --- | --- |
 | FarmEchoTask | 刷声骸 | todo |
-| TacetTask / TacetEliminationTask | 无音区 | todo |
+| TacetTask / TacetEliminationTask | 无音区（见上「优先推进」） | todo |
 | DomainTask | 副本 | todo |
 | ForgeryTask | 伪作 | todo |
 | SimulationTask | 模拟挑战 | todo |
-| NightmareNestTask | 梦魇巢穴 | todo |
+| NightmareNestTask | 梦魇巢穴（图鉴传送与聚落相关） | todo |
 
 ## 第三期（声骸养成 / 周常）
 
