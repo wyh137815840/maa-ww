@@ -35,6 +35,15 @@
     },
     "task": [
         {
+            "name": "Startup",
+            "label": "$task.Startup.label",
+            "description": "$task.Startup.description",
+            "entry": "StartupMain",
+            "controller": [
+                "ADB"
+            ]
+        },
+        {
             "name": "SkipDialog",
             "label": "$task.SkipDialog.label",
             "description": "$task.SkipDialog.description",

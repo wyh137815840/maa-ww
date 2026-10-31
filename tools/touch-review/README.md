@@ -16,11 +16,17 @@ python tools\touch-review\serve.py
 
 浏览器会打开 `http://127.0.0.1:8765/`。
 
-1. 左侧选中 inbox 截图  
-2. 用「点击点」模式点要点的位置  
-3. 用「ROI 框」模式拖出模板区域（可选但推荐）  
-4. 填 `label` / `expected_next` / `note`  
-5. 点「导出审查卡」
+1. 左侧优先选带黄色「待标注」的截图  
+2. 先读画面上方的黄色「本次任务」（我会写好你要做什么）  
+3. 按说明：先框 **ROI**，再点 **点击点**  
+4. 右侧字段一般已预填，核对后点「导出审查卡」  
+5. 在聊天里把 card id 发我，或直接说「已导出」
+
+给某张截图补任务说明：
+
+```bat
+python tools\touch-review\brief.py 20261031-172410-boot.png --title "标题页" --goal "标点击连接" --step "框住文字" --step "点文字中心" --label TitleClickConnect
+```
 
 ## 产物
 

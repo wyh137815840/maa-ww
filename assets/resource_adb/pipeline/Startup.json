@@ -1,0 +1,55 @@
+{
+    "StartupMain": {
+        "desc": "启动入口：标题页进入后，等到大世界 ExploreHUD。",
+        "next": [
+            "TitleClickConnect",
+            "ExploreHUD"
+        ]
+    },
+    "TitleClickConnect": {
+        "desc": "标题页底部「点击连接」。审查卡 20261031-173027-titleclickconnect。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            526,
+            627,
+            228,
+            90
+        ],
+        "template": "Title/ClickConnect.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            638,
+            669
+        ],
+        "post_wait_freezes": {
+            "time": 500,
+            "target": 0.95,
+            "timeout": 8000
+        },
+        "next": [
+            "ExploreHUD",
+            "StartupNeedMoreCards"
+        ]
+    },
+    "ExploreHUD": {
+        "desc": "大世界探索 HUD（左上小地图）。审查卡 20261031-173521-explorehud。只识别不点击。小地图内容会变，若易失效再改更稳 HUD。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            40,
+            10,
+            180,
+            160
+        ],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.6,
+        "action": "DoNothing",
+        "next": []
+    },
+    "StartupNeedMoreCards": {
+        "desc": "占位：点完连接后若长时间未进大世界，停在这里。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    }
+}

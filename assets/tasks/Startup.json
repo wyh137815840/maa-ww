@@ -1,0 +1,6 @@
+{
+    "Startup": {
+        "label": "$task.Startup.label",
+        "description": "$task.Startup.description"
+    }
+}

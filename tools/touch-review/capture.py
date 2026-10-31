@@ -32,18 +32,20 @@ def ensure_device(adb: str, serial: str) -> None:
 
 
 def capture_png(adb: str, serial: str, dest: Path) -> None:
+    # MuMu: /sdcard pull can race; /data/local/tmp is reliable.
     with tempfile.TemporaryDirectory() as tmp:
-        remote = "/sdcard/maa_ww_touch_review.png"
+        remote = "/data/local/tmp/maa_ww_touch_review.png"
         local_raw = Path(tmp) / "raw.png"
+        run([adb, "-s", serial, "shell", "rm", "-f", remote], check=False)
         run([adb, "-s", serial, "shell", "screencap", "-p", remote])
         run([adb, "-s", serial, "pull", remote, str(local_raw)])
         run([adb, "-s", serial, "shell", "rm", "-f", remote], check=False)
         img = Image.open(local_raw).convert("RGB")
-        tw, th = load_config()["target_size"]
-        if img.size != (tw, th):
-            img = img.resize((tw, th), Image.Resampling.LANCZOS)
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        img.save(dest, format="PNG")
+    tw, th = load_config()["target_size"]
+    if img.size != (tw, th):
+        img = img.resize((tw, th), Image.Resampling.LANCZOS)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    img.save(dest, format="PNG")
 
 
 def main() -> int:

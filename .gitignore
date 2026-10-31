@@ -46,4 +46,5 @@ config/
 # Touch-review captures (keep cards JSON; ignore bulky screenshots)
 review/inbox/**
 !review/inbox/.gitkeep
+!review/inbox/*.brief.json
 review/cards/**/*.png

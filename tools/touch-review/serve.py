@@ -25,13 +25,38 @@ def slugify(text: str) -> str:
     return text or "unnamed"
 
 
+def load_brief(image: Path) -> dict | None:
+    bp = image.with_suffix(".brief.json")
+    if not bp.is_file():
+        return None
+    try:
+        return json.loads(bp.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {"title": "说明文件损坏", "goal": f"请检查 {bp.name}", "steps": []}
+
+
 def list_inbox(cfg: dict) -> list[dict]:
     files = sorted(cfg["inbox_dir"].glob("*.png"), key=lambda p: p.stat().st_mtime, reverse=True)
     items = []
     for p in files:
+        if p.name.startswith("_"):
+            continue
         with Image.open(p) as im:
             w, h = im.size
-        items.append({"name": p.name, "url": f"/inbox/{p.name}", "width": w, "height": h})
+        brief = load_brief(p)
+        items.append(
+            {
+                "name": p.name,
+                "url": f"/inbox/{p.name}",
+                "width": w,
+                "height": h,
+                "brief": brief,
+                "title": (brief or {}).get("title") or p.name,
+                "has_brief": brief is not None,
+            }
+        )
+    # prefer items that still need work (have brief) at top, keep mtime order within groups
+    items.sort(key=lambda it: (0 if it["has_brief"] else 1, -Path(cfg["inbox_dir"], it["name"]).stat().st_mtime))
     return items
 
 
@@ -172,20 +197,32 @@ HTML = r"""<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MaaWW Touch Review</title>
   <style>
-    :root { color-scheme: dark; --bg:#0f1419; --panel:#1a2332; --line:#2b3a4f; --text:#e7eef8; --muted:#9db0c7; --acc:#3d8bfd; --ok:#3dd68c; --bad:#ff6b6b; }
+    :root { color-scheme: dark; --bg:#0f1419; --panel:#1a2332; --line:#2b3a4f; --text:#e7eef8; --muted:#9db0c7; --acc:#3d8bfd; --ok:#3dd68c; --bad:#ff6b6b; --warn:#f0c674; }
     * { box-sizing: border-box; }
     body { margin:0; font:14px/1.45 system-ui,Segoe UI,sans-serif; background:var(--bg); color:var(--text); }
     header { padding:12px 16px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
     header h1 { font-size:16px; margin:0; font-weight:650; }
     header .hint { color:var(--muted); }
-    main { display:grid; grid-template-columns: 280px 1fr 320px; min-height: calc(100vh - 54px); }
+    main { display:grid; grid-template-columns: 300px 1fr 340px; min-height: calc(100vh - 54px); }
     aside, section { border-right:1px solid var(--line); padding:12px; }
     section { border-right:none; }
     h2 { margin:0 0 8px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
     .list { display:flex; flex-direction:column; gap:6px; max-height:42vh; overflow:auto; }
     .item { padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; }
     .item.active { border-color:var(--acc); }
+    .item.todo { border-color:#7a6230; }
     .item small { display:block; color:var(--muted); }
+    .badge { display:inline-block; margin-top:4px; padding:1px 6px; border-radius:999px; font-size:11px; background:#3a2d12; color:var(--warn); }
+    .brief {
+      margin-bottom:12px; padding:12px; border:1px solid #6b5424; border-radius:10px;
+      background:linear-gradient(180deg,#2a2414,#1b1a14); color:#f6e7c2;
+    }
+    .brief h3 { margin:0 0 6px; font-size:15px; color:#ffe39a; }
+    .brief .goal { margin:0 0 8px; font-size:14px; }
+    .brief ol { margin:0; padding-left:18px; }
+    .brief li { margin:4px 0; }
+    .brief .avoid { margin-top:8px; color:#ffb4b4; }
+    .brief.empty { border-color:var(--line); background:var(--panel); color:var(--muted); }
     .stage-wrap { overflow:auto; background:#070b10; border:1px solid var(--line); border-radius:10px; }
     canvas { display:block; cursor:crosshair; max-width:100%; height:auto; }
     label { display:block; margin:10px 0 4px; color:var(--muted); }
@@ -196,7 +233,7 @@ HTML = r"""<!doctype html>
     button { cursor:pointer; }
     button.primary { background:var(--acc); border-color:transparent; color:#041018; font-weight:650; }
     button.ghost { background:transparent; }
-    .mode { display:flex; gap:8px; margin:8px 0 12px; }
+    .mode { display:flex; gap:8px; margin:8px 0 12px; flex-wrap:wrap; }
     .mode button { width:auto; }
     .mode button.on { border-color:var(--ok); color:var(--ok); }
     .status { margin-top:10px; color:var(--muted); white-space:pre-wrap; }
@@ -208,7 +245,7 @@ HTML = r"""<!doctype html>
 <body>
 <header>
   <h1>MaaWW Touch Review</h1>
-  <div class="hint">左键点选点击点 / 拖拽框选 ROI · 坐标基准 1280×720</div>
+  <div class="hint">先读黄色「本次任务」→ 再框 ROI / 点点击点 → 导出审查卡</div>
   <button class="ghost" style="width:auto" id="btnRefresh">刷新列表</button>
 </header>
 <main>
@@ -219,22 +256,27 @@ HTML = r"""<!doctype html>
     <div class="list" id="cards"></div>
   </aside>
   <aside>
+    <div id="briefBox" class="brief empty">
+      <h3>请选择左侧截图</h3>
+      <p class="goal">我会在截图旁写好「你要做什么」。有黄色任务条的优先处理。</p>
+    </div>
     <h2>画面</h2>
     <div class="mode">
-      <button id="modeClick" class="on">点击点</button>
-      <button id="modeRoi">ROI 框</button>
+      <button id="modeRoi" class="on">1. ROI 框</button>
+      <button id="modeClick">2. 点击点</button>
       <button id="clearMarks" class="ghost">清除标记</button>
     </div>
     <div class="stage-wrap"><canvas id="cv" width="1280" height="720"></canvas></div>
   </aside>
   <section>
-    <h2>审查卡</h2>
+    <h2>审查卡字段</h2>
+    <p style="margin:0 0 8px;color:var(--muted)">通常会被任务说明自动填好，你只需核对后导出。</p>
     <label>label（节点/按钮名）</label>
-    <input id="label" placeholder="SkipDialogButton" />
+    <input id="label" placeholder="TitleClickConnect" />
     <label>expected_next（点完后应出现）</label>
-    <input id="expected" placeholder="对话下一句 / 回到探索" />
+    <input id="expected" placeholder="登录界面 / 公告弹窗 / 进入游戏" />
     <label>note（给我的说明）</label>
-    <textarea id="note" placeholder="右下角白色跳过；若出现选项框先点选项"></textarea>
+    <textarea id="note" placeholder="补充你看到的细节"></textarea>
     <div class="row">
       <div>
         <label>click [x,y]</label>
@@ -254,12 +296,14 @@ HTML = r"""<!doctype html>
 </main>
 <script>
 const state = {
-  mode: 'click',
+  mode: 'roi',
   image: null,
   source: null,
+  brief: null,
   click: null,
   roi: null,
   drag: null,
+  inbox: [],
 };
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
@@ -268,6 +312,33 @@ function setStatus(msg, kind='') {
   const el = document.getElementById('status');
   el.className = 'status ' + kind;
   el.textContent = msg;
+}
+
+function renderBrief(brief, name) {
+  const box = document.getElementById('briefBox');
+  if (!brief) {
+    box.className = 'brief empty';
+    box.innerHTML = `<h3>${name || '无任务说明'}</h3><p class="goal">这张图还没有我写的任务说明。先处理带黄色「待标注」标记的截图；或等我补说明。</p>`;
+    return;
+  }
+  const steps = (brief.steps || []).map(s => `<li>${s}</li>`).join('');
+  const avoid = (brief.do_not || []).length
+    ? `<div class="avoid"><strong>不要做：</strong>${brief.do_not.join('；')}</div>`
+    : '';
+  box.className = 'brief';
+  box.innerHTML = `
+    <h3>${brief.title || '本次任务'}</h3>
+    <p class="goal"><strong>目标：</strong>${brief.goal || ''}</p>
+    <ol>${steps}</ol>
+    ${avoid}
+  `;
+}
+
+function applyBriefDefaults(brief) {
+  if (!brief) return;
+  if (brief.suggested_label) document.getElementById('label').value = brief.suggested_label;
+  if (brief.suggested_expected_next) document.getElementById('expected').value = brief.suggested_expected_next;
+  if (brief.suggested_note) document.getElementById('note').value = brief.suggested_note;
 }
 
 function draw() {
@@ -304,15 +375,20 @@ function canvasPos(ev) {
   return [Math.max(0, Math.min(cv.width-1, x)), Math.max(0, Math.min(cv.height-1, y))];
 }
 
-async function refresh() {
+async function refresh(autoSelect=false) {
   const data = await fetch('/api/list').then(r => r.json());
+  state.inbox = data.inbox || [];
   const inbox = document.getElementById('inbox');
   inbox.innerHTML = '';
-  data.inbox.forEach(it => {
+  state.inbox.forEach(it => {
     const div = document.createElement('div');
-    div.className = 'item' + (state.source === it.name ? ' active' : '');
-    div.innerHTML = `<strong>${it.name}</strong><small>${it.width}×${it.height}</small>`;
-    div.onclick = () => loadImage(it.name, it.url);
+    div.className = 'item'
+      + (state.source === it.name ? ' active' : '')
+      + (it.has_brief ? ' todo' : '');
+    div.innerHTML = `<strong>${it.title || it.name}</strong>
+      <small>${it.name}<br>${it.width}×${it.height}</small>
+      ${it.has_brief ? '<span class="badge">待标注</span>' : ''}`;
+    div.onclick = () => loadImage(it);
     inbox.appendChild(div);
   });
   const cards = document.getElementById('cards');
@@ -323,24 +399,36 @@ async function refresh() {
     div.innerHTML = `<strong>${c.label}</strong><small>${c.id}<br>click ${JSON.stringify(c.click)} · roi ${JSON.stringify(c.roi)}</small>`;
     cards.appendChild(div);
   });
+  if (autoSelect && !state.source) {
+    const first = state.inbox.find(it => it.has_brief) || state.inbox[0];
+    if (first) loadImage(first);
+  }
 }
 
-function loadImage(name, url) {
+function loadImage(it) {
+  const name = typeof it === 'string' ? it : it.name;
+  const meta = typeof it === 'string' ? state.inbox.find(x => x.name === name) : it;
+  const url = (meta && meta.url) || ('/inbox/' + name);
   const img = new Image();
   img.onload = () => {
     state.image = img;
     state.source = name;
+    state.brief = meta ? meta.brief : null;
     state.click = null;
     state.roi = null;
     state.drag = null;
     document.getElementById('click').value = '';
     document.getElementById('roi').value = '';
-    if (!document.getElementById('label').value) {
-      document.getElementById('label').value = name.replace(/\.[^.]+$/, '');
-    }
+    document.getElementById('label').value = '';
+    document.getElementById('expected').value = '';
+    document.getElementById('note').value = '';
+    applyBriefDefaults(state.brief);
+    renderBrief(state.brief, name);
     draw();
-    refresh();
-    setStatus('已加载 ' + name);
+    refresh(false);
+    setStatus(state.brief
+      ? '已加载任务：「' + (state.brief.title || name) + '」。先框绿色 ROI，再点红色点击点。'
+      : '已加载 ' + name + '（无任务说明）');
   };
   img.src = url + '?t=' + Date.now();
 }
@@ -394,10 +482,12 @@ document.getElementById('clearMarks').onclick = () => {
   document.getElementById('roi').value = '';
   draw();
 };
-document.getElementById('btnRefresh').onclick = refresh;
+document.getElementById('btnRefresh').onclick = () => refresh(false);
 document.getElementById('btnOpenIndex').onclick = () => window.open('/cards/INDEX.md', '_blank');
 document.getElementById('btnSave').onclick = async () => {
   if (!state.source) { setStatus('请先选择截图', 'err'); return; }
+  if (!state.roi) { setStatus('请先用「ROI 框」圈住目标按钮/文字', 'err'); return; }
+  if (!state.click) { setStatus('请再用「点击点」点一下要点的位置', 'err'); return; }
   const body = {
     source_image: state.source,
     label: document.getElementById('label').value,
@@ -409,10 +499,10 @@ document.getElementById('btnSave').onclick = async () => {
   const res = await fetch('/api/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
   const data = await res.json();
   if (!res.ok) { setStatus(data.error || '保存失败', 'err'); return; }
-  setStatus('已导出 review/cards/' + data.id + '\n把这个 id 发给我即可继续写 Pipeline。', 'ok');
-  refresh();
+  setStatus('已导出 review/cards/' + data.id + '\n把这个 id 发给我，或直接说「已导出」。', 'ok');
+  refresh(false);
 };
-refresh();
+refresh(true);
 draw();
 </script>
 </body>

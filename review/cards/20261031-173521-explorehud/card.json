@@ -1,0 +1,43 @@
+{
+    "id": "20261031-173521-explorehud",
+    "created_at": "2026-10-31T09:35:21.517560+00:00",
+    "label": "ExploreHUD",
+    "note": "场景识别节点。稳定特征：左上角小地图。右侧角色头像、技能键先不要标。",
+    "expected_next": "地图",
+    "source_image": "review/inbox/20261031-173334-next-ui.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        127,
+        82
+    ],
+    "roi": [
+        56,
+        30,
+        144,
+        122
+    ],
+    "files": {
+        "screen": "review/cards/20261031-173521-explorehud/screen.png",
+        "preview": "review/cards/20261031-173521-explorehud/preview.png",
+        "template": "review/cards/20261031-173521-explorehud/template.png",
+        "card": "review/cards/20261031-173521-explorehud/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/ExploreHUD.png",
+        "roi": [
+            56,
+            30,
+            144,
+            122
+        ],
+        "target": [
+            127,
+            82
+        ]
+    }
+}
