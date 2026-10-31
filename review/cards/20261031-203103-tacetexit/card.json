@@ -1,0 +1,43 @@
+{
+    "id": "20261031-203103-tacetexit",
+    "created_at": "2026-10-31T12:31:03.449343+00:00",
+    "label": "TacetExit",
+    "note": "从已导出结算图复制，专标退出。",
+    "expected_next": "ExploreHUD",
+    "source_image": "review/inbox/20261031-203015-tacet-exit.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        473,
+        612
+    ],
+    "roi": [
+        360,
+        579,
+        223,
+        68
+    ],
+    "files": {
+        "screen": "review/cards/20261031-203103-tacetexit/screen.png",
+        "preview": "review/cards/20261031-203103-tacetexit/preview.png",
+        "template": "review/cards/20261031-203103-tacetexit/template.png",
+        "card": "review/cards/20261031-203103-tacetexit/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetExit.png",
+        "roi": [
+            360,
+            579,
+            223,
+            68
+        ],
+        "target": [
+            473,
+            612
+        ]
+    }
+}

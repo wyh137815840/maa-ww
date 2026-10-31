@@ -1,0 +1,22 @@
+{
+    "image": "20261031-203334-snap.png",
+    "updated_at": "2026-10-31T12:35:20.978555+00:00",
+    "title": "无音区 · 体力耗尽（60红+120红）",
+    "goal": "双红无法领取：标弹窗右上角关闭「X」并点击关闭。",
+    "steps": [
+        "框住领取奖励弹窗右上角关闭 X 为 ROI。",
+        "点击点点在 X 中心。",
+        "label=TacetStaminaExhausted。不要点单倍/双倍。",
+        "导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetStaminaExhausted",
+    "suggested_expected_next": "ExploreHUD",
+    "suggested_note": "60与120数字皆红=体力不足。关弹窗后结束无音区并跳过后续耗体任务。",
+    "do_not": [
+        "不要点单倍或双倍领取",
+        "不要标技能键"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-203550-tacetstaminaexhausted",
+    "exported_at": "2026-10-31T12:35:50.918581+00:00"
+}

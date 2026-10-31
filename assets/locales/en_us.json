@@ -5,6 +5,8 @@
     "resource.Official.label": "Official",
     "task.Startup.label": "Startup (in progress)",
     "task.Startup.description": "Enter the game from the title screen Click-to-Connect button. Later login screens still need review cards.",
+    "task.Tacet.label": "Tacet Suppression (in progress)",
+    "task.Tacet.description": "Open guidebook from the overworld, then farm Tacet. Tab and dungeon steps still need review cards.",
     "task.SkipDialog.label": "Skip Dialog (placeholder)",
     "task.SkipDialog.description": "Phase-1 placeholder. Needs screenshots and a real Pipeline."
 }

@@ -7,20 +7,25 @@
 在仓库根目录 `D:\git\maa-ww`：
 
 ```bat
-REM 1) 截一张当前模拟器画面（默认 127.0.0.1:16384，缩放到 1280x720）
+REM 0) 短时 UI：桌面打开「鸣潮快截服务.bat」，保持黑窗，按 Ctrl+Alt+空格 秒截
+REM    成功会哔一声，文件进 review/inbox/*-snap.png（只截游戏层，比双击 bat 快）
+
+REM 1) 截一张当前模拟器画面（默认连 config.json 的 serial，内部 1280x720）
+REM    MuMu 安卓15 上会优先截 mumuscreen001（游戏层），避免截到桌面
 python tools\touch-review\capture.py --label home
 
 REM 2) 打开本地标注页
 python tools\touch-review\serve.py
 ```
 
+
 浏览器会打开 `http://127.0.0.1:8765/`。
 
-1. 左侧优先选带黄色「待标注」的截图  
+1. 左侧优先选带黄色「待标注」的截图（绿色「已导出」可忽略）  
 2. 先读画面上方的黄色「本次任务」（我会写好你要做什么）  
 3. 按说明：先框 **ROI**，再点 **点击点**  
 4. 右侧字段一般已预填，核对后点「导出审查卡」  
-5. 在聊天里把 card id 发我，或直接说「已导出」
+5. 导出后该条会变成「已导出」，inbox 不再黄标；聊天发 card id 或说「已导出」即可
 
 给某张截图补任务说明：
 

@@ -1,0 +1,43 @@
+{
+    "id": "20261031-194638-intacetcombat",
+    "created_at": "2026-10-31T11:46:38.833315+00:00",
+    "label": "InTacetCombat",
+    "note": "ADB mumuscreen001。进本后战斗界面；用于判断已在无音区战斗中。",
+    "expected_next": "TacetClear or TacetSettle",
+    "source_image": "review/inbox/20261031-194504-tacet-in-combat.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        182,
+        212
+    ],
+    "roi": [
+        26,
+        196,
+        313,
+        33
+    ],
+    "files": {
+        "screen": "review/cards/20261031-194638-intacetcombat/screen.png",
+        "preview": "review/cards/20261031-194638-intacetcombat/preview.png",
+        "template": "review/cards/20261031-194638-intacetcombat/template.png",
+        "card": "review/cards/20261031-194638-intacetcombat/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/InTacetCombat.png",
+        "roi": [
+            26,
+            196,
+            313,
+            33
+        ],
+        "target": [
+            182,
+            212
+        ]
+    }
+}

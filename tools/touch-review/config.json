@@ -1,6 +1,8 @@
 {
     "adb_path": "D:\\Program Files\\Netease\\MuMuPlayer-12.0\\nx_main\\adb.exe",
-    "serial": "127.0.0.1:16384",
+    "serial": "192.168.1.50:5555",
+    "display_name": "mumuscreen001",
+    "note": "MuMu 桥接时用模拟器局域网 IP:5555；NAT 时常用 127.0.0.1:16416(安卓15实例)",
     "target_size": [
         1280,
         720

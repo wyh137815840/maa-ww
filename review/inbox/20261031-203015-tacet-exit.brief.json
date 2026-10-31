@@ -1,0 +1,20 @@
+{
+    "image": "20261031-203015-tacet-exit.png",
+    "updated_at": "2026-10-31T12:30:42.461138+00:00",
+    "title": "无音区 · 结算：退出副本",
+    "goal": "标左侧「退出副本」（同结算页新任务条）。",
+    "steps": [
+        "框住左侧白按钮「退出副本」整颗。",
+        "点击点在按钮中心。",
+        "label=TacetExit → 导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetExit",
+    "suggested_expected_next": "ExploreHUD",
+    "suggested_note": "从已导出结算图复制，专标退出。",
+    "do_not": [
+        "不要标重新挑战"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-203103-tacetexit",
+    "exported_at": "2026-10-31T12:31:03.462317+00:00"
+}

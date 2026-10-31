@@ -1,0 +1,43 @@
+{
+    "id": "20261031-200221-tacetclaimreward",
+    "created_at": "2026-10-31T12:02:21.479488+00:00",
+    "label": "TacetClaimReward",
+    "note": "挑战达成跳过。当前为宝藏旁领取奖励提示（对齐 ok-ww pick_f）。",
+    "expected_next": "TacetClaimStamina",
+    "source_image": "review/inbox/20261031-200134-tacet-claim.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        886,
+        308
+    ],
+    "roi": [
+        785,
+        224,
+        372,
+        176
+    ],
+    "files": {
+        "screen": "review/cards/20261031-200221-tacetclaimreward/screen.png",
+        "preview": "review/cards/20261031-200221-tacetclaimreward/preview.png",
+        "template": "review/cards/20261031-200221-tacetclaimreward/template.png",
+        "card": "review/cards/20261031-200221-tacetclaimreward/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetClaimReward.png",
+        "roi": [
+            785,
+            224,
+            372,
+            176
+        ],
+        "target": [
+            886,
+            308
+        ]
+    }
+}

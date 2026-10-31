@@ -1,0 +1,43 @@
+{
+    "id": "20261031-201111-tacetchallengecomplete",
+    "created_at": "2026-10-31T12:11:12.023521+00:00",
+    "label": "TacetChallengeComplete",
+    "note": "纯提示、无点击。战斗完成标志 → 下一步找领取奖励。",
+    "expected_next": "TacetClaimReward",
+    "source_image": "review/inbox/20261031-200856-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        639,
+        196
+    ],
+    "roi": [
+        538,
+        172,
+        193,
+        51
+    ],
+    "files": {
+        "screen": "review/cards/20261031-201111-tacetchallengecomplete/screen.png",
+        "preview": "review/cards/20261031-201111-tacetchallengecomplete/preview.png",
+        "template": "review/cards/20261031-201111-tacetchallengecomplete/template.png",
+        "card": "review/cards/20261031-201111-tacetchallengecomplete/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetChallengeComplete.png",
+        "roi": [
+            538,
+            172,
+            193,
+            51
+        ],
+        "target": [
+            639,
+            196
+        ]
+    }
+}

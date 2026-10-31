@@ -1,0 +1,43 @@
+{
+    "id": "20261031-202743-tacetcontinue",
+    "created_at": "2026-10-31T12:27:43.371047+00:00",
+    "label": "TacetContinue",
+    "note": "结算页。续刷点重新挑战；体力不足/收工点退出副本（下一卡 TacetExit）。",
+    "expected_next": "InTacetCombat",
+    "source_image": "review/inbox/20261031-202612-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        805,
+        614
+    ],
+    "roi": [
+        694,
+        585,
+        236,
+        62
+    ],
+    "files": {
+        "screen": "review/cards/20261031-202743-tacetcontinue/screen.png",
+        "preview": "review/cards/20261031-202743-tacetcontinue/preview.png",
+        "template": "review/cards/20261031-202743-tacetcontinue/template.png",
+        "card": "review/cards/20261031-202743-tacetcontinue/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetContinue.png",
+        "roi": [
+            694,
+            585,
+            236,
+            62
+        ],
+        "target": [
+            805,
+            614
+        ]
+    }
+}

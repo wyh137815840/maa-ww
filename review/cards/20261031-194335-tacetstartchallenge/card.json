@@ -1,0 +1,43 @@
+{
+    "id": "20261031-194335-tacetstartchallenge",
+    "created_at": "2026-10-31T11:43:36.136223+00:00",
+    "label": "TacetStartChallenge",
+    "note": "ADB mumuscreen001。点「直接挑战」后进入的编队页；确认进本按钮是「开启挑战」。",
+    "expected_next": "InTacetCombat or Loading",
+    "source_image": "review/inbox/20261031-194247-tacet-after-go.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1094,
+        661
+    ],
+    "roi": [
+        816,
+        520,
+        422,
+        181
+    ],
+    "files": {
+        "screen": "review/cards/20261031-194335-tacetstartchallenge/screen.png",
+        "preview": "review/cards/20261031-194335-tacetstartchallenge/preview.png",
+        "template": "review/cards/20261031-194335-tacetstartchallenge/template.png",
+        "card": "review/cards/20261031-194335-tacetstartchallenge/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetStartChallenge.png",
+        "roi": [
+            816,
+            520,
+            422,
+            181
+        ],
+        "target": [
+            1094,
+            661
+        ]
+    }
+}

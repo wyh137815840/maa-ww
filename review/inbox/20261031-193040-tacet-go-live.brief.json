@@ -1,0 +1,11 @@
+{
+    "image": "20261031-193040-tacet-go-live.png",
+    "title": "作废：窗口缩放截图",
+    "goal": "已作废，改用 ADB mumuscreen001 实截。",
+    "steps": [],
+    "skip": true,
+    "suggested_label": "",
+    "suggested_expected_next": "",
+    "suggested_note": "",
+    "do_not": []
+}

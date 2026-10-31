@@ -1,0 +1,19 @@
+{
+    "image": "20261031-200000-tacet-settle.png",
+    "updated_at": "2026-10-31T12:00:24.470039+00:00",
+    "title": "无音区 · 第6步：挑战达成（识别）",
+    "goal": "标「挑战达成」大字为识别特征（只识别不点），用于战斗结束→结算过渡。",
+    "steps": [
+        "框住画面中央金色大字「挑战达成」整块为 ROI（尽量少背景）。",
+        "点击点点在文字中心即可（节点 DoNothing）。",
+        "label 填 TacetChallengeComplete，导出后说「已导出」。",
+        "导出后继续打到出现「吸收」提示或体力弹窗，再说「截图」。"
+    ],
+    "suggested_label": "TacetChallengeComplete",
+    "suggested_expected_next": "TacetAbsorbEcho",
+    "suggested_note": "ADB mumuscreen001。挑战刚完成的全屏提示。",
+    "do_not": [
+        "不要标技能键",
+        "不要标小地图/血条"
+    ]
+}

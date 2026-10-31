@@ -1,0 +1,15 @@
+{
+    "id": "manual-disconnect-confirm",
+    "label": "DisconnectConfirm",
+    "note": "from user shot; Click 确认 only — root cause is env",
+    "click": [
+        790,
+        455
+    ],
+    "roi": [
+        720,
+        431,
+        140,
+        48
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "image": "20261031-200134-tacet-claim.png",
+    "updated_at": "2026-10-31T12:01:55.745969+00:00",
+    "title": "无音区 · 领取奖励（交互提示）",
+    "goal": "标右侧「领取奖励」提示条，点击领取。",
+    "steps": [
+        "框住「领取奖励」整条提示（含左侧手型图标）为 ROI。",
+        "点击点点在「领取奖励」文字中心。",
+        "label 用 TacetClaimReward。导出后说「已导出」。",
+        "点过后若出体力确认弹窗，再说「截图」标 TacetClaimStamina。"
+    ],
+    "suggested_label": "TacetClaimReward",
+    "suggested_expected_next": "TacetClaimStamina",
+    "suggested_note": "挑战达成跳过。当前为宝藏旁领取奖励提示（对齐 ok-ww pick_f）。",
+    "do_not": [
+        "不要标技能键",
+        "不要标离开门图标"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-200221-tacetclaimreward",
+    "exported_at": "2026-10-31T12:02:21.492387+00:00"
+}

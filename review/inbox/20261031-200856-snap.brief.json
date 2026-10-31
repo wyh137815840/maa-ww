@@ -1,0 +1,21 @@
+{
+    "image": "20261031-200856-snap.png",
+    "updated_at": "2026-10-31T12:10:46.700688+00:00",
+    "title": "无音区 · 挑战达成（仅识别）",
+    "goal": "只识别「挑战达成」提示，不点击。用于判定战斗已结束。",
+    "steps": [
+        "框住中央「挑战达成」横幅为 ROI（尽量只含文字）。",
+        "点击点可点文字中心，节点会是 DoNothing，不会真点。",
+        "label=TacetChallengeComplete。导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetChallengeComplete",
+    "suggested_expected_next": "TacetClaimReward",
+    "suggested_note": "纯提示、无点击。战斗完成标志 → 下一步找领取奖励。",
+    "do_not": [
+        "不要当按钮点",
+        "不要标技能键"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-201111-tacetchallengecomplete",
+    "exported_at": "2026-10-31T12:11:12.038066+00:00"
+}

@@ -35,29 +35,9 @@ def load_brief(image: Path) -> dict | None:
         return {"title": "说明文件损坏", "goal": f"请检查 {bp.name}", "steps": []}
 
 
-def list_inbox(cfg: dict) -> list[dict]:
-    files = sorted(cfg["inbox_dir"].glob("*.png"), key=lambda p: p.stat().st_mtime, reverse=True)
-    items = []
-    for p in files:
-        if p.name.startswith("_"):
-            continue
-        with Image.open(p) as im:
-            w, h = im.size
-        brief = load_brief(p)
-        items.append(
-            {
-                "name": p.name,
-                "url": f"/inbox/{p.name}",
-                "width": w,
-                "height": h,
-                "brief": brief,
-                "title": (brief or {}).get("title") or p.name,
-                "has_brief": brief is not None,
-            }
-        )
-    # prefer items that still need work (have brief) at top, keep mtime order within groups
-    items.sort(key=lambda it: (0 if it["has_brief"] else 1, -Path(cfg["inbox_dir"], it["name"]).stat().st_mtime))
-    return items
+def save_brief(image: Path, brief: dict) -> None:
+    bp = image.with_suffix(".brief.json")
+    bp.write_text(json.dumps(brief, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
 
 
 def list_cards(cfg: dict) -> list[dict]:
@@ -67,6 +47,75 @@ def list_cards(cfg: dict) -> list[dict]:
         data["_dir"] = p.parent.name
         cards.append(data)
     return cards
+
+
+def exported_source_map(cfg: dict) -> dict[str, str]:
+    """Map inbox png basename -> latest card id that was exported from it."""
+    mapping: dict[str, str] = {}
+    for c in list_cards(cfg):
+        src = str(c.get("source_image") or "")
+        name = Path(src).name
+        if name and name not in mapping:
+            mapping[name] = str(c.get("id") or "")
+    return mapping
+
+
+def mark_brief_exported(source: Path, card_id: str) -> None:
+    brief = load_brief(source) or {
+        "image": source.name,
+        "title": source.stem,
+        "goal": "已导出审查卡",
+        "steps": [],
+    }
+    brief["exported"] = True
+    brief["exported_card_id"] = card_id
+    brief["exported_at"] = datetime.now(timezone.utc).isoformat()
+    save_brief(source, brief)
+
+
+def list_inbox(cfg: dict) -> list[dict]:
+    exported = exported_source_map(cfg)
+    files = sorted(cfg["inbox_dir"].glob("*.png"), key=lambda p: p.stat().st_mtime, reverse=True)
+    items = []
+    for p in files:
+        if p.name.startswith("_"):
+            continue
+        with Image.open(p) as im:
+            w, h = im.size
+        brief = load_brief(p)
+        card_id = exported.get(p.name) or (brief or {}).get("exported_card_id") or ""
+        is_exported = bool(card_id) or bool((brief or {}).get("exported"))
+        # Backfill brief flags for older exports so UI stays consistent after refresh.
+        if is_exported and brief is not None and not brief.get("exported"):
+            mark_brief_exported(p, str(card_id))
+            brief = load_brief(p)
+        title_l = str((brief or {}).get("title") or "")
+        goal_l = str((brief or {}).get("goal") or "")
+        is_skip = bool((brief or {}).get("skip")) or ("不用标注" in title_l) or ("不用标注" in goal_l)
+        needs_annotation = brief is not None and not is_exported and not is_skip
+        items.append(
+            {
+                "name": p.name,
+                "url": f"/inbox/{p.name}",
+                "width": w,
+                "height": h,
+                "brief": brief,
+                "title": (brief or {}).get("title") or p.name,
+                "has_brief": brief is not None,
+                "exported": is_exported,
+                "exported_card_id": card_id or None,
+                "skip": is_skip,
+                "needs_annotation": needs_annotation,
+            }
+        )
+    # pending tasks first, then unexported plain shots, then already exported
+    items.sort(
+        key=lambda it: (
+            0 if it["needs_annotation"] else 1 if not it["exported"] else 2,
+            -Path(cfg["inbox_dir"], it["name"]).stat().st_mtime,
+        )
+    )
+    return items
 
 
 def rebuild_index(cfg: dict) -> None:
@@ -187,6 +236,7 @@ def save_card(cfg: dict, payload: dict) -> dict:
         md.extend(["## Template crop", "", "![template](template.png)", ""])
     (card_dir / "CARD.md").write_text("\n".join(md), encoding="utf-8")
     rebuild_index(cfg)
+    mark_brief_exported(source, card_id)
     return card
 
 
@@ -211,8 +261,10 @@ HTML = r"""<!doctype html>
     .item { padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; }
     .item.active { border-color:var(--acc); }
     .item.todo { border-color:#7a6230; }
+    .item.done { border-color:#2a5a40; opacity:.85; }
     .item small { display:block; color:var(--muted); }
     .badge { display:inline-block; margin-top:4px; padding:1px 6px; border-radius:999px; font-size:11px; background:#3a2d12; color:var(--warn); }
+    .badge.ok { background:#163528; color:var(--ok); }
     .brief {
       margin-bottom:12px; padding:12px; border:1px solid #6b5424; border-radius:10px;
       background:linear-gradient(180deg,#2a2414,#1b1a14); color:#f6e7c2;
@@ -314,11 +366,18 @@ function setStatus(msg, kind='') {
   el.textContent = msg;
 }
 
-function renderBrief(brief, name) {
+function renderBrief(brief, name, exported) {
   const box = document.getElementById('briefBox');
   if (!brief) {
     box.className = 'brief empty';
     box.innerHTML = `<h3>${name || '无任务说明'}</h3><p class="goal">这张图还没有我写的任务说明。先处理带黄色「待标注」标记的截图；或等我补说明。</p>`;
+    return;
+  }
+  if (exported || brief.exported) {
+    const cid = brief.exported_card_id ? `（${brief.exported_card_id}）` : '';
+    box.className = 'brief empty';
+    box.innerHTML = `<h3>${brief.title || name || '已导出'}</h3>
+      <p class="goal">这张截图已导出审查卡${cid}，无需再标。请处理其它黄色「待标注」项，或等我补新截图任务。</p>`;
     return;
   }
   const steps = (brief.steps || []).map(s => `<li>${s}</li>`).join('');
@@ -384,10 +443,15 @@ async function refresh(autoSelect=false) {
     const div = document.createElement('div');
     div.className = 'item'
       + (state.source === it.name ? ' active' : '')
-      + (it.has_brief ? ' todo' : '');
+      + (it.needs_annotation ? ' todo' : '')
+      + (it.exported ? ' done' : '');
+    let badge = '';
+    if (it.needs_annotation) badge = '<span class="badge">待标注</span>';
+    else if (it.exported) badge = '<span class="badge ok">已导出</span>';
+    else if (it.skip) badge = '<span class="badge ok">无需标注</span>';
     div.innerHTML = `<strong>${it.title || it.name}</strong>
       <small>${it.name}<br>${it.width}×${it.height}</small>
-      ${it.has_brief ? '<span class="badge">待标注</span>' : ''}`;
+      ${badge}`;
     div.onclick = () => loadImage(it);
     inbox.appendChild(div);
   });
@@ -400,7 +464,7 @@ async function refresh(autoSelect=false) {
     cards.appendChild(div);
   });
   if (autoSelect && !state.source) {
-    const first = state.inbox.find(it => it.has_brief) || state.inbox[0];
+    const first = state.inbox.find(it => it.needs_annotation) || state.inbox[0];
     if (first) loadImage(first);
   }
 }
@@ -423,9 +487,13 @@ function loadImage(it) {
     document.getElementById('expected').value = '';
     document.getElementById('note').value = '';
     applyBriefDefaults(state.brief);
-    renderBrief(state.brief, name);
+    renderBrief(state.brief, name, meta && meta.exported);
     draw();
     refresh(false);
+    if (meta && meta.exported) {
+      setStatus('此截图已导出，可忽略。请选黄色「待标注」项。', 'ok');
+      return;
+    }
     setStatus(state.brief
       ? '已加载任务：「' + (state.brief.title || name) + '」。先框绿色 ROI，再点红色点击点。'
       : '已加载 ' + name + '（无任务说明）');

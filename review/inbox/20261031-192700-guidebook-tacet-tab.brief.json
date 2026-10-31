@@ -1,0 +1,22 @@
+{
+    "image": "20261031-192700-guidebook-tacet-tab.png",
+    "updated_at": "2026-10-31T11:27:03.299879+00:00",
+    "title": "无音区 · 第2步：导能手册「无音清剿」页签",
+    "goal": "在左侧分类栏标出「无音清剿」。导出 GuidebookTacetTab。",
+    "steps": [
+        "左侧找到「无音清剿」（当前多半已高亮选中）。",
+        "框住该行图标+文字为 ROI（不要框到右侧列表）。",
+        "点该行中心为点击点。",
+        "导出后说「已导出」；下一张标某个「前往」。"
+    ],
+    "suggested_label": "GuidebookTacetTab",
+    "suggested_expected_next": "TacetGoButton",
+    "suggested_note": "来源：你提供的窗口截图，已裁掉 MuMu 标题栏并缩到 1280x720。ADB screencap 在安卓15鸣潮上会截到桌面，暂用手动截图。",
+    "do_not": [
+        "不要点右侧前往",
+        "不要点返回/体力"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-192736-guidebooktacettab",
+    "exported_at": "2026-10-31T11:27:37.160488+00:00"
+}

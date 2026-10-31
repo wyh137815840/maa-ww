@@ -1,0 +1,320 @@
+{
+    "TacetMain": {
+        "desc": "无音区：手册→挑战→战斗→达成→领奖→双倍优先/单倍回退/双红关窗耗尽→重新挑战或退出。双红耗尽后跳过后续耗体任务（全局标志待接）。多副本选行待补。",
+        "next": [
+            "OpenGuidebook",
+            "GuidebookTacetTab",
+            "TacetGoButton",
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "TacetChallengeComplete",
+            "TacetClaimReward",
+            "TacetClaimStaminaDouble",
+            "TacetClaimStamina",
+            "TacetStaminaExhausted",
+            "TacetNeedSettle",
+            "TacetExit"
+        ]
+    },
+    "OpenGuidebook": {
+        "desc": "大世界顶部「索拉指南/导能手册」。审查卡 20261031-182324-openguidebook。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1140,
+            0,
+            120,
+            90
+        ],
+        "template": "Guidebook/OpenGuidebook.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1198,
+            38
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 6000
+        },
+        "next": [
+            "GuidebookTacetTab",
+            "TacetGoButton"
+        ]
+    },
+    "GuidebookTacetTab": {
+        "desc": "导能手册左侧「无音清剿」。审查卡 20261031-192736-guidebooktacettab。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            80,
+            450,
+            280,
+            160
+        ],
+        "template": "Guidebook/TacetTab.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            183,
+            531
+        ],
+        "post_wait_freezes": {
+            "time": 300,
+            "target": 0.95,
+            "timeout": 5000
+        },
+        "next": [
+            "TacetGoButton",
+            "TacetStartChallenge"
+        ]
+    },
+    "TacetGoButton": {
+        "desc": "无音区列表行右侧「直接挑战」。审查卡 20261031-194119-tacetgobutton。多副本需按行名/序号定位后再点。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1040,
+            160,
+            220,
+            480
+        ],
+        "template": "Guidebook/TacetGoButton.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 8000
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat"
+        ]
+    },
+    "TacetStartChallenge": {
+        "desc": "编队页右下「开启挑战」。审查卡 20261031-194335-tacetstartchallenge。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            960,
+            600,
+            280,
+            110
+        ],
+        "template": "Guidebook/TacetStartChallenge.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1094,
+            661
+        ],
+        "post_wait_freezes": {
+            "time": 500,
+            "target": 0.95,
+            "timeout": 15000
+        },
+        "next": [
+            "InTacetCombat",
+            "TacetChallengeComplete",
+            "TacetClaimReward"
+        ]
+    },
+    "InTacetCombat": {
+        "desc": "无音区内战斗中（左侧目标条）。审查卡 20261031-194638-intacetcombat。只识别不点击；战斗循环后续进 Go。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            10,
+            170,
+            360,
+            80
+        ],
+        "template": "Guidebook/InTacetCombat.png",
+        "threshold": 0.65,
+        "action": "DoNothing",
+        "next": [
+            "TacetChallengeComplete",
+            "TacetClaimReward",
+            "TacetNeedSettle"
+        ]
+    },
+    "TacetNeedSettle": {
+        "desc": "结算链已齐；跨任务跳过耗体待 Interface/Go 接「体力耗尽」标志。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    },
+    "TacetClaimReward": {
+        "desc": "无音区清完后宝藏旁「领取奖励」。审查卡 20261031-200221-tacetclaimreward。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            786,
+            280,
+            200,
+            56
+        ],
+        "template": "Guidebook/TacetClaimReward.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            886,
+            308
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 8000
+        },
+        "next": [
+            "TacetClaimStaminaDouble",
+            "TacetClaimStamina",
+            "TacetStaminaExhausted",
+            "TacetContinue",
+            "TacetExit"
+        ]
+    },
+    "TacetChallengeComplete": {
+        "desc": "战斗结束全屏提示「挑战达成」。审查卡 20261031-201111。纯识别、不点击。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            538,
+            172,
+            193,
+            51
+        ],
+        "template": "Guidebook/TacetChallengeComplete.png",
+        "threshold": 0.7,
+        "action": "DoNothing",
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimStaminaDouble",
+            "TacetClaimStamina",
+            "TacetStaminaExhausted"
+        ]
+    },
+    "TacetClaimStaminaDouble": {
+        "desc": "领取奖励弹窗右侧「120|双倍领取」（数字白字可点）。审查卡 20261031-202345。策略：能双倍不单倍。匹配失败再试单倍。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            738,
+            427,
+            200,
+            48
+        ],
+        "template": "Guidebook/TacetClaimStaminaDouble.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [
+            838,
+            451
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 8000
+        },
+        "next": [
+            "TacetContinue",
+            "TacetExit",
+            "TacetNeedSettle"
+        ]
+    },
+    "TacetClaimStamina": {
+        "desc": "领取弹窗左侧「60|单倍领取」（60白/120红时回退）。审查卡 20261031-202836。仅当双倍不可用；能双倍不单倍。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            343,
+            431,
+            200,
+            52
+        ],
+        "template": "Guidebook/TacetClaimStamina.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [
+            443,
+            457
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 8000
+        },
+        "next": [
+            "TacetContinue",
+            "TacetExit",
+            "TacetNeedSettle"
+        ]
+    },
+    "TacetStaminaExhausted": {
+        "desc": "领取弹窗 60+120 皆红（体力不足）：点右上角关闭 X。审查卡 20261031-203550。关闭后结束无音区并标记完成；应置位「体力耗尽」使后续耗体力任务全部跳过（Interface/Go 待接）。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            912,
+            192,
+            106,
+            87
+        ],
+        "template": "Guidebook/TacetStaminaExhausted.png",
+        "threshold": 0.75,
+        "action": "Click",
+        "target": [
+            969,
+            230
+        ],
+        "post_wait_freezes": {
+            "time": 300,
+            "target": 0.95,
+            "timeout": 5000
+        },
+        "next": []
+    },
+    "TacetContinue": {
+        "desc": "结算页右侧「重新挑战」。审查卡 20261031-202743。续刷入口。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            705,
+            590,
+            200,
+            48
+        ],
+        "template": "Guidebook/TacetContinue.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            805,
+            614
+        ],
+        "post_wait_freezes": {
+            "time": 500,
+            "target": 0.95,
+            "timeout": 15000
+        },
+        "next": [
+            "InTacetCombat",
+            "TacetChallengeComplete",
+            "TacetClaimReward",
+            "TacetExit"
+        ]
+    },
+    "TacetExit": {
+        "desc": "结算页左侧「退出副本」。审查卡 20261031-203103。收工/不续刷时点。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            373,
+            588,
+            200,
+            48
+        ],
+        "template": "Guidebook/TacetExit.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            473,
+            612
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "target": 0.95,
+            "timeout": 10000
+        },
+        "next": []
+    }
+}

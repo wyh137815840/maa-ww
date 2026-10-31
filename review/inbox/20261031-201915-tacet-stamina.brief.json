@@ -1,0 +1,20 @@
+{
+    "image": "20261031-201915-tacet-stamina.png",
+    "updated_at": "2026-10-31T12:27:32.271652+00:00",
+    "title": "无音区 · 单倍领取（回退）",
+    "goal": "60白/120红：框左侧「单倍领取」并导出。",
+    "steps": [
+        "框住左侧「60 | 单倍领取」整颗为 ROI。",
+        "点击点在按钮中心。",
+        "label=TacetClaimStamina → 导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetClaimStamina",
+    "suggested_expected_next": "TacetContinue",
+    "suggested_note": "确认：本图即双倍不可用时的回退态（60白/120红）。",
+    "do_not": [
+        "不要标双倍"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-202836-tacetclaimstamina",
+    "exported_at": "2026-10-31T12:28:36.868463+00:00"
+}

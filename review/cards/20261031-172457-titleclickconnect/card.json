@@ -1,0 +1,43 @@
+{
+    "id": "20261031-172457-titleclickconnect",
+    "created_at": "2026-10-31T09:24:57.912946+00:00",
+    "label": "TitleClickConnect",
+    "note": "标题页底部「点击连接」。右侧还有退出/公告/工具/账号/扫码/设置，本卡只标主入口。",
+    "expected_next": "进入登录/选服/公告关闭后，或出现进入游戏相关界面",
+    "source_image": "review/inbox/20261031-172410-boot.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        640,
+        672
+    ],
+    "roi": [
+        590,
+        652,
+        100,
+        41
+    ],
+    "files": {
+        "screen": "review/cards/20261031-172457-titleclickconnect/screen.png",
+        "preview": "review/cards/20261031-172457-titleclickconnect/preview.png",
+        "template": "review/cards/20261031-172457-titleclickconnect/template.png",
+        "card": "review/cards/20261031-172457-titleclickconnect/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TitleClickConnect.png",
+        "roi": [
+            590,
+            652,
+            100,
+            41
+        ],
+        "target": [
+            640,
+            672
+        ]
+    }
+}

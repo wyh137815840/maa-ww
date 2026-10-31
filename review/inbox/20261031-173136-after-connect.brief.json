@@ -1,18 +1,11 @@
 {
     "image": "20261031-173136-after-connect.png",
-    "updated_at": "2026-10-31T09:31:57.782514+00:00",
     "title": "加载页：不用标注",
-    "goal": "这是进游戏加载画面（右下角进度％）。不需要 ROI / 点击点。",
-    "steps": [
-        "不要标注这张图。",
-        "在模拟器里等进度走完，进入可操作界面后告诉我「加载完成」。",
-        "或等我自动再截下一张。"
-    ],
-    "suggested_label": "LoadingSplash",
-    "suggested_expected_next": "加载结束后的登录/主界面/弹窗",
-    "suggested_note": "纯等待节点，后续用进度消失或关键 UI 判断离开加载。",
-    "do_not": [
-        "不要在这张图上框选或点选",
-        "不要点屏幕乱点"
-    ]
+    "goal": "过渡画面，无需导出审查卡。",
+    "steps": [],
+    "skip": true,
+    "suggested_label": "",
+    "suggested_expected_next": "",
+    "suggested_note": "",
+    "do_not": []
 }

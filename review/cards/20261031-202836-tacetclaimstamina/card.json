@@ -1,0 +1,43 @@
+{
+    "id": "20261031-202836-tacetclaimstamina",
+    "created_at": "2026-10-31T12:28:36.857296+00:00",
+    "label": "TacetClaimStamina",
+    "note": "确认：本图即双倍不可用时的回退态（60白/120红）。",
+    "expected_next": "TacetContinue",
+    "source_image": "review/inbox/20261031-201915-tacet-stamina.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        443,
+        457
+    ],
+    "roi": [
+        311,
+        414,
+        245,
+        73
+    ],
+    "files": {
+        "screen": "review/cards/20261031-202836-tacetclaimstamina/screen.png",
+        "preview": "review/cards/20261031-202836-tacetclaimstamina/preview.png",
+        "template": "review/cards/20261031-202836-tacetclaimstamina/template.png",
+        "card": "review/cards/20261031-202836-tacetclaimstamina/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetClaimStamina.png",
+        "roi": [
+            311,
+            414,
+            245,
+            73
+        ],
+        "target": [
+            443,
+            457
+        ]
+    }
+}

@@ -44,6 +44,15 @@
             ]
         },
         {
+            "name": "Tacet",
+            "label": "$task.Tacet.label",
+            "description": "$task.Tacet.description",
+            "entry": "TacetMain",
+            "controller": [
+                "ADB"
+            ]
+        },
+        {
             "name": "SkipDialog",
             "label": "$task.SkipDialog.label",
             "description": "$task.SkipDialog.description",

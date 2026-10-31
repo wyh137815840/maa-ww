@@ -1,0 +1,21 @@
+{
+    "image": "20261031-202612-snap.png",
+    "updated_at": "2026-10-31T12:29:09.515919+00:00",
+    "title": "无音区 · 结算：退出副本",
+    "goal": "标左侧「退出副本」。",
+    "steps": [
+        "框住左侧白按钮「退出副本」整颗（可含下方倒计时小字或只含按钮）。",
+        "点击点在按钮中心。",
+        "label=TacetExit → 导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetExit",
+    "suggested_expected_next": "ExploreHUD",
+    "suggested_note": "收工/体力不够续刷时点退出。重新挑战已入库。",
+    "do_not": [
+        "不要标重新挑战",
+        "不要标奖励图标"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-202743-tacetcontinue",
+    "exported_at": "2026-10-31T12:29:21.839488+00:00"
+}

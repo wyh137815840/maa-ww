@@ -1,0 +1,22 @@
+{
+    "image": "20261031-202033-snap.png",
+    "updated_at": "2026-10-31T12:23:13.098050+00:00",
+    "title": "无音区 · 双倍领取（优先）",
+    "goal": "标右侧「120 | 双倍领取」（数字为白/可点）。策略：能双倍不单倍。",
+    "steps": [
+        "框住右侧黑按钮「120 | 双倍领取」整颗为 ROI。",
+        "点击点点在该按钮中心。",
+        "label=TacetClaimStaminaDouble。左侧单倍本张不要标。",
+        "导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetClaimStaminaDouble",
+    "suggested_expected_next": "TacetContinue",
+    "suggested_note": "120白字=可领。流水线优先匹配本节点，失败再回退单倍。",
+    "do_not": [
+        "不要标单倍领取",
+        "不要标X"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-202345-tacetclaimstaminadouble",
+    "exported_at": "2026-10-31T12:23:46.133215+00:00"
+}

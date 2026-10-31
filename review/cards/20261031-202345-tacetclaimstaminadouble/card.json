@@ -1,0 +1,43 @@
+{
+    "id": "20261031-202345-tacetclaimstaminadouble",
+    "created_at": "2026-10-31T12:23:46.119124+00:00",
+    "label": "TacetClaimStaminaDouble",
+    "note": "120白字=可领。流水线优先匹配本节点，失败再回退单倍。",
+    "expected_next": "TacetContinue",
+    "source_image": "review/inbox/20261031-202033-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        838,
+        451
+    ],
+    "roi": [
+        718,
+        421,
+        245,
+        64
+    ],
+    "files": {
+        "screen": "review/cards/20261031-202345-tacetclaimstaminadouble/screen.png",
+        "preview": "review/cards/20261031-202345-tacetclaimstaminadouble/preview.png",
+        "template": "review/cards/20261031-202345-tacetclaimstaminadouble/template.png",
+        "card": "review/cards/20261031-202345-tacetclaimstaminadouble/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetClaimStaminaDouble.png",
+        "roi": [
+            718,
+            421,
+            245,
+            64
+        ],
+        "target": [
+            838,
+            451
+        ]
+    }
+}

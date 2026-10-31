@@ -1,0 +1,43 @@
+{
+    "id": "20261031-194119-tacetgobutton",
+    "created_at": "2026-10-31T11:41:19.570332+00:00",
+    "label": "TacetGoButton",
+    "note": "ADB mumuscreen001 实截 1280x720（桥接 192.168.1.50:5555）。文案是「直接挑战」不是「前往」。",
+    "expected_next": "TacetChallengeConfirm or InWorldNearTacet",
+    "source_image": "review/inbox/20261031-194016-tacet-list-live.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1148,
+        237
+    ],
+    "roi": [
+        1092,
+        224,
+        111,
+        28
+    ],
+    "files": {
+        "screen": "review/cards/20261031-194119-tacetgobutton/screen.png",
+        "preview": "review/cards/20261031-194119-tacetgobutton/preview.png",
+        "template": "review/cards/20261031-194119-tacetgobutton/template.png",
+        "card": "review/cards/20261031-194119-tacetgobutton/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetGoButton.png",
+        "roi": [
+            1092,
+            224,
+            111,
+            28
+        ],
+        "target": [
+            1148,
+            237
+        ]
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "id": "20261031-182324-openguidebook",
+    "created_at": "2026-10-31T10:23:24.490364+00:00",
+    "label": "OpenGuidebook",
+    "note": "安卓用顶部图标代替 PC F2。当前任务栏有「清理聚落中的残象」，与后续聚落任务相关，本次先忽略。",
+    "expected_next": "GuidebookMain",
+    "source_image": "review/inbox/20261031-182234-explore-open-guidebook.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1198,
+        38
+    ],
+    "roi": [
+        833,
+        0,
+        440,
+        96
+    ],
+    "files": {
+        "screen": "review/cards/20261031-182324-openguidebook/screen.png",
+        "preview": "review/cards/20261031-182324-openguidebook/preview.png",
+        "template": "review/cards/20261031-182324-openguidebook/template.png",
+        "card": "review/cards/20261031-182324-openguidebook/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/OpenGuidebook.png",
+        "roi": [
+            833,
+            0,
+            440,
+            96
+        ],
+        "target": [
+            1198,
+            38
+        ]
+    }
+}

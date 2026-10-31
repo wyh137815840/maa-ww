@@ -5,6 +5,8 @@
     "resource.Official.label": "官服",
     "task.Startup.label": "启动进游戏（开发中）",
     "task.Startup.description": "从标题页「点击连接」开始进入游戏。后续登录界面需继续标注。",
+    "task.Tacet.label": "无音区（开发中）",
+    "task.Tacet.description": "从大世界打开导能手册进入无音区。页签与刷本流程待继续标注。",
     "task.SkipDialog.label": "跳过剧情（占位）",
     "task.SkipDialog.description": "第一期占位任务。补齐截图与 Pipeline 后可用。"
 }

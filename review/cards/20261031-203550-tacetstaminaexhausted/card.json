@@ -1,0 +1,43 @@
+{
+    "id": "20261031-203550-tacetstaminaexhausted",
+    "created_at": "2026-10-31T12:35:50.907726+00:00",
+    "label": "TacetStaminaExhausted",
+    "note": "60与120数字皆红=体力不足。关弹窗后结束无音区并跳过后续耗体任务。",
+    "expected_next": "ExploreHUD",
+    "source_image": "review/inbox/20261031-203334-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        969,
+        230
+    ],
+    "roi": [
+        932,
+        212,
+        66,
+        47
+    ],
+    "files": {
+        "screen": "review/cards/20261031-203550-tacetstaminaexhausted/screen.png",
+        "preview": "review/cards/20261031-203550-tacetstaminaexhausted/preview.png",
+        "template": "review/cards/20261031-203550-tacetstaminaexhausted/template.png",
+        "card": "review/cards/20261031-203550-tacetstaminaexhausted/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetStaminaExhausted.png",
+        "roi": [
+            932,
+            212,
+            66,
+            47
+        ],
+        "target": [
+            969,
+            230
+        ]
+    }
+}

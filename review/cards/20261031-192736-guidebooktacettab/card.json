@@ -1,0 +1,43 @@
+{
+    "id": "20261031-192736-guidebooktacettab",
+    "created_at": "2026-10-31T11:27:37.149856+00:00",
+    "label": "GuidebookTacetTab",
+    "note": "来源：你提供的窗口截图，已裁掉 MuMu 标题栏并缩到 1280x720。ADB screencap 在安卓15鸣潮上会截到桌面，暂用手动截图。",
+    "expected_next": "TacetGoButton",
+    "source_image": "review/inbox/20261031-192700-guidebook-tacet-tab.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        183,
+        531
+    ],
+    "roi": [
+        127,
+        495,
+        180,
+        77
+    ],
+    "files": {
+        "screen": "review/cards/20261031-192736-guidebooktacettab/screen.png",
+        "preview": "review/cards/20261031-192736-guidebooktacettab/preview.png",
+        "template": "review/cards/20261031-192736-guidebooktacettab/template.png",
+        "card": "review/cards/20261031-192736-guidebooktacettab/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/GuidebookTacetTab.png",
+        "roi": [
+            127,
+            495,
+            180,
+            77
+        ],
+        "target": [
+            183,
+            531
+        ]
+    }
+}

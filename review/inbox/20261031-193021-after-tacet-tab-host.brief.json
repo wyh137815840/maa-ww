@@ -1,0 +1,16 @@
+{
+    "image": "20261031-193021-after-tacet-tab-host.png",
+    "updated_at": "2026-10-31T11:30:21.258768+00:00",
+    "title": "无音区 · 第3步：列表前往/直接挑战",
+    "goal": "标右侧列表第一条的「前往」或「直接挑战」按钮（以你当前画面文案为准）。",
+    "steps": [
+        "确认左侧「无音清剿」已选中，右侧是无音区列表。",
+        "只框第一条右侧操作按钮（前往/直接挑战）为 ROI。",
+        "点按钮中心为点击点。",
+        "导出后说已导出；可再在游戏里点该按钮停在下一界面。"
+    ],
+    "suggested_label": "TacetGoButton",
+    "suggested_expected_next": "TacetTravelConfirm or ChallengeConfirm",
+    "suggested_note": "宿主窗口截取：MuMu安卓设备-1（因 ADB screencap 在安卓15鸣潮上会截到桌面）。",
+    "do_not": []
+}

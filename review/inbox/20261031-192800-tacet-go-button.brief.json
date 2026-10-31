@@ -1,0 +1,11 @@
+{
+    "image": "20261031-192800-tacet-go-button.png",
+    "title": "作废：复用旧图（未真实点击）",
+    "goal": "已作废，请改标 after-tacet-tab-host。",
+    "steps": [],
+    "skip": true,
+    "suggested_label": "",
+    "suggested_expected_next": "",
+    "suggested_note": "",
+    "do_not": []
+}
