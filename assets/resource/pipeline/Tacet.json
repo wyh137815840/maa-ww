@@ -21,7 +21,7 @@
             "InTacetCombat",
             "InTacetCombatTpl",
             "TacetTreasureSeen",
-            "TacetApproachTreasure",
+            "TacetWalkToTreasure",
             "TacetChallengeComplete",
             "TacetClaimReward",
             "TacetClaimStaminaDoubleBlocked",
@@ -369,24 +369,30 @@
                 "custom_action": "CombatLoop",
                 "custom_action_param": {
                     "exit_nodes": [
-                        "TacetTreasureSeen",
+                        "TacetSettleSuccessOCR",
+                        "TacetChallengeComplete",
                         "TacetClaimReward",
                         "TacetClaimRewardByOCR",
-                        "TacetChallengeComplete"
+                        "TacetTreasureSeen"
                     ],
                     "max_duration_ms": 300000,
                     "hud_node": "InTacetCombat",
                     "lock_every_n": 3,
-                    "retarget_timeout_ms": 10000
+                    "retarget_timeout_ms": 4000
                 }
             }
         },
         "next": [
-            "TacetTreasureSeen",
-            "TacetApproachTreasure",
+            "TacetSettleSuccessOCR",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
+            "TacetTreasureDist",
+            "TacetTreasureDistOCR",
+            "TacetTreasureSeen",
+            "TacetWalkToTreasure",
             "TacetChallengeComplete",
+            "TacetExit",
+            "TacetContinue",
             "InTacetCombat",
             "InTacetCombatTpl"
         ],
@@ -404,28 +410,48 @@
                 "custom_action": "CombatLoop",
                 "custom_action_param": {
                     "exit_nodes": [
-                        "TacetTreasureSeen",
+                        "TacetSettleSuccessOCR",
+                        "TacetChallengeComplete",
                         "TacetClaimReward",
                         "TacetClaimRewardByOCR",
-                        "TacetChallengeComplete"
+                        "TacetTreasureSeen"
                     ],
                     "max_duration_ms": 300000,
                     "hud_node": "InTacetCombat",
                     "lock_every_n": 3,
-                    "retarget_timeout_ms": 10000
+                    "retarget_timeout_ms": 4000
                 }
             }
         },
         "next": [
-            "TacetTreasureSeen",
-            "TacetApproachTreasure",
+            "TacetSettleSuccessOCR",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
+            "TacetTreasureDist",
+            "TacetTreasureDistOCR",
+            "TacetTreasureSeen",
+            "TacetWalkToTreasure",
             "TacetChallengeComplete",
+            "TacetExit",
+            "TacetContinue",
             "InTacetCombat",
             "InTacetCombatTpl"
         ],
         "timeout": 600000
+    },
+    "TacetSettleSuccessOCR": {
+        "desc": "结算「挑战成功/挑战达成」。CombatLoop 快退；先领奖/走近宝藏，再 Exit/Continue。",
+        "recognition": "OCR",
+        "roi": [400, 40, 480, 160],
+        "expected": ["挑战成功", "挑战达成"],
+        "action": "DoNothing",
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetWalkToTreasure",
+            "TacetExit",
+            "TacetContinue"
+        ]
     },
     "TacetNeedSettle": {
         "desc": "占位已禁用：勿用 DirectHit 提前结束。结算走 ChallengeComplete/Claim* / Exit。",
@@ -435,7 +461,7 @@
         "enabled": false
     },
     "TacetClaimReward": {
-        "desc": "宝藏旁「领取奖励」。点开后先判 120：红字不可领则改看 60；都不可领则关弹窗并退出副本。",
+        "desc": "宝藏旁「领取奖励」。手柄按 B（Interact=F）；弹窗仍点屏判 120/60。",
         "recognition": "TemplateMatch",
         "roi": [
             700,
@@ -445,11 +471,12 @@
         ],
         "template": "Guidebook/TacetClaimReward.png",
         "threshold": 0.7,
-        "action": "Click",
-        "target": [
-            886,
-            308
-        ],
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 97
+            }
+        },
         "post_wait_freezes": {
             "time": 400,
             "timeout": 8000,
@@ -461,7 +488,7 @@
         ]
     },
     "TacetChallengeComplete": {
-        "desc": "战斗结束全屏「挑战达成」。纯识别；命中后才进入走近宝藏。勿在战斗 next 里挂 Approach。",
+        "desc": "战斗结束全屏「挑战达成」。纯识别；命中后走 Go WalkToTacetTreasure（对齐 ok-ww）。",
         "recognition": "TemplateMatch",
         "roi": [
             420,
@@ -473,13 +500,65 @@
         "threshold": 0.62,
         "action": "DoNothing",
         "next": [
-            "TacetTreasureSeen",
-            "TacetApproachTreasure",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
+            "TacetTreasureSeen",
+            "TacetWalkToTreasure",
             "TacetChallengeComplete"
         ],
         "timeout": 120000
+    },
+    "TacetWalkToTreasure": {
+        "desc": "对齐 ok-ww walk_to_treasure：Go 经 GamepadForwarder 泵左摇杆走近「N米」宝箱标，出现领取按 B。",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "WalkToTacetTreasure",
+                "custom_action_param": {
+                    "timeout_ms": 60000,
+                    "claim_nodes": [
+                        "TacetClaimReward",
+                        "TacetClaimRewardByOCR"
+                    ],
+                    "treasure_nodes": [
+                        "TacetTreasureDist",
+                        "TacetTreasureDistOCR",
+                        "TacetTreasureAim",
+                        "TacetTreasureSeen"
+                    ],
+                    "x_threshold": 90
+                }
+            }
+        },
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetClaimStaminaDoubleBlocked",
+            "TacetClaimStaminaDouble",
+            "TacetTreasureDist",
+            "TacetWalkToTreasure",
+            "TacetExit",
+            "TacetContinue"
+        ],
+        "timeout": 120000
+    },
+    "TacetTreasureDist": {
+        "desc": "战后宝箱距离标（胸口图标+N米）。实截 on_error 6米。",
+        "recognition": "TemplateMatch",
+        "roi": [200, 120, 880, 480],
+        "template": "Guidebook/TacetTreasureDist.png",
+        "threshold": 0.55,
+        "action": "DoNothing",
+        "next": ["TacetWalkToTreasure"]
+    },
+    "TacetTreasureDistOCR": {
+        "desc": "宝箱距离 OCR「米」。",
+        "recognition": "OCR",
+        "roi": [200, 120, 880, 480],
+        "expected": ["米"],
+        "action": "DoNothing",
+        "next": ["TacetWalkToTreasure"]
     },
     "TacetClaimStaminaDouble": {
         "desc": "右侧「120|双倍领取」可领（120 非红）才点。红字由 DoubleBlocked 截走，不会点到这里。",
@@ -498,13 +577,14 @@
             451
         ],
         "post_wait_freezes": {
-            "time": 400,
-            "timeout": 8000,
+            "time": 800,
+            "timeout": 10000,
             "threshold": 0.95
         },
         "next": [
+            "TacetExit",
             "TacetContinue",
-            "TacetExit"
+            "TacetSettleSuccessOCR"
         ],
         "method": 10001
     },
@@ -525,13 +605,14 @@
             457
         ],
         "post_wait_freezes": {
-            "time": 400,
-            "timeout": 8000,
+            "time": 800,
+            "timeout": 10000,
             "threshold": 0.95
         },
         "next": [
+            "TacetExit",
             "TacetContinue",
-            "TacetExit"
+            "TacetSettleSuccessOCR"
         ],
         "method": 10001
     },
@@ -558,11 +639,12 @@
         },
         "next": [
             "TacetLeaveInstanceIcon",
+            "TacetPadMenuLeave",
             "TacetReturnWorld"
         ]
     },
     "TacetContinue": {
-        "desc": "结算页右侧「重新挑战」。审查卡 20261031-202743。续刷入口。",
+        "desc": "结算页右侧「重新挑战」。点后只等进本/战斗，禁止同屏再点 Exit（会 Continue→Exit 连点卡住）。",
         "recognition": "TemplateMatch",
         "roi": [
             681,
@@ -578,19 +660,20 @@
             614
         ],
         "post_wait_freezes": {
-            "time": 500,
-            "timeout": 15000,
+            "time": 1200,
+            "timeout": 20000,
             "threshold": 0.95
         },
         "next": [
+            "TacetInstanceLoadingBar",
+            "TacetInstanceLoadingOCR",
+            "TacetInstanceWorldLoadingBar",
             "InTacetCombat",
-            "InTacetCombatTpl",
-            "TacetChallengeComplete",
-            "TacetExit"
+            "InTacetCombatTpl"
         ]
     },
     "TacetExit": {
-        "desc": "结算页左侧「退出副本」。审查卡 20261031-203103。收工/不续刷时点。",
+        "desc": "结算页左侧「退出副本」（挑战成功屏）。默认收工优先于续刷。",
         "recognition": "TemplateMatch",
         "roi": [
             349,
@@ -606,11 +689,15 @@
             612
         ],
         "post_wait_freezes": {
-            "time": 400,
-            "timeout": 10000,
+            "time": 1000,
+            "timeout": 20000,
             "threshold": 0.95
         },
-        "next": []
+        "next": [
+            "TacetReturnWorld",
+            "ExploreWorldReady",
+            "ExploreHUD"
+        ]
     },
     "TacetGoIndex1": {
         "desc": "无音区列表第1行「直接挑战」。审查卡 20261031-204447。默认关闭，由任务选项启用。",
@@ -840,18 +927,15 @@
         ]
     },
     "TacetApproachTreasure": {
-        "desc": "领奖导航：定位宝箱标 → 滑向它的实际位置（左右+上下，行程随偏移变）→ 图标进入屏幕中心小窗后才前进。",
+        "desc": "旧触屏寻宝环（Swipe 假摇杆）。手柄态改走 TacetWalkToTreasure；保留节点仅兼容，默认禁用。",
+        "enabled": false,
         "timeout": 180000,
         "next": [
-            "TacetClaimReward",
-            "TacetClaimRewardByOCR",
-            "TacetTreasureCentered",
-            "TacetTreasureAim",
-            "TacetTreasureSearch"
+            "TacetWalkToTreasure"
         ]
     },
     "TacetClaimRewardByOCR": {
-        "desc": "领取奖励 OCR 兜底（模板漂移时）。",
+        "desc": "领取奖励 OCR 兜底；手柄按 B。",
         "recognition": "OCR",
         "roi": [
             600,
@@ -862,7 +946,12 @@
         "expected": [
             "领取奖励"
         ],
-        "action": "Click",
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 97
+            }
+        },
         "post_wait_freezes": {
             "time": 400,
             "timeout": 8000,
@@ -874,7 +963,7 @@
         ]
     },
     "TacetTreasureSearch": {
-        "desc": "画面内没有宝箱标 → 小幅左转再找。找到后按实际偏移调视角，禁止盲目前进。",
+        "desc": "（旧触屏寻宝）画面内没有宝箱标 → 小幅左转。手柄请走 TacetWalkToTreasure。",
         "recognition": "DirectHit",
         "action": {
             "type": "Swipe",
@@ -1055,7 +1144,7 @@
         ]
     },
     "TacetLeaveInstanceIcon": {
-        "desc": "体力耗尽关弹窗后仍在副本：点左上角出门图标，打开「确认离开」。",
+        "desc": "体力耗尽关弹窗后仍在副本：点左上角出门图标（触屏），打开「确认离开」。手柄无效则走 TacetPadMenuLeave。",
         "recognition": "TemplateMatch",
         "roi": [
             0,
@@ -1078,7 +1167,67 @@
         "next": [
             "TacetConfirmLeave",
             "TacetConfirmLeaveByOCR",
+            "TacetLeaveConfirmOCR",
+            "TacetPadMenuLeave",
             "TacetLeaveInstanceIcon",
+            "TacetReturnWorld"
+        ]
+    },
+    "TacetPadMenuLeave": {
+        "desc": "手柄副本出本：点右上三横杠打开「确认离开」。仅从 LeaveInstance / ReturnWorld / 耗尽链路进入，勿在大世界裸点。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1180,
+            0,
+            100,
+            80
+        ],
+        "template": [
+            "Explore/InstancePadMenu.png",
+            "Explore/PadHUD_MenuX.png"
+        ],
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1224,
+            38
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetConfirmLeave",
+            "TacetConfirmLeaveByOCR",
+            "TacetLeaveConfirmOCR",
+            "TacetPadMenuLeave",
+            "TacetReturnWorld"
+        ]
+    },
+    "TacetLeaveConfirmOCR": {
+        "desc": "离开弹窗「确认离开」OCR；点右侧确认。",
+        "recognition": "OCR",
+        "roi": [
+            400,
+            240,
+            480,
+            200
+        ],
+        "expected": [
+            "确认离开"
+        ],
+        "action": "Click",
+        "target": [
+            760,
+            435
+        ],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
             "TacetReturnWorld"
         ]
     },
@@ -1130,18 +1279,20 @@
         ]
     },
     "TacetReturnWorld": {
-        "desc": "关窗后等到回到大世界：还看见出门图标就继续离开；出现 Terminal 或小地图且不再次命中出门图标才结束。",
+        "desc": "关窗后等到回到大世界：先处理离开弹窗/出门图标；认到 Terminal 即结束；三横杠仅作无出门图标时的手柄兜底（须排在 Terminal 之后，避免大世界误开系统菜单）。",
         "timeout": 120000,
         "next": [
-            "TacetLeaveInstanceIcon",
             "TacetConfirmLeave",
             "TacetConfirmLeaveByOCR",
+            "TacetLeaveConfirmOCR",
+            "TacetLeaveInstanceIcon",
             "ExploreWorldReady",
+            "TacetPadMenuLeave",
             "ExploreHUD"
         ]
     },
     "TacetTreasureSeen": {
-        "desc": "战斗结束后的宝箱标（全屏）。命中后才进入按偏移转视角。战斗中没有此标，不会提前走。",
+        "desc": "战斗结束后的宝箱标（全屏）。命中后进 Go WalkToTacetTreasure。",
         "recognition": "TemplateMatch",
         "roi": [
             16,
@@ -1154,10 +1305,10 @@
             "Guidebook/TacetTreasureGlow.png",
             "Guidebook/TacetTreasureFlare.png"
         ],
-        "threshold": 0.68,
+        "threshold": 0.62,
         "action": "DoNothing",
         "next": [
-            "TacetApproachTreasure"
+            "TacetWalkToTreasure"
         ]
     },
     "TacetCombatAttack": {

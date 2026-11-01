@@ -17,7 +17,7 @@ var _ maa.CustomActionRunner = &CombatLoopAction{}
 type combatLoopParam struct {
 	ExitNodes         []string `json:"exit_nodes"`
 	MaxDurationMs     int64    `json:"max_duration_ms"`
-	HUDNode           string   `json:"hud_node"` // kept for compat; in-combat uses HasTarget/HP
+	HUDNode           string   `json:"hud_node"`
 	LockEveryN        int      `json:"lock_every_n"`
 	RetargetTimeoutMs int64    `json:"retarget_timeout_ms"`
 }
@@ -25,6 +25,7 @@ type combatLoopParam struct {
 func defaultCombatLoopParam() combatLoopParam {
 	return combatLoopParam{
 		ExitNodes: []string{
+			"TacetSettleSuccessOCR",
 			"TacetChallengeComplete",
 			"TacetClaimReward",
 			"TacetClaimRewardByOCR",
@@ -33,7 +34,7 @@ func defaultCombatLoopParam() combatLoopParam {
 		MaxDurationMs:     300000,
 		HUDNode:           "InTacetCombat",
 		LockEveryN:        3,
-		RetargetTimeoutMs: 10000,
+		RetargetTimeoutMs: 4000,
 	}
 }
 
@@ -95,12 +96,23 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	deadline := time.Now().Add(time.Duration(param.MaxDurationMs) * time.Millisecond)
 	retargetTO := time.Duration(param.RetargetTimeoutMs) * time.Millisecond
 	if retargetTO <= 0 {
-		retargetTO = 10 * time.Second
+		retargetTO = 4 * time.Second
 	}
 
-	// Initial lock-on (ok-ww middle-click / R3).
 	pad.Lock()
 	time.Sleep(150 * time.Millisecond)
+
+	stop := func() bool {
+		if tasker.Stopping() {
+			return true
+		}
+		hit, name := peekExit(ctx, ctrl, param.ExitNodes)
+		if hit {
+			log.Info().Str("node", name).Msg("CombatLoop: exit during perform")
+			return true
+		}
+		return false
+	}
 
 	for {
 		if tasker.Stopping() {
@@ -112,6 +124,11 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			return true
 		}
 
+		if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
+			log.Info().Str("node", name).Msg("CombatLoop: exit node hit")
+			return true
+		}
+
 		ctrl.PostScreencap().Wait()
 		img, err := ctrl.CacheImage()
 		if err != nil || img == nil {
@@ -120,24 +137,22 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			continue
 		}
 
-		if hit, name := anyExitHit(ctx, img, param.ExitNodes); hit {
-			log.Info().Str("node", name).Msg("CombatLoop: exit node hit")
-			return true
-		}
-
 		combatNow := inCombat(ctx, img)
 		if combatNow {
 			enteredCombat = true
 		} else {
-			// No target/HP: retarget. If we already fought and still fail → out of combat (ok-ww).
 			ok := ensureInCombat(ctx, ctrl, pad, retargetTO)
 			if !ok {
+				// Settle may appear while retargeting — check before declaring out-of-combat.
+				if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
+					log.Info().Str("node", name).Msg("CombatLoop: exit node hit after retarget fail")
+					return true
+				}
 				if enteredCombat || rounds > 0 {
 					log.Info().Int("rounds", rounds).Msg("CombatLoop: out of combat → hand off treasure")
 					return true
 				}
-				// Not yet entered: keep waiting (loading / spawn).
-				time.Sleep(300 * time.Millisecond)
+				time.Sleep(200 * time.Millisecond)
 				continue
 			}
 			enteredCombat = true
@@ -152,16 +167,12 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			time.Sleep(80 * time.Millisecond)
 		}
 
-		char := NewBaseChar(pad, slot)
-		slot = char.Perform(waitHUD)
+		next, aborted := NewBaseChar(pad, slot).Perform(waitHUD, stop)
+		slot = next
 		rounds++
-
-		ctrl.PostScreencap().Wait()
-		if img2, err2 := ctrl.CacheImage(); err2 == nil && img2 != nil {
-			if hit, name := anyExitHit(ctx, img2, param.ExitNodes); hit {
-				log.Info().Str("node", name).Msg("CombatLoop: exit node hit after perform")
-				return true
-			}
+		if aborted {
+			log.Info().Int("rounds", rounds).Msg("CombatLoop: aborted perform for exit")
+			return true
 		}
 	}
 }

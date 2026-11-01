@@ -48,7 +48,7 @@
 - [ ] **多无音区自动选行（5+ / Go）**（设计已定；Python swipe 原型有；**Go `SelectTacetRow` 待接**）
 - [x] 挑战达成识别 / 领取奖励提示 / 双倍领取（120 白字优先）
 - [x] 单倍领取回退 / 双红耗尽关窗（TacetStaminaExhausted）/ 再次挑战 / 退出副本
-- [ ] **走到宝藏再领奖**（对齐 ok-ww `walk_to_treasure`；Pipeline 短步/标已接，完整转向环绕待 Go `WalkToTacetTreasure`）
+- [x] **走到宝藏再领奖**（对齐 ok-ww `walk_to_treasure`；Go `WalkToTacetTreasure` 左摇杆+ B；旧触屏 Swipe 假摇杆已禁用）
 - [ ] 跨任务「体力耗尽」标志：跳过后续一切耗体力任务（Interface/Go）
 - [ ] 吸声骸（若与领取奖励分流）
 - [x] Go：本内 AutoCombat 循环骨架（`CombatLoop`；实机验收中）

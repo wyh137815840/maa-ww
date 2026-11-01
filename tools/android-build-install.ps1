@@ -37,6 +37,20 @@ Write-Output "build android go-service"
 python (Join-Path $root "tools\build_android_agents.py")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+# Apply maa-ww-owned overlays onto MaaFwApp tree (may be a junction to external source).
+# Source of truth for git is Android/overlays/** — never edit the junction target as "repo work".
+$overlayRoot = Join-Path $root "Android\overlays"
+$forwarderOverlay = Join-Path $overlayRoot "maafw\remote\internal\GamepadForwarder.kt"
+$forwarderTarget = Join-Path $app "app\src\main\java\com\aliothmoon\maafw\remote\internal\GamepadForwarder.kt"
+if (Test-Path $forwarderOverlay) {
+  $destDir = Split-Path $forwarderTarget -Parent
+  New-Item -ItemType Directory -Force -Path $destDir | Out-Null
+  Copy-Item -Force $forwarderOverlay $forwarderTarget
+  Write-Output "overlay applied: GamepadForwarder.kt"
+} else {
+  Write-Output "WARN: missing overlay $forwarderOverlay"
+}
+
 Set-Location $app
 
 $so = Join-Path $app "app\src\main\jniLibs\arm64-v8a\libMaaFramework.so"

@@ -14,7 +14,9 @@ const (
 	NodeCombatEnemyHP   = "CombatEnemyHP"
 )
 
-// inCombat reports whether the current frame looks like active combat (ok-ww style).
+// inCombat reports active combat (ok-ww style), with tighter rules than raw red pixels:
+// has_target alone is enough; red HP only counts while quest bar still visible
+// (avoids false positives on settle UI red accents after combat ends).
 func inCombat(ctx *maa.Context, img image.Image) bool {
 	if img == nil {
 		return false
@@ -22,7 +24,8 @@ func inCombat(ctx *maa.Context, img image.Image) bool {
 	if nodeHit(ctx, img, NodeCombatHasTarget) {
 		return true
 	}
-	if nodeHit(ctx, img, NodeCombatEnemyHP) {
+	quest := nodeHit(ctx, img, "InTacetCombat") || nodeHit(ctx, img, "InTacetCombatTpl")
+	if quest && nodeHit(ctx, img, NodeCombatEnemyHP) {
 		return true
 	}
 	return false
@@ -86,11 +89,20 @@ func waitForCombatHUD(ctx *maa.Context, ctrl *maa.Controller, tasker *maa.Tasker
 		if inCombat(ctx, img) {
 			return true
 		}
-		// Fallback: quest bar still visible during brief HUD flicker.
-		if nodeHit(ctx, img, "InTacetCombat") || nodeHit(ctx, img, "InTacetCombatTpl") {
-			return true
-		}
 		time.Sleep(120 * time.Millisecond)
 	}
 	return false
+}
+
+// peekExit captures once and reports exit-node / settle hit without sleeping long.
+func peekExit(ctx *maa.Context, ctrl *maa.Controller, exitNodes []string) (bool, string) {
+	if ctrl == nil {
+		return false, ""
+	}
+	ctrl.PostScreencap().Wait()
+	img, err := ctrl.CacheImage()
+	if err != nil || img == nil {
+		return false, ""
+	}
+	return anyExitHit(ctx, img, exitNodes)
 }

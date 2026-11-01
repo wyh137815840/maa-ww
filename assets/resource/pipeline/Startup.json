@@ -40,9 +40,11 @@
             "StartupLoadingBarOCR",
             "StartupWorldLoadingBar",
             "StartupMonthlyCard",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "ConfirmLeaveInstance",
             "ConfirmLeaveInstanceByOCR",
+            "LeaveInstanceMenuOCR",
             "TitleClickConnect",
             "TitleClickConnectOCR",
             "StartupLoginConfirm",
@@ -141,8 +143,10 @@
             "StartupLoadingBarOCR",
             "StartupWorldLoadingBar",
             "StartupPadWatch",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "ConfirmLeaveInstance",
+            "LeaveInstanceMenuOCR",
             "TitleClickConnectOCR",
             "StartupLoginConfirm",
             "StartUpGameWait"
@@ -165,8 +169,10 @@
             "StartupLoadingBarOCR",
             "StartupWorldLoadingBar",
             "StartupPadWatch",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "ConfirmLeaveInstance",
+            "LeaveInstanceMenuOCR",
             "StartupLoginConfirm",
             "StartUpGameWait"
         ]
@@ -197,8 +203,10 @@
             "StartupLoadingBarOCR",
             "StartupWorldLoadingBar",
             "StartupPadWatch",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "ConfirmLeaveInstance",
+            "LeaveInstanceMenuOCR",
             "StartUpGameWait"
         ]
     },
@@ -300,8 +308,38 @@
         "action": "DoNothing",
         "next": []
     },
+    "InInstanceClaimHint": {
+        "desc": "副本内软恢复标志：中部「领取奖励」（战斗已清）。手柄态点右上三横杠打开「确认离开」，勿当大世界。实截 20261101 inst_now。",
+        "recognition": "OCR",
+        "roi": [
+            620,
+            280,
+            280,
+            160
+        ],
+        "expected": [
+            "领取奖励"
+        ],
+        "action": "Click",
+        "target": [
+            1224,
+            38
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "ConfirmLeaveInstance",
+            "ConfirmLeaveInstanceByOCR",
+            "LeaveInstanceMenuOCR",
+            "InInstancePadMenu",
+            "StartUpGameWait"
+        ]
+    },
     "InInstanceExitIcon": {
-        "desc": "副本内标志：左上角「出门」图标（门+箭头）。出现即不在大世界；点击打开「确认离开」。实截 20261101 instance_hud。",
+        "desc": "副本内标志：左上角「出门」图标（门+箭头，触屏）。出现即不在大世界；点击打开「确认离开」。手柄态若无效则改走 InInstancePadMenu。",
         "recognition": "TemplateMatch",
         "roi": [
             0,
@@ -324,6 +362,74 @@
         "next": [
             "ConfirmLeaveInstance",
             "ConfirmLeaveInstanceByOCR",
+            "LeaveInstanceMenuOCR",
+            "InInstancePadMenu",
+            "InInstanceExitIcon",
+            "StartUpGameWait"
+        ]
+    },
+    "InInstancePadMenu": {
+        "desc": "手柄副本出本：点右上角三横杠（Pad 菜单）。在副本内会直接弹出「确认离开」；禁止在大世界裸点（会开系统菜单）。由 ClaimHint / ExitIcon 兜底进入。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1180,
+            0,
+            100,
+            80
+        ],
+        "template": [
+            "Explore/InstancePadMenu.png",
+            "Explore/PadHUD_MenuX.png"
+        ],
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1224,
+            38
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "ConfirmLeaveInstance",
+            "ConfirmLeaveInstanceByOCR",
+            "LeaveInstanceMenuOCR",
+            "InInstancePadMenu",
+            "StartUpGameWait"
+        ]
+    },
+    "LeaveInstanceMenuOCR": {
+        "desc": "离开弹窗标题「确认离开」OCR；命中后点右侧「确认」区域（左侧是重新挑战）。",
+        "recognition": "OCR",
+        "roi": [
+            400,
+            240,
+            480,
+            200
+        ],
+        "expected": [
+            "确认离开"
+        ],
+        "action": "Click",
+        "target": [
+            760,
+            435
+        ],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "StartupWorldReady",
+            "StartupWorldHUD",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "StartUpGameWait"
         ]
@@ -356,6 +462,7 @@
             "StartupPadWatch",
             "StartupWorldReady",
             "StartupWorldHUD",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "StartUpGameWait"
         ]
@@ -385,6 +492,7 @@
             "StartupPadWatch",
             "StartupWorldReady",
             "StartupWorldHUD",
+            "InInstanceClaimHint",
             "InInstanceExitIcon",
             "StartUpGameWait"
         ]
