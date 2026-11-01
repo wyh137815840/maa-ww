@@ -1,0 +1,20 @@
+{
+    "image": "20261101-112231-annot-pad-checkpoint.png",
+    "updated_at": "2026-11-01T03:22:31.761415+00:00",
+    "title": "手柄模式检查点",
+    "goal": "在这张已确认的手柄态大世界图上，标出最稳的「手柄模式」识别点（ROI + 点中心）。",
+    "steps": [
+        "选一个只在手柄模式出现的图标（地图旁 D-Pad、技能旁 LB/RT、顶栏菜单 X 等）",
+        "框 ROI → 点图标中心",
+        "导出；label=StartupPadReady",
+        "若要标第2个检查点：导出后说「再来一张」，我复制同图再开 brief"
+    ],
+    "suggested_label": "StartupPadReady",
+    "suggested_expected_next": "",
+    "suggested_note": "来源：今早手柄态大世界实截。基准 1280x720。识别用，点击点可忽略。",
+    "do_not": [
+        "触摸态也有的图标",
+        "小地图圆盘本身",
+        "血条"
+    ]
+}

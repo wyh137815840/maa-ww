@@ -1,6 +1,59 @@
 {
-    "Startup": {
-        "label": "$task.Startup.label",
-        "description": "$task.Startup.description"
+    "task": [
+        {
+            "name": "Startup",
+            "label": "$task.Startup.label",
+            "description": "$task.Startup.description",
+            "entry": "StartupMain",
+            "controller": [
+                "ADB"
+            ],
+            "option": [
+                "LaunchMode"
+            ]
+        }
+    ],
+    "option": {
+        "LaunchMode": {
+            "type": "select",
+            "label": "$option.LaunchMode.label",
+            "description": "$option.LaunchMode.description",
+            "default_case": "Cold",
+            "cases": [
+                {
+                    "name": "Soft",
+                    "label": "$option.LaunchMode.cases.Soft.label",
+                    "pipeline_override": {
+                        "CloseGame": {
+                            "enabled": false
+                        },
+                        "StartupMain": {
+                            "next": [
+                                "ExploreWorldReady",
+                                "ExploreHUD",
+                                "TitleClickConnect",
+                                "StartupLoginConfirm",
+                                "StartUpGame"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cold",
+                    "label": "$option.LaunchMode.cases.Cold.label",
+                    "pipeline_override": {
+                        "CloseGame": {
+                            "enabled": true
+                        },
+                        "StartupMain": {
+                            "next": [
+                                "CloseGame",
+                                "StartUpGame"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
     }
 }

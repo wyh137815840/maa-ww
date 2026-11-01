@@ -1,0 +1,105 @@
+{
+  "bar_x": 1245,
+  "bar_x_ratio": 0.973,
+  "bar_bottom_ratio": 0.8806,
+  "bar_top_fallback_ratio": 0.1963,
+  "bar_top_detect": {
+    "method": "light_thumb_on_dark_track",
+    "search_x": [1238, 1252],
+    "search_y": [140, 220],
+    "note": "运行时取亮色滑块顶边 ya/H 作为 bar_top；找不到则用 bar_top_fallback_ratio（ok-ww 424/2160）"
+  },
+  "header_h_ratio": 0.028,
+  "thumb_h_px": 104,
+  "structure": [4, 5, 5, 7],
+  "total": 21,
+  "viewport_rows": 4,
+  "button_search_roi": [1040, 160, 200, 520],
+  "click_x_typical": 1146,
+  "row_pitch_px": 102,
+  "underscroll_retry": {
+    "max_btn_y_ratio": 0.73,
+    "nudge_item_h_factor": 0.55
+  },
+  "formula_click_y_px_at_720_with_bar_top_0_1963": {
+    "1": 157,
+    "2": 175,
+    "3": 193,
+    "4": 211,
+    "5": 250,
+    "6": 268,
+    "7": 286,
+    "8": 304,
+    "9": 322,
+    "10": 361,
+    "11": 379,
+    "12": 397,
+    "13": 415,
+    "14": 433,
+    "15": 472,
+    "16": 490,
+    "17": 508,
+    "18": 526,
+    "19": 544,
+    "20": 562,
+    "21": 580
+  },
+  "observed_thumbs": [
+    {
+      "file": "20261031-205216-snap.png",
+      "role": "near_top",
+      "thumb_ya": 209,
+      "thumb_cy": 260,
+      "thumb_yb": 312,
+      "bar_x": 1245
+    },
+    {
+      "file": "20261031-205201-snap.png",
+      "role": "upper",
+      "thumb_ya": 217,
+      "thumb_cy": 268,
+      "thumb_yb": 320,
+      "bar_x": 1245
+    },
+    {
+      "file": "20261031-205657-snap.png",
+      "role": "mid",
+      "thumb_ya": 265,
+      "thumb_cy": 316,
+      "thumb_yb": 367,
+      "bar_x": 1245
+    },
+    {
+      "file": "20261031-205700-snap.png",
+      "role": "mid_low",
+      "thumb_ya": 335,
+      "thumb_cy": 386,
+      "thumb_yb": 438,
+      "bar_x": 1246
+    },
+    {
+      "file": "20261031-205704-snap.png",
+      "role": "low",
+      "thumb_ya": 470,
+      "thumb_cy": 521,
+      "thumb_yb": 573,
+      "bar_x": 1245
+    },
+    {
+      "file": "20261031-205708-snap.png",
+      "role": "near_bottom",
+      "thumb_ya": 532,
+      "thumb_cy": 583,
+      "thumb_yb": 635,
+      "bar_x": 1245,
+      "note": "thumb_yb=635 对齐 ok-ww bar_bottom 0.8806*720"
+    }
+  ],
+  "source_sequence": [
+    "20261031-205657-snap.png",
+    "20261031-205700-snap.png",
+    "20261031-205704-snap.png",
+    "20261031-205708-snap.png"
+  ],
+  "note": "对齐 ok-ww click_on_book_target：点滚动条公式 y → 再找「直接挑战」→ 点 y 最大者；欠滚则 +0.55*item_h 重试。"
+}

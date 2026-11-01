@@ -1,0 +1,18 @@
+{
+    "image": "20261101-110526-annot-terminal-try.png",
+    "updated_at": "2026-11-01T03:05:26.994880+00:00",
+    "title": "② Terminal / 菜单（若已打开）",
+    "goal": "若画面是 Terminal 磁贴页：标「索拉指南」；否则在 note 写当前界面，并标应点的入口。",
+    "steps": [
+        "框住索拉指南磁贴 ROI（或正确入口）",
+        "点磁贴中心",
+        "导出；label=SolaGuidebookTile"
+    ],
+    "suggested_label": "SolaGuidebookTile",
+    "suggested_expected_next": "GuidebookTacetTab",
+    "suggested_note": "勿点活跃行迹/周度游历。1280x720。",
+    "do_not": [
+        "活跃行迹",
+        "周度游历"
+    ]
+}

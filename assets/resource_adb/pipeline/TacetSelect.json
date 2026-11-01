@@ -1,0 +1,21 @@
+{
+    "SelectTacetRow": {
+        "desc": "仅在无音清剿列表页分发：先认「直接挑战」再点对应行。禁止 DirectHit（会在活跃行迹等错页盲点）。",
+        "recognition": "OCR",
+        "roi": [
+            1000,
+            140,
+            260,
+            520
+        ],
+        "expected": ["直接挑战"],
+        "action": "DoNothing",
+        "timeout": 8000,
+        "next": [
+            "TacetGoIndex1",
+            "TacetGoIndex2",
+            "TacetGoIndex3",
+            "TacetGoIndex4"
+        ]
+    }
+}

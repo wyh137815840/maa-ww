@@ -1,0 +1,43 @@
+{
+    "id": "20261101-115816-startupworldloadingbar",
+    "created_at": "2026-11-01T03:58:16.434484+00:00",
+    "label": "StartupWorldLoadingBar",
+    "note": "大世界加载读条，非更新下载条。基准 1280x720。有则禁止 PadWatch。点击点是个数字，变成100时读取完毕，或者数字消失读取完毕",
+    "expected_next": "StartUpGameWait",
+    "source_image": "review/inbox/20261101-115641-annot-world-loading.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1207,
+        682
+    ],
+    "roi": [
+        16,
+        660,
+        1236,
+        48
+    ],
+    "files": {
+        "screen": "review/cards/20261101-115816-startupworldloadingbar/screen.png",
+        "preview": "review/cards/20261101-115816-startupworldloadingbar/preview.png",
+        "template": "review/cards/20261101-115816-startupworldloadingbar/template.png",
+        "card": "review/cards/20261101-115816-startupworldloadingbar/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/StartupWorldLoadingBar.png",
+        "roi": [
+            16,
+            660,
+            1236,
+            48
+        ],
+        "target": [
+            1207,
+            682
+        ]
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "image": "20261101-112901-annot-pad-checkpoint2.png",
+    "updated_at": "2026-11-01T03:29:01.659381+00:00",
+    "title": "手柄模式检查点（更明显）",
+    "goal": "重新标一个更明显、更稳的手柄模式特征（比右下 RT 更醒目）。",
+    "steps": [
+        "选更大/更独特的手柄专属图标（如地图旁整块 D-Pad+提示、技能旁 LB 白底字等）",
+        "ROI 尽量框完整提示，不要太碎",
+        "点图标中心",
+        "导出 label=StartupPadReady"
+    ],
+    "suggested_label": "StartupPadReady",
+    "suggested_expected_next": "",
+    "suggested_note": "同一张手柄态大世界图。基准 1280x720。识别用。上一版 RT 29x25 太小易飘。",
+    "do_not": [
+        "触摸态也有的图标",
+        "过小碎片"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-113017-startuppadready",
+    "exported_at": "2026-11-01T03:30:17.448603+00:00"
+}

@@ -1,0 +1,21 @@
+{
+    "image": "20261031-tacet-go-index3.png",
+    "updated_at": "2026-10-31T12:47:55.361314+00:00",
+    "title": "无音区 · 多副本选行：第3行「直接挑战」",
+    "goal": "标第3行右侧「直接挑战」（方掌西峰无音区一带）。勿框到第2/4行。",
+    "steps": [
+        "框住第3行「直接挑战」整颗。",
+        "点击点在按钮中心。",
+        "label=TacetGoIndex3 → 导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetGoIndex3",
+    "suggested_expected_next": "TacetStartChallenge",
+    "suggested_note": "同列表图。Index1/2 已入库。行距约 103px（235→338）。",
+    "do_not": [
+        "不要标第2行",
+        "不要标第4行"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-204819-tacetgoindex3",
+    "exported_at": "2026-10-31T12:48:19.879011+00:00"
+}

@@ -11,14 +11,14 @@
 | AutoPickTask | 自动拾取 | todo |
 | AutoLoginTask | 自动登录 | todo |
 | DailyTask | 日常一条龙骨架 | todo |
-| AutoCombatTask | 自动战斗（先 1～2 角色） | todo |
-| BaseCombatTask / BaseChar | 战斗与角色基类（移植为 Go） | todo |
+| AutoCombatTask | 自动战斗（先通用 BaseChar；专精角色后补） | wip |
+| BaseCombatTask / BaseChar | 战斗与角色基类（移植为 Go `CombatLoop`） | wip |
 
 ## 优先推进（用户指定）
 
 | 任务 | 对标 / 说明 | 状态 | 前置依赖 |
 | --- | --- | --- | --- |
-| TacetTask（无音区） | ok-ww `TacetTask`：手册 → 无音清剿 → **多副本择一**「直接挑战」→ 开启挑战 → 本内战斗 → 结算 | wip | 结算链齐（达成/领奖/双倍优先/单倍回退/双红关窗/再战/退出）；**跨任务跳过耗体**待 Interface/Go；待：多副本选行、Go 战斗 |
+| TacetTask（无音区） | ok-ww `TacetTask`：手册 → 无音清剿 → **按序号/名称自动选行** → 开启挑战 → 本内战斗 → **走到宝藏** → 结算 | wip | 奥丁已验进本；本内 `CombatLoop`（手柄时序）已接；结算前需 `walk_to_treasure`（Pipeline 短步+宝藏标已接；完整环绕待 Go）；待：Go `SelectTacetRow`、5+、耗尽标志、实机验收 |
 | SettlementQuest（聚落任务） | ok-ww 无同名任务；指聚落侧可自动任务流（接取/完成/交付）。界面卡待标 | todo | 大世界 HUD、聚落 NPC/任务 UI 卡；复杂战斗可后置 |
 
 ## 第二期（刷本 / 体力）

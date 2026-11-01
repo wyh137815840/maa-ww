@@ -1,0 +1,43 @@
+{
+    "id": "20261101-112446-startuppadready",
+    "created_at": "2026-11-01T03:24:46.814823+00:00",
+    "label": "StartupPadReady",
+    "note": "基准 1280x720。识别用。",
+    "expected_next": "",
+    "source_image": "review/inbox/20261101-112324-annot-pad-hud.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1223,
+        651
+    ],
+    "roi": [
+        1208,
+        639,
+        29,
+        25
+    ],
+    "files": {
+        "screen": "review/cards/20261101-112446-startuppadready/screen.png",
+        "preview": "review/cards/20261101-112446-startuppadready/preview.png",
+        "template": "review/cards/20261101-112446-startuppadready/template.png",
+        "card": "review/cards/20261101-112446-startuppadready/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/StartupPadReady.png",
+        "roi": [
+            1208,
+            639,
+            29,
+            25
+        ],
+        "target": [
+            1223,
+            651
+        ]
+    }
+}

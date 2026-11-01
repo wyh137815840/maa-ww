@@ -1,0 +1,43 @@
+{
+    "id": "20261101-113824-solaguidebookopened",
+    "created_at": "2026-11-01T03:38:24.756430+00:00",
+    "label": "SolaGuidebookOpened",
+    "note": "成功验证节点：DoNothing。基准 1280x720。",
+    "expected_next": "GuidebookTacetTab",
+    "source_image": "review/inbox/20261101-113745-annot-sola-ok.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        50,
+        217
+    ],
+    "roi": [
+        9,
+        187,
+        78,
+        61
+    ],
+    "files": {
+        "screen": "review/cards/20261101-113824-solaguidebookopened/screen.png",
+        "preview": "review/cards/20261101-113824-solaguidebookopened/preview.png",
+        "template": "review/cards/20261101-113824-solaguidebookopened/template.png",
+        "card": "review/cards/20261101-113824-solaguidebookopened/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/SolaGuidebookOpened.png",
+        "roi": [
+            9,
+            187,
+            78,
+            61
+        ],
+        "target": [
+            50,
+            217
+        ]
+    }
+}

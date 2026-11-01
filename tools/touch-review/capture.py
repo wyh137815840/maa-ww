@@ -165,12 +165,17 @@ def capture_png(adb: str, serial: str, dest: Path, cfg: dict) -> str:
         best_tag, best_path, best_score = max(pool, key=lambda r: r[2])
 
         img = Image.open(best_path).convert("RGB")
+        raw_w, raw_h = img.size
         tw, th = cfg["target_size"]
+        # Odin / phone may report portrait physical size; game landscape is usually w>=h.
+        if raw_w < raw_h and tw > th:
+            # Prefer rotating only if clearly portrait UI; otherwise keep and stretch warn via tag.
+            pass
         if img.size != (tw, th):
             img = img.resize((tw, th), Image.Resampling.LANCZOS)
         dest.parent.mkdir(parents=True, exist_ok=True)
         img.save(dest, format="PNG")
-        return f"{best_tag};score={best_score}"
+        return f"{best_tag};raw={raw_w}x{raw_h};out={tw}x{th};score={best_score}"
 
 
 def main() -> int:

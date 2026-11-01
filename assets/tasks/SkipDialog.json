@@ -1,6 +1,13 @@
 {
-    "SkipDialog": {
-        "label": "$task.SkipDialog.label",
-        "description": "$task.SkipDialog.description"
-    }
+    "task": [
+        {
+            "name": "SkipDialog",
+            "label": "$task.SkipDialog.label",
+            "description": "$task.SkipDialog.description",
+            "entry": "SkipDialogMain",
+            "controller": [
+                "ADB"
+            ]
+        }
+    ]
 }

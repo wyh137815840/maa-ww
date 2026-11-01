@@ -1,49 +1,280 @@
 {
     "TacetMain": {
-        "desc": "无音区：手册→挑战→战斗→达成→领奖→双倍优先/单倍回退/双红关窗耗尽→重新挑战或退出。双红耗尽后跳过后续耗体任务（全局标志待接）。多副本选行待补。",
+        "desc": "无音区顺序（标注/odin-nav）：Terminal→索拉→(活跃行迹则)双剑Extra→Opened验证素材获取→无音清剿Tab→选行/直接挑战→开战→结算。禁止未点 Tab 就点 Go。",
         "next": [
+            "TacetDismissActivity",
+            "OpenGuidebookFromWorld",
             "OpenGuidebook",
+            "SolaGuidebookTile",
+            "SolaGuidebookTileOCR",
+            "SolaGuidebookExtra",
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
             "GuidebookTacetTab",
+            "SelectTacetRow",
+            "TacetGoIndex1",
+            "TacetGoIndex2",
+            "TacetGoIndex3",
+            "TacetGoIndex4",
             "TacetGoButton",
             "TacetStartChallenge",
             "InTacetCombat",
+            "InTacetCombatTpl",
+            "TacetTreasureSeen",
+            "TacetApproachTreasure",
             "TacetChallengeComplete",
             "TacetClaimReward",
+            "TacetClaimStaminaDoubleBlocked",
             "TacetClaimStaminaDouble",
-            "TacetClaimStamina",
-            "TacetStaminaExhausted",
-            "TacetNeedSettle",
             "TacetExit"
         ]
     },
-    "OpenGuidebook": {
-        "desc": "大世界顶部「索拉指南/导能手册」。审查卡 20261031-182324-openguidebook。",
+    "TacetInstanceLoadingBar": {
+        "desc": "进本读条（更新/着色器条）。勿复用 StartupLoadingBar（其 next 会进 PadWatch）。",
         "recognition": "TemplateMatch",
-        "roi": [
-            1140,
-            0,
-            120,
-            90
+        "roi": [40, 610, 1200, 100],
+        "template": "Title/StartupLoadingBar.png",
+        "threshold": 0.70,
+        "action": "DoNothing",
+        "post_delay": 1200,
+        "next": [
+            "TacetInstanceLoadingBar",
+            "TacetInstanceLoadingOCR",
+            "TacetInstanceWorldLoadingBar",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetInstanceLoadingOCR": {
+        "desc": "进本读条 OCR。结束后回战斗门槛。",
+        "recognition": "OCR",
+        "roi": [40, 600, 800, 110],
+        "expected": ["更新", "下载", "正在下载", "正在编译着色器", "编译着色器"],
+        "action": "DoNothing",
+        "post_delay": 1200,
+        "next": [
+            "TacetInstanceLoadingBar",
+            "TacetInstanceLoadingOCR",
+            "TacetInstanceWorldLoadingBar",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetInstanceWorldLoadingBar": {
+        "desc": "进本大世界读条。结束后进 InTacetCombat，禁止回 Startup/PadWatch。",
+        "recognition": "TemplateMatch",
+        "roi": [0, 650, 1280, 70],
+        "template": "Title/StartupWorldLoadingBar.png",
+        "threshold": 0.72,
+        "action": "DoNothing",
+        "post_delay": 1000,
+        "next": [
+            "TacetInstanceWorldLoadingBar",
+            "TacetInstanceLoadingBar",
+            "TacetInstanceLoadingOCR",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "CombatHasTarget": {
+        "desc": "对齐 ok-ww has_target：右下准星/锁敌标。仅供 Go CombatLoop RunRecognition，勿挂入口 next。",
+        "recognition": "TemplateMatch",
+        "roi": [880, 560, 280, 140],
+        "template": [
+            "Combat/HasTarget.png",
+            "Combat/HasTarget169.png"
         ],
-        "template": "Guidebook/OpenGuidebook.png",
+        "threshold": 0.55,
+        "action": "DoNothing",
+        "next": []
+    },
+    "CombatEnemyHP": {
+        "desc": "对齐 ok-ww 红血条：屏中上方敌方 HP 红色。仅供 Go CombatLoop。",
+        "recognition": "ColorMatch",
+        "roi": [120, 60, 1040, 360],
+        "method": 40,
+        "lower": [
+            [0, 80, 120],
+            [160, 80, 120]
+        ],
+        "upper": [
+            [15, 255, 255],
+            [180, 255, 255]
+        ],
+        "count": 80,
+        "action": "DoNothing",
+        "next": []
+    },
+    "OpenGuidebookFromWorld": {
+        "desc": "大世界（认小地图）后点 Terminal。触审卡 20261101-110736：1221,35。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 10, 200, 180],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.55,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "SolaGuidebookTile",
+            "SolaGuidebookTileOCR",
+            "TacetDismissActivity",
+            "SolaGuidebookExtra",
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab"
+        ]
+    },
+    "TacetDismissActivity": {
+        "desc": "点索拉后常落在「活跃行迹」：必须先点左栏双剑(51,214)进素材获取。勿先认 Opened（活跃行迹下双剑也像选中）。",
+        "recognition": "OCR",
+        "roi": [0, 0, 700, 120],
+        "expected": ["活跃行迹", "活跃度", "周度游历"],
+        "action": "Click",
+        "target": [51, 214],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab",
+            "SolaGuidebookExtra",
+            "TacetDismissActivity"
+        ]
+    },
+    "OpenGuidebook": {
+        "desc": "手柄态顶栏 Terminal。触审卡 20261101-110736：点 1221,35；用 Pad 小图（勿覆盖大块 OpenGuidebook，以免启动误判标题页）。",
+        "recognition": "TemplateMatch",
+        "roi": [1180, 0, 100, 80],
+        "template": "Guidebook/OpenGuidebookPad.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "SolaGuidebookTile",
+            "SolaGuidebookTileOCR",
+            "TacetDismissActivity",
+            "SolaGuidebookExtra",
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab"
+        ]
+    },
+    "SolaGuidebookTileOCR": {
+        "desc": "Terminal「索拉指南」OCR 兜底；点击固定触审点 634,499，禁止跟 OCR 框。",
+        "recognition": "OCR",
+        "roi": [560, 450, 160, 180],
+        "expected": ["索拉指南"],
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetDismissActivity",
+            "SolaGuidebookExtra",
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab"
+        ]
+    },
+    "SolaGuidebookTile": {
+        "desc": "Terminal「索拉指南」磁贴。触审卡 20261101-111149：634,499 / ROI 589,474,87,118。顺序：活跃行迹→Extra→Opened→无音清剿（禁止先 Opened/Go）。",
+        "recognition": "TemplateMatch",
+        "roi": [560, 450, 160, 180],
+        "template": "Guidebook/SolaGuidebookTile.png",
+        "threshold": 0.65,
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetDismissActivity",
+            "SolaGuidebookExtra",
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab"
+        ]
+    },
+    "SolaGuidebookExtra": {
+        "desc": "手柄态点索拉指南后的额外一步：点左侧双剑/素材图标。触审卡 20261101-113712：51,214。",
+        "recognition": "TemplateMatch",
+        "roi": [0, 160, 120, 120],
+        "template": "Guidebook/SolaGuidebookExtra.png",
         "threshold": 0.7,
         "action": "Click",
+        "target": [51, 214],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "SolaGuidebookOpened",
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab",
+            "TacetDismissActivity"
+        ]
+    },
+    "SolaGuidebookOpened": {
+        "desc": "素材获取已打开：认左侧子项文案（模拟/凝素/无音等）。禁止再用双剑选中态——活跃行迹下双剑也选中，会跳过 Extra 并误点前往。",
+        "recognition": "OCR",
+        "roi": [60, 200, 340, 420],
+        "expected": ["模拟领域", "凝素领域", "讨伐强敌", "战歌重奏", "无音清剿", "残象聚落"],
+        "action": "DoNothing",
+        "next": [
+            "GuidebookTacetTabOCR",
+            "GuidebookTacetTab"
+        ]
+    },
+    "GuidebookTacetTabOCR": {
+        "desc": "素材获取左侧「无音清剿」OCR 兜底。点完才允许选行/直接挑战。",
+        "recognition": "OCR",
+        "roi": [
+            60,
+            400,
+            320,
+            240
+        ],
+        "expected": ["无音清剿"],
+        "action": "Click",
         "target": [
-            1198,
-            38
+            183,
+            531
         ],
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 6000
+            "timeout": 5000,
+            "threshold": 0.95
         },
         "next": [
-            "GuidebookTacetTab",
-            "TacetGoButton"
+            "SelectTacetRow",
+            "TacetGoIndex1",
+            "TacetGoIndex2",
+            "TacetGoIndex3",
+            "TacetGoIndex4",
+            "TacetGoButton",
+            "TacetStartChallenge"
         ]
     },
     "GuidebookTacetTab": {
-        "desc": "导能手册左侧「无音清剿」。审查卡 20261031-192736-guidebooktacettab。",
+        "desc": "素材获取左侧第6项「无音清剿」（不是第2项凝素）。审查卡 20261031-192736：183,531。点完才选行。",
         "recognition": "TemplateMatch",
         "roi": [
             80,
@@ -60,16 +291,21 @@
         ],
         "post_wait_freezes": {
             "time": 300,
-            "target": 0.95,
-            "timeout": 5000
+            "timeout": 5000,
+            "threshold": 0.95
         },
         "next": [
+            "SelectTacetRow",
+            "TacetGoIndex1",
+            "TacetGoIndex2",
+            "TacetGoIndex3",
+            "TacetGoIndex4",
             "TacetGoButton",
             "TacetStartChallenge"
         ]
     },
     "TacetGoButton": {
-        "desc": "无音区列表行右侧「直接挑战」。审查卡 20261031-194119-tacetgobutton。多副本需按行名/序号定位后再点。",
+        "desc": "无音清剿列表「直接挑战」兜底（非活跃行迹「前往」）。仅 Tab 之后可达；阈值提高防误点。",
         "recognition": "TemplateMatch",
         "roi": [
             1040,
@@ -78,20 +314,21 @@
             480
         ],
         "template": "Guidebook/TacetGoButton.png",
-        "threshold": 0.7,
+        "threshold": 0.82,
         "action": "Click",
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 8000
+            "timeout": 8000,
+            "threshold": 0.95
         },
         "next": [
             "TacetStartChallenge",
-            "InTacetCombat"
+            "InTacetCombat",
+            "InTacetCombatTpl"
         ]
     },
     "TacetStartChallenge": {
-        "desc": "编队页右下「开启挑战」。审查卡 20261031-194335-tacetstartchallenge。",
+        "desc": "编队页右下「开启挑战」。点后等读条/进本；默认 20s 不够，超时会在已开战时仍 Failed。",
         "recognition": "TemplateMatch",
         "roi": [
             960,
@@ -108,47 +345,103 @@
         ],
         "post_wait_freezes": {
             "time": 500,
-            "target": 0.95,
-            "timeout": 15000
+            "timeout": 15000,
+            "threshold": 0.95
         },
+        "timeout": 120000,
         "next": [
+            "TacetInstanceLoadingBar",
+            "TacetInstanceLoadingOCR",
+            "TacetInstanceWorldLoadingBar",
             "InTacetCombat",
-            "TacetChallengeComplete",
-            "TacetClaimReward"
+            "InTacetCombatTpl",
+            "TacetChallengeComplete"
         ]
     },
     "InTacetCombat": {
-        "desc": "无音区内战斗中（左侧目标条）。审查卡 20261031-194638-intacetcombat。只识别不点击；战斗循环后续进 Go。",
-        "recognition": "TemplateMatch",
-        "roi": [
-            10,
-            170,
-            360,
-            80
-        ],
-        "template": "Guidebook/InTacetCombat.png",
-        "threshold": 0.65,
-        "action": "DoNothing",
+        "desc": "进本门槛：OCR 左侧目标「清理无音区/残象」。命中后 Go CombatLoop；出战由准星/血条判定，不靠本节点。",
+        "recognition": "OCR",
+        "roi": [10, 160, 420, 100],
+        "expected": ["清理无音区", "涌现的残象", "残象"],
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatLoop",
+                "custom_action_param": {
+                    "exit_nodes": [
+                        "TacetTreasureSeen",
+                        "TacetClaimReward",
+                        "TacetClaimRewardByOCR",
+                        "TacetChallengeComplete"
+                    ],
+                    "max_duration_ms": 300000,
+                    "hud_node": "InTacetCombat",
+                    "lock_every_n": 3,
+                    "retarget_timeout_ms": 10000
+                }
+            }
+        },
         "next": [
-            "TacetChallengeComplete",
+            "TacetTreasureSeen",
+            "TacetApproachTreasure",
             "TacetClaimReward",
-            "TacetNeedSettle"
-        ]
+            "TacetClaimRewardByOCR",
+            "TacetChallengeComplete",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ],
+        "timeout": 600000
+    },
+    "InTacetCombatTpl": {
+        "desc": "进本门槛模板兜底（奥丁 on_error 实截目标条）。命中同样进 CombatLoop。",
+        "recognition": "TemplateMatch",
+        "roi": [10, 170, 360, 80],
+        "template": "Guidebook/InTacetCombat.png",
+        "threshold": 0.55,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatLoop",
+                "custom_action_param": {
+                    "exit_nodes": [
+                        "TacetTreasureSeen",
+                        "TacetClaimReward",
+                        "TacetClaimRewardByOCR",
+                        "TacetChallengeComplete"
+                    ],
+                    "max_duration_ms": 300000,
+                    "hud_node": "InTacetCombat",
+                    "lock_every_n": 3,
+                    "retarget_timeout_ms": 10000
+                }
+            }
+        },
+        "next": [
+            "TacetTreasureSeen",
+            "TacetApproachTreasure",
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetChallengeComplete",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ],
+        "timeout": 600000
     },
     "TacetNeedSettle": {
-        "desc": "结算链已齐；跨任务跳过耗体待 Interface/Go 接「体力耗尽」标志。",
+        "desc": "占位已禁用：勿用 DirectHit 提前结束。结算走 ChallengeComplete/Claim* / Exit。",
         "recognition": "DirectHit",
         "action": "DoNothing",
-        "next": []
+        "next": [],
+        "enabled": false
     },
     "TacetClaimReward": {
-        "desc": "无音区清完后宝藏旁「领取奖励」。审查卡 20261031-200221-tacetclaimreward。",
+        "desc": "宝藏旁「领取奖励」。点开后先判 120：红字不可领则改看 60；都不可领则关弹窗并退出副本。",
         "recognition": "TemplateMatch",
         "roi": [
-            786,
-            280,
+            700,
             200,
-            56
+            400,
+            280
         ],
         "template": "Guidebook/TacetClaimReward.png",
         "threshold": 0.7,
@@ -159,47 +452,46 @@
         ],
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 8000
+            "timeout": 8000,
+            "threshold": 0.95
         },
         "next": [
-            "TacetClaimStaminaDouble",
-            "TacetClaimStamina",
-            "TacetStaminaExhausted",
-            "TacetContinue",
-            "TacetExit"
+            "TacetClaimStaminaDoubleBlocked",
+            "TacetClaimStaminaDouble"
         ]
     },
     "TacetChallengeComplete": {
-        "desc": "战斗结束全屏提示「挑战达成」。审查卡 20261031-201111。纯识别、不点击。",
+        "desc": "战斗结束全屏「挑战达成」。纯识别；命中后才进入走近宝藏。勿在战斗 next 里挂 Approach。",
         "recognition": "TemplateMatch",
         "roi": [
-            538,
-            172,
-            193,
-            51
+            420,
+            80,
+            440,
+            180
         ],
         "template": "Guidebook/TacetChallengeComplete.png",
-        "threshold": 0.7,
+        "threshold": 0.62,
         "action": "DoNothing",
         "next": [
+            "TacetTreasureSeen",
+            "TacetApproachTreasure",
             "TacetClaimReward",
-            "TacetClaimStaminaDouble",
-            "TacetClaimStamina",
-            "TacetStaminaExhausted"
-        ]
+            "TacetClaimRewardByOCR",
+            "TacetChallengeComplete"
+        ],
+        "timeout": 120000
     },
     "TacetClaimStaminaDouble": {
-        "desc": "领取奖励弹窗右侧「120|双倍领取」（数字白字可点）。审查卡 20261031-202345。策略：能双倍不单倍。匹配失败再试单倍。",
+        "desc": "右侧「120|双倍领取」可领（120 非红）才点。红字由 DoubleBlocked 截走，不会点到这里。",
         "recognition": "TemplateMatch",
         "roi": [
-            738,
-            427,
-            200,
-            48
+            714,
+            403,
+            248,
+            96
         ],
         "template": "Guidebook/TacetClaimStaminaDouble.png",
-        "threshold": 0.72,
+        "threshold": 0.85,
         "action": "Click",
         "target": [
             838,
@@ -207,26 +499,26 @@
         ],
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 8000
+            "timeout": 8000,
+            "threshold": 0.95
         },
         "next": [
             "TacetContinue",
-            "TacetExit",
-            "TacetNeedSettle"
-        ]
+            "TacetExit"
+        ],
+        "method": 10001
     },
     "TacetClaimStamina": {
-        "desc": "领取弹窗左侧「60|单倍领取」（60白/120红时回退）。审查卡 20261031-202836。仅当双倍不可用；能双倍不单倍。",
+        "desc": "120 领不了且左侧「60」非红：点单倍领取。",
         "recognition": "TemplateMatch",
         "roi": [
-            343,
-            431,
-            200,
-            52
+            319,
+            407,
+            248,
+            100
         ],
         "template": "Guidebook/TacetClaimStamina.png",
-        "threshold": 0.72,
+        "threshold": 0.85,
         "action": "Click",
         "target": [
             443,
@@ -234,17 +526,17 @@
         ],
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 8000
+            "timeout": 8000,
+            "threshold": 0.95
         },
         "next": [
             "TacetContinue",
-            "TacetExit",
-            "TacetNeedSettle"
-        ]
+            "TacetExit"
+        ],
+        "method": 10001
     },
     "TacetStaminaExhausted": {
-        "desc": "领取弹窗 60+120 皆红（体力不足）：点右上角关闭 X。审查卡 20261031-203550。关闭后结束无音区并标记完成；应置位「体力耗尽」使后续耗体力任务全部跳过（Interface/Go 待接）。",
+        "desc": "60 与 120 都领不了：点弹窗右上角 X 关掉。随后走左上角出门图标离开副本。",
         "recognition": "TemplateMatch",
         "roi": [
             912,
@@ -261,19 +553,22 @@
         ],
         "post_wait_freezes": {
             "time": 300,
-            "target": 0.95,
-            "timeout": 5000
+            "timeout": 5000,
+            "threshold": 0.95
         },
-        "next": []
+        "next": [
+            "TacetLeaveInstanceIcon",
+            "TacetReturnWorld"
+        ]
     },
     "TacetContinue": {
         "desc": "结算页右侧「重新挑战」。审查卡 20261031-202743。续刷入口。",
         "recognition": "TemplateMatch",
         "roi": [
-            705,
-            590,
-            200,
-            48
+            681,
+            566,
+            248,
+            96
         ],
         "template": "Guidebook/TacetContinue.png",
         "threshold": 0.7,
@@ -284,13 +579,13 @@
         ],
         "post_wait_freezes": {
             "time": 500,
-            "target": 0.95,
-            "timeout": 15000
+            "timeout": 15000,
+            "threshold": 0.95
         },
         "next": [
             "InTacetCombat",
+            "InTacetCombatTpl",
             "TacetChallengeComplete",
-            "TacetClaimReward",
             "TacetExit"
         ]
     },
@@ -298,10 +593,10 @@
         "desc": "结算页左侧「退出副本」。审查卡 20261031-203103。收工/不续刷时点。",
         "recognition": "TemplateMatch",
         "roi": [
-            373,
-            588,
-            200,
-            48
+            349,
+            564,
+            248,
+            96
         ],
         "template": "Guidebook/TacetExit.png",
         "threshold": 0.7,
@@ -312,9 +607,606 @@
         ],
         "post_wait_freezes": {
             "time": 400,
-            "target": 0.95,
-            "timeout": 10000
+            "timeout": 10000,
+            "threshold": 0.95
         },
+        "next": []
+    },
+    "TacetGoIndex1": {
+        "desc": "无音区列表第1行「直接挑战」。审查卡 20261031-204447。默认关闭，由任务选项启用。",
+        "enabled": false,
+        "recognition": "TemplateMatch",
+        "roi": [
+            1043,
+            185,
+            208,
+            102
+        ],
+        "template": "Guidebook/TacetGoIndex1.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1139,
+            235
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetGoIndex2": {
+        "desc": "无音区列表第2行「直接挑战」。审查卡 20261031-204735。默认关闭，由任务选项启用。",
+        "enabled": false,
+        "recognition": "TemplateMatch",
+        "roi": [
+            1046,
+            297,
+            205,
+            86
+        ],
+        "template": "Guidebook/TacetGoIndex2.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1148,
+            338
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetGoIndex3": {
+        "desc": "无音区列表第3行「直接挑战」。审查卡 20261031-204819。默认关闭，由任务选项启用。",
+        "enabled": false,
+        "recognition": "TemplateMatch",
+        "roi": [
+            1047,
+            396,
+            204,
+            97
+        ],
+        "template": "Guidebook/TacetGoIndex3.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1150,
+            439
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetGoIndex4": {
+        "desc": "无音区列表第4行「直接挑战」（首屏末行）。默认关闭，由任务选项启用。",
+        "enabled": false,
+        "recognition": "TemplateMatch",
+        "roi": [
+            1044,
+            496,
+            205,
+            90
+        ],
+        "template": "Guidebook/TacetGoIndex4.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1146,
+            541
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetListSwipeUp": {
+        "desc": "无音区列表上划一页（露出第5行及以后）。仅从列表页进入；禁止挂到 TacetMain 入口。",
+        "recognition": "OCR",
+        "roi": [1000, 140, 260, 520],
+        "expected": ["直接挑战"],
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    640,
+                    560
+                ],
+                "end": [
+                    640,
+                    280
+                ],
+                "end_hold": 200,
+                "duration": 400
+            }
+        },
+        "next": [
+            "TacetGoIndex5",
+            "TacetGoIndex6",
+            "TacetGoIndex7",
+            "TacetNeedMoreRows"
+        ]
+    },
+    "TacetNeedMoreRows": {
+        "desc": "占位：第8行起。默认禁用，避免 DirectHit 假成功。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetGoIndex5": {
+        "desc": "无音区列表第5行「直接挑战」（约落日堤屿无音区）。需先上划露出第二页；审查来源 20261031-205201-snap。序号=5。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1042,
+            297,
+            207,
+            87
+        ],
+        "template": "Guidebook/TacetGoIndex5.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1145,
+            340
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetGoIndex6": {
+        "desc": "无音区列表第6行「直接挑战」（约冰原运输港无音区）。需先上划露出第二页；审查来源 20261031-205201-snap。序号=6。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1042,
+            399,
+            207,
+            87
+        ],
+        "template": "Guidebook/TacetGoIndex6.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1145,
+            442
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetGoIndex7": {
+        "desc": "无音区列表第7行「直接挑战」（约加拉尔冠阶无音区）。需先上划露出第二页；审查来源 20261031-205201-snap。序号=7。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1042,
+            501,
+            207,
+            87
+        ],
+        "template": "Guidebook/TacetGoIndex7.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            1145,
+            544
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetStartChallenge",
+            "InTacetCombat",
+            "InTacetCombatTpl"
+        ]
+    },
+    "TacetApproachTreasure": {
+        "desc": "领奖导航：定位宝箱标 → 滑向它的实际位置（左右+上下，行程随偏移变）→ 图标进入屏幕中心小窗后才前进。",
+        "timeout": 180000,
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetTreasureCentered",
+            "TacetTreasureAim",
+            "TacetTreasureSearch"
+        ]
+    },
+    "TacetClaimRewardByOCR": {
+        "desc": "领取奖励 OCR 兜底（模板漂移时）。",
+        "recognition": "OCR",
+        "roi": [
+            600,
+            180,
+            560,
+            360
+        ],
+        "expected": [
+            "领取奖励"
+        ],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetClaimStaminaDoubleBlocked",
+            "TacetClaimStaminaDouble"
+        ]
+    },
+    "TacetTreasureSearch": {
+        "desc": "画面内没有宝箱标 → 小幅左转再找。找到后按实际偏移调视角，禁止盲目前进。",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    860,
+                    360
+                ],
+                "end": [
+                    560,
+                    360
+                ],
+                "duration": 220,
+                "end_hold": 20
+            }
+        },
+        "post_delay": 180,
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetTreasureCentered",
+            "TacetTreasureAim",
+            "TacetApproachTreasure"
+        ]
+    },
+    "TacetTreasureCentered": {
+        "desc": "宝箱图标中心已落在屏幕中心小窗（左右、上下都进窗）才推左摇杆前进。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            590,
+            318,
+            100,
+            84
+        ],
+        "template": [
+            "Guidebook/TacetTreasure.png",
+            "Guidebook/TacetTreasureGlow.png",
+            "Guidebook/TacetTreasureFlare.png"
+        ],
+        "threshold": 0.55,
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    220,
+                    560
+                ],
+                "end": [
+                    220,
+                    400
+                ],
+                "duration": 280,
+                "end_hold": 30
+            }
+        },
+        "post_delay": 120,
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetApproachTreasure"
+        ]
+    },
+    "TacetClaimStaminaDoubleBlocked": {
+        "desc": "弹窗右侧「120」红字=双倍领不了。不点 120，改看左侧 60。",
+        "recognition": "ColorMatch",
+        "roi": [
+            742,
+            428,
+            45,
+            30
+        ],
+        "method": 40,
+        "lower": [
+            [
+                0,
+                40,
+                100
+            ],
+            [
+                155,
+                40,
+                100
+            ]
+        ],
+        "upper": [
+            [
+                25,
+                255,
+                255
+            ],
+            [
+                180,
+                255,
+                255
+            ]
+        ],
+        "count": 40,
+        "action": "DoNothing",
+        "next": [
+            "TacetClaimStaminaBlocked",
+            "TacetClaimStamina"
+        ],
+        "timeout": 8000
+    },
+    "TacetClaimStaminaBlocked": {
+        "desc": "左侧「60」也是红字=单倍同样领不了。关弹窗并退出副本回大世界。",
+        "recognition": "ColorMatch",
+        "roi": [
+            345,
+            428,
+            40,
+            30
+        ],
+        "method": 40,
+        "lower": [
+            [
+                0,
+                40,
+                100
+            ],
+            [
+                155,
+                40,
+                100
+            ]
+        ],
+        "upper": [
+            [
+                25,
+                255,
+                255
+            ],
+            [
+                180,
+                255,
+                255
+            ]
+        ],
+        "count": 40,
+        "action": "DoNothing",
+        "next": [
+            "TacetStaminaExhausted"
+        ],
+        "timeout": 5000
+    },
+    "TacetTreasureAim": {
+        "desc": "宝箱不在中心窗：从屏幕中心滑向本次识别框。行程=图标相对中心的实际偏移，左右和上下一起调。禁止前进。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            16,
+            24,
+            1248,
+            640
+        ],
+        "template": [
+            "Guidebook/TacetTreasure.png",
+            "Guidebook/TacetTreasureGlow.png",
+            "Guidebook/TacetTreasureFlare.png"
+        ],
+        "threshold": 0.55,
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    640,
+                    360
+                ],
+                "end": true,
+                "duration": 200,
+                "end_hold": 30
+            }
+        },
+        "post_delay": 120,
+        "next": [
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
+            "TacetApproachTreasure"
+        ]
+    },
+    "TacetLeaveInstanceIcon": {
+        "desc": "体力耗尽关弹窗后仍在副本：点左上角出门图标，打开「确认离开」。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            0,
+            0,
+            100,
+            100
+        ],
+        "template": "Explore/InstanceExitIcon.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [
+            32,
+            31
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetConfirmLeave",
+            "TacetConfirmLeaveByOCR",
+            "TacetLeaveInstanceIcon",
+            "TacetReturnWorld"
+        ]
+    },
+    "TacetConfirmLeave": {
+        "desc": "离开副本弹窗右侧「确认」。左侧是「重新挑战」，不点。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            640,
+            380,
+            260,
+            100
+        ],
+        "template": "Explore/ConfirmLeaveInstance.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            760,
+            435
+        ],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetReturnWorld"
+        ]
+    },
+    "TacetConfirmLeaveByOCR": {
+        "desc": "离开弹窗右侧「确认」OCR 兜底，ROI 偏右，避开「重新挑战」。",
+        "recognition": "OCR",
+        "roi": [
+            640,
+            380,
+            260,
+            100
+        ],
+        "expected": [
+            "确认"
+        ],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
+            "TacetReturnWorld"
+        ]
+    },
+    "TacetReturnWorld": {
+        "desc": "关窗后等到回到大世界：还看见出门图标就继续离开；出现 Terminal 或小地图且不再次命中出门图标才结束。",
+        "timeout": 120000,
+        "next": [
+            "TacetLeaveInstanceIcon",
+            "TacetConfirmLeave",
+            "TacetConfirmLeaveByOCR",
+            "ExploreWorldReady",
+            "ExploreHUD"
+        ]
+    },
+    "TacetTreasureSeen": {
+        "desc": "战斗结束后的宝箱标（全屏）。命中后才进入按偏移转视角。战斗中没有此标，不会提前走。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            16,
+            24,
+            1248,
+            640
+        ],
+        "template": [
+            "Guidebook/TacetTreasure.png",
+            "Guidebook/TacetTreasureGlow.png",
+            "Guidebook/TacetTreasureFlare.png"
+        ],
+        "threshold": 0.68,
+        "action": "DoNothing",
+        "next": [
+            "TacetApproachTreasure"
+        ]
+    },
+    "TacetCombatAttack": {
+        "desc": "已由 Go CombatLoop 接管；保留节点仅作兼容，默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatAttack2": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatResonance": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatLiberation": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatEcho": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatHeavy": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
+        "next": []
+    },
+    "TacetCombatSwap": {
+        "desc": "已由 Go CombatLoop 接管；默认禁用。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "enabled": false,
         "next": []
     }
 }

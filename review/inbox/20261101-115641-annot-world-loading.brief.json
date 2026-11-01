@@ -1,0 +1,22 @@
+{
+    "image": "20261101-115641-annot-world-loading.png",
+    "updated_at": "2026-11-01T03:56:43.497383+00:00",
+    "title": "大世界读取进度条",
+    "goal": "标出「进大世界读条」底部进度条（区别于游戏更新进度条）。命中同样不进手柄轮询。",
+    "steps": [
+        "框底部大世界读条 ROI",
+        "点进度条中心",
+        "导出 label=StartupWorldLoadingBar"
+    ],
+    "suggested_label": "StartupWorldLoadingBar",
+    "suggested_expected_next": "StartUpGameWait",
+    "suggested_note": "大世界加载读条，非更新下载条。基准 1280x720。有则禁止 PadWatch。",
+    "do_not": [
+        "游戏更新进度条",
+        "点击连接",
+        "血条"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-115816-startupworldloadingbar",
+    "exported_at": "2026-11-01T03:58:16.450590+00:00"
+}

@@ -1,55 +1,392 @@
 {
     "StartupMain": {
-        "desc": "启动入口：标题页进入后，等到大世界 ExploreHUD。",
+        "desc": "启动：冷/软拉起 → 标题点连接 → 之后每 10s 查手柄模式，不符则按 A 切一次，最多 15 次；认到 PadReady 才成功。",
         "next": [
-            "TitleClickConnect",
-            "ExploreHUD"
+            "CloseGame",
+            "StartUpGame"
         ]
     },
-    "TitleClickConnect": {
-        "desc": "标题页底部「点击连接」。审查卡 20261031-173027-titleclickconnect。",
+    "CloseGame": {
+        "desc": "am force-stop com.kurogame.mingchao",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "StopApp",
+            "param": {
+                "package": "com.kurogame.mingchao"
+            }
+        },
+        "next": [
+            "StartUpGame"
+        ]
+    },
+    "StartUpGame": {
+        "desc": "am start -n com.kurogame.mingchao/com.epicgames.ue4.GameActivity。仅拉起，不视为任务完成。",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "StartApp",
+            "param": {
+                "package": "com.kurogame.mingchao/com.epicgames.ue4.GameActivity"
+            }
+        },
+        "next": [
+            "StartUpGameWait"
+        ]
+    },
+    "StartUpGameWait": {
+        "desc": "加载期循环：有底部进度条则继续等；月卡 / 出本 / 点连接 / 登录 / 大世界。禁止挂 DirectHit（PadWatch）。",
+        "timeout": 240000,
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupMonthlyCard",
+            "InInstanceExitIcon",
+            "ConfirmLeaveInstance",
+            "ConfirmLeaveInstanceByOCR",
+            "TitleClickConnect",
+            "TitleClickConnectOCR",
+            "StartupLoginConfirm",
+            "StartupWorldHUD",
+            "StartupWorldReady"
+        ]
+    },
+    "StartupLoadingBar": {
+        "desc": "游戏更新进度条。读条中自循环；读完必须进 PadWatch（禁止回 StartUpGameWait，否则丢切手柄）。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 610, 1200, 100],
+        "template": "Title/StartupLoadingBar.png",
+        "threshold": 0.70,
+        "action": "DoNothing",
+        "post_delay": 1500,
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch"
+        ]
+    },
+    "StartupLoadingBarOCR": {
+        "desc": "更新/着色器文案 OCR 兜底。读完必须进 PadWatch。",
+        "recognition": "OCR",
+        "roi": [40, 600, 800, 110],
+        "expected": ["更新", "下载", "正在下载", "正在编译着色器", "编译着色器"],
+        "action": "DoNothing",
+        "post_delay": 1500,
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch"
+        ]
+    },
+    "StartupWorldLoadingBar": {
+        "desc": "大世界读取进度条。自循环等到消失后进 PadWatch；禁止回 StartUpGameWait（日志 12:00:56 曾因此丢切手柄）。",
+        "recognition": "TemplateMatch",
+        "roi": [0, 650, 1280, 70],
+        "template": "Title/StartupWorldLoadingBar.png",
+        "threshold": 0.72,
+        "action": "DoNothing",
+        "post_delay": 1200,
+        "next": [
+            "StartupWorldLoadingBar",
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupPadWatch"
+        ]
+    },
+    "StartupMonthlyCard": {
+        "desc": "月相观测卡。认到「点击领取今日月相观测卡奖励」就点一下屏幕。不判断是否首次、不看时间。",
         "recognition": "TemplateMatch",
         "roi": [
-            526,
-            627,
-            228,
-            90
+            400,
+            560,
+            520,
+            150
         ],
-        "template": "Title/ClickConnect.png",
+        "template": "Title/MonthlyCardClaim.png",
         "threshold": 0.7,
         "action": "Click",
         "target": [
-            638,
-            669
+            640,
+            360
         ],
         "post_wait_freezes": {
-            "time": 500,
-            "target": 0.95,
-            "timeout": 8000
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
         },
         "next": [
-            "ExploreHUD",
-            "StartupNeedMoreCards"
+            "StartupMonthlyCard",
+            "StartUpGameWait"
         ]
     },
-    "ExploreHUD": {
-        "desc": "大世界探索 HUD（左上小地图）。审查卡 20261031-173521-explorehud。只识别不点击。小地图内容会变，若易失效再改更稳 HUD。",
+    "TitleClickConnect": {
+        "desc": "标题页底部「点击连接」。点完进入手柄轮询（每 10s 查一次，最多切 15 次）。",
         "recognition": "TemplateMatch",
+        "roi": [480, 600, 320, 120],
+        "template": [
+            "Title/ClickConnect.png",
+            "Title/ClickConnectText.png"
+        ],
+        "threshold": 0.65,
+        "action": "Click",
+        "target": [638, 669],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 15000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "InInstanceExitIcon",
+            "ConfirmLeaveInstance",
+            "TitleClickConnectOCR",
+            "StartupLoginConfirm",
+            "StartUpGameWait"
+        ]
+    },
+    "TitleClickConnectOCR": {
+        "desc": "标题「点击连接」OCR 兜底。点完进入手柄轮询（有进度条则先等）。",
+        "recognition": "OCR",
+        "roi": [480, 600, 320, 120],
+        "expected": ["点击连接"],
+        "action": "Click",
+        "target": [638, 669],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 15000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "InInstanceExitIcon",
+            "ConfirmLeaveInstance",
+            "StartupLoginConfirm",
+            "StartUpGameWait"
+        ]
+    },
+    "StartupLoginConfirm": {
+        "desc": "登录/选号后的确认入口（OCR 暂用）。点完进入手柄轮询（有进度条则先等）。",
+        "recognition": "OCR",
         "roi": [
-            40,
-            10,
-            180,
+            400,
+            520,
+            480,
             160
         ],
+        "expected": [
+            "登录",
+            "进入游戏",
+            "开始游戏",
+            "确认"
+        ],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 20000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "InInstanceExitIcon",
+            "ConfirmLeaveInstance",
+            "StartUpGameWait"
+        ]
+    },
+    "ExploreWorldReady": {
+        "desc": "大世界确认：小地图。勿用过小 Terminal 图标模板（会在标题页误命中）。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 10, 200, 180],
         "template": "Explore/HUD_Minimap.png",
         "threshold": 0.6,
         "action": "DoNothing",
         "next": []
     },
-    "StartupNeedMoreCards": {
-        "desc": "占位：点完连接后若长时间未进大世界，停在这里。",
+    "StartupWorldReady": {
+        "desc": "启动大世界确认（顶栏 Terminal）。命中后进手柄轮询。",
+        "recognition": "TemplateMatch",
+        "roi": [1100, 0, 180, 100],
+        "template": "Guidebook/OpenGuidebook.png",
+        "threshold": 0.55,
+        "action": "DoNothing",
+        "next": ["StartupPadWatch"]
+    },
+    "StartupWorldHUD": {
+        "desc": "启动大世界确认（小地图）。命中后进手柄轮询。阈值略降以防读条结束后认不出。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 10, 200, 180],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.45,
+        "action": "DoNothing",
+        "next": ["StartupPadWatch"]
+    },
+    "StartupPadWatch": {
+        "desc": "手柄轮询封闭环：只认 PadReady 或按 A。禁止再挂读条节点（读条会把流程拐进 Wait 并永久丢切换）。",
         "recognition": "DirectHit",
         "action": "DoNothing",
+        "timeout": 160000,
+        "next": [
+            "StartupPadReady",
+            "StartupPadSwitchOnce"
+        ]
+    },
+    "StartupPadSwitchOnce": {
+        "desc": "非手柄：按物理 Xbox A。最多 15 次。",
+        "recognition": "DirectHit",
+        "action": {"type": "ClickKey", "param": {"key": 96}},
+        "repeat": 2,
+        "post_delay": 600,
+        "max_hit": 15,
+        "timeout": 8000,
+        "next": [
+            "StartupPadConfirm",
+            "StartupPadReady",
+            "StartupPadCheckWait"
+        ]
+    },
+    "StartupPadConfirm": {
+        "desc": "操作模式切换弹窗右侧「确认」。",
+        "recognition": "OCR",
+        "roi": [280, 180, 720, 360],
+        "expected": ["控制器模式", "操作模式切换", "切换至控制器"],
+        "action": "Click",
+        "target": [787, 453],
+        "timeout": 3500,
+        "post_wait_freezes": {"time": 400, "timeout": 5000, "threshold": 0.95},
+        "next": [
+            "StartupPadReady",
+            "StartupPadCheckWait"
+        ]
+    },
+    "StartupPadCheckWait": {
+        "desc": "等 10s：只查 PadReady / 再按 A。读条不得插入此环。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "post_delay": 10000,
+        "next": [
+            "StartupPadReady",
+            "StartupPadSwitchOnce"
+        ]
+    },
+    "StartupPadReady": {
+        "desc": "手柄 HUD 检查点：左下 View+「地图」。仅在 PadWatch 链路成功结束，不放进 StartUpGameWait。",
+        "recognition": "TemplateMatch",
+        "roi": [0, 640, 160, 80],
+        "template": "Explore/PadHUD_Ready.png",
+        "threshold": 0.70,
+        "action": "DoNothing",
         "next": []
+    },
+    "ExploreHUD": {
+        "desc": "大世界确认（次选）：左上小地图。副本内也有小地图，仅在无出门图标时作为大世界证据。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            40,
+            10,
+            200,
+            180
+        ],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.55,
+        "action": "DoNothing",
+        "next": []
+    },
+    "InInstanceExitIcon": {
+        "desc": "副本内标志：左上角「出门」图标（门+箭头）。出现即不在大世界；点击打开「确认离开」。实截 20261101 instance_hud。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            0,
+            0,
+            100,
+            100
+        ],
+        "template": "Explore/InstanceExitIcon.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [
+            32,
+            31
+        ],
+        "post_wait_freezes": {
+            "time": 400,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "ConfirmLeaveInstance",
+            "ConfirmLeaveInstanceByOCR",
+            "InInstanceExitIcon",
+            "StartUpGameWait"
+        ]
+    },
+    "ConfirmLeaveInstance": {
+        "desc": "离开副本弹窗右侧「确认」（左侧是「重新挑战」，禁止点左）。点确认后等读条回到大世界。",
+        "recognition": "TemplateMatch",
+        "roi": [
+            640,
+            380,
+            260,
+            100
+        ],
+        "template": "Explore/ConfirmLeaveInstance.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [
+            760,
+            435
+        ],
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "StartupWorldReady",
+            "StartupWorldHUD",
+            "InInstanceExitIcon",
+            "StartUpGameWait"
+        ]
+    },
+    "ConfirmLeaveInstanceByOCR": {
+        "desc": "离开弹窗「确认」OCR 兜底；ROI 偏右，避免点到「重新挑战」。",
+        "recognition": "OCR",
+        "roi": [
+            640,
+            380,
+            260,
+            100
+        ],
+        "expected": [
+            "确认"
+        ],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 60000,
+            "threshold": 0.95
+        },
+        "next": [
+            "StartupLoadingBar",
+            "StartupLoadingBarOCR",
+            "StartupWorldLoadingBar",
+            "StartupPadWatch",
+            "StartupWorldReady",
+            "StartupWorldHUD",
+            "InInstanceExitIcon",
+            "StartUpGameWait"
+        ]
     }
 }

@@ -1,0 +1,43 @@
+{
+    "id": "20261101-110736-openguidebook",
+    "created_at": "2026-11-01T03:07:36.689426+00:00",
+    "label": "OpenGuidebook",
+    "note": "当前流水线误用过 1225,28（易进系统菜单）和 1198,38。请按你实测能打开 Terminal 的点标注。基准 1280x720。",
+    "expected_next": "SolaGuidebookTile",
+    "source_image": "review/inbox/20261101-110427-annot-world-hud.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1221,
+        35
+    ],
+    "roi": [
+        1207,
+        28,
+        27,
+        21
+    ],
+    "files": {
+        "screen": "review/cards/20261101-110736-openguidebook/screen.png",
+        "preview": "review/cards/20261101-110736-openguidebook/preview.png",
+        "template": "review/cards/20261101-110736-openguidebook/template.png",
+        "card": "review/cards/20261101-110736-openguidebook/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/OpenGuidebook.png",
+        "roi": [
+            1207,
+            28,
+            27,
+            21
+        ],
+        "target": [
+            1221,
+            35
+        ]
+    }
+}

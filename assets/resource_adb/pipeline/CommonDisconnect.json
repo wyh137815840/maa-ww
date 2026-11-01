@@ -17,8 +17,8 @@
         ],
         "post_wait_freezes": {
             "time": 300,
-            "target": 0.95,
-            "timeout": 5000
+            "timeout": 5000,
+            "threshold": 0.95
         },
         "next": []
     },

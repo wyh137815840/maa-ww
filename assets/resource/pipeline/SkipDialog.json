@@ -1,0 +1,8 @@
+{
+    "SkipDialogMain": {
+        "desc": "占位入口：待提供鸣潮安卓对话界面截图、roi 与跳转关系后再实现。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    }
+}

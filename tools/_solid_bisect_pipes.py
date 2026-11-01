@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Add pipeline files one-by-one onto working model+stub base; find which breaks PostBundle."""
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools/touch-review"))
+from common import load_config
+
+OUT = ROOT / "review/inbox"
+WW = "com.aliothmoon.maafw.maaww"
+WW_PI = f"/storage/emulated/0/Android/data/{WW}/files/pi"
+
+
+def adb(cfg, *a):
+    return subprocess.run(
+        [cfg["adb_path"], "-s", cfg["serial"], *a],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="ignore",
+    )
+
+
+def unlock(cfg):
+    adb(cfg, "shell", "input", "keyevent", "KEYCODE_WAKEUP")
+    time.sleep(0.35)
+    adb(cfg, "shell", "input", "keyevent", "82")
+    time.sleep(0.3)
+    adb(cfg, "shell", "input", "text", "753698")
+    time.sleep(0.15)
+    adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
+    time.sleep(0.7)
+
+
+def dump(cfg):
+    adb(cfg, "shell", "uiautomator", "dump", "/sdcard/uidump.xml")
+    adb(cfg, "pull", "/sdcard/uidump.xml", str(OUT / "_uidump.xml"))
+    text = (OUT / "_uidump.xml").read_text(encoding="utf-8", errors="ignore")
+    nodes = []
+    for m in re.finditer(r"<node\b([^>]*)/>", text):
+        attrs = m.group(1)
+        tm = re.search(r'\btext="([^"]*)"', attrs)
+        dm = re.search(r'\bcontent-desc="([^"]*)"', attrs)
+        bm = re.search(r'\bbounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', attrs)
+        if not bm:
+            continue
+        nodes.append({"text": tm.group(1) if tm else "", "desc": dm.group(1) if dm else "", "bounds": tuple(map(int, bm.groups()))})
+    return nodes
+
+
+def tap(cfg, x, y, w=1.0, label=""):
+    print("tap", label, x, y)
+    adb(cfg, "shell", "input", "tap", str(x), str(y))
+    time.sleep(w)
+
+
+def tap_text(cfg, needle, y_min=0, wait=1.0):
+    nodes = dump(cfg)
+    for n in nodes:
+        if (n["text"] == needle or n["desc"] == needle) and n["bounds"][1] >= y_min:
+            x1, y1, x2, y2 = n["bounds"]
+            tap(cfg, (x1 + x2) // 2, (y1 + y2) // 2, wait, needle)
+            return True
+    print("miss", needle)
+    return False
+
+
+def reset_base(cfg):
+    adb(cfg, "shell", "rm", "-rf", f"{WW_PI}/resource/pipeline")
+    adb(cfg, "shell", "rm", "-rf", f"{WW_PI}/resource/image")
+    adb(cfg, "shell", "mkdir", "-p", f"{WW_PI}/resource/pipeline")
+    stub = {"MaaWWBaseStub": {"recognition": "DirectHit", "action": "DoNothing", "next": []}}
+    p = OUT / "_stub.json"
+    p.write_text(json.dumps(stub, indent=4) + "\n", encoding="utf-8")
+    adb(cfg, "push", str(p), f"{WW_PI}/resource/pipeline/Stub.json")
+    adb(cfg, "push", str(ROOT / "assets/resource/default_pipeline.json"), f"{WW_PI}/resource/default_pipeline.json")
+    # interface single path
+    iface = json.loads((ROOT / "assets/interface.json").read_text(encoding="utf-8"))
+    iface["resource"][0]["path"] = ["./resource"]
+    for c in iface["controller"]:
+        c["attach_resource_path"] = []
+    ip = OUT / "_iface.json"
+    ip.write_text(json.dumps(iface, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+    adb(cfg, "push", str(ip), f"{WW_PI}/interface.json")
+
+
+def try_load(cfg, label: str) -> bool:
+    unlock(cfg)
+    adb(cfg, "shell", "monkey", "-p", WW, "-c", "android.intent.category.LAUNCHER", "1")
+    time.sleep(1.3)
+    unlock(cfg)
+    tap_text(cfg, "任务", y_min=900, wait=0.9)
+    tap_text(cfg, "快捷选项", wait=0.7)
+    tap_text(cfg, "重新加载项目", wait=2.2)
+    unlock(cfg)
+    adb(cfg, "shell", "monkey", "-p", WW, "-c", "android.intent.category.LAUNCHER", "1")
+    time.sleep(1.0)
+    tap_text(cfg, "任务", y_min=900, wait=0.8)
+    # ensure one task checked
+    adb(cfg, "shell", "uiautomator", "dump", "/sdcard/uidump.xml")
+    adb(cfg, "pull", "/sdcard/uidump.xml", str(OUT / "_uidump.xml"))
+    text = (OUT / "_uidump.xml").read_text(encoding="utf-8", errors="ignore")
+    for m in re.finditer(r"<node\b([^>]*)/>", text):
+        attrs = m.group(1)
+        if "CheckBox" not in attrs:
+            continue
+        bm = re.search(r'\bbounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', attrs)
+        checked = re.search(r'\bchecked="([^"]*)"', attrs)
+        if bm and checked and checked.group(1) == "false":
+            x1, y1, x2, y2 = map(int, bm.groups())
+            tap(cfg, (x1 + x2) // 2, (y1 + y2) // 2, 0.5, "check")
+            break
+    tap_text(cfg, "开始任务", wait=3.5)
+    unlock(cfg)
+    adb(cfg, "shell", "monkey", "-p", WW, "-c", "android.intent.category.LAUNCHER", "1")
+    time.sleep(1.0)
+    tap_text(cfg, "任务", y_min=900, wait=0.8)
+    tap_text(cfg, "日志", wait=1.0)
+    nodes = dump(cfg)
+    texts = [n["text"] for n in nodes if n["text"]]
+    failed = any("资源加载失败" in t for t in texts)
+    print("===", label, "FAIL" if failed else "PASS", [t for t in texts if "资源" in t or "失败" in t][:6])
+    tap_text(cfg, "关闭", wait=0.4)
+    return not failed
+
+
+def main() -> int:
+    cfg = load_config()
+    # confirm model
+    print("model", adb(cfg, "shell", "ls", f"{WW_PI}/resource/model/ocr/rec.onnx").stdout.strip())
+
+    reset_base(cfg)
+    if not try_load(cfg, "0-stub-only"):
+        print("BASE BROKEN — abort")
+        return 2
+
+    order = [
+        "Startup.json",
+        "SkipDialog.json",
+        "CommonDisconnect.json",
+        "TacetSelect.json",
+        "Tacet.json",
+    ]
+    for name in order:
+        src = ROOT / "assets/resource_adb/pipeline" / name
+        adb(cfg, "push", str(src), f"{WW_PI}/resource/pipeline/{name}")
+        print("added", name)
+        if not try_load(cfg, f"+{name}"):
+            print("BREAKER:", name)
+            # validate json
+            try:
+                json.loads(src.read_text(encoding="utf-8"))
+                print("JSON parse OK — schema/runtime reject")
+            except Exception as e:
+                print("JSON BAD", e)
+            return 1
+    print("all pipelines OK without images")
+    # add images
+    img_root = ROOT / "assets/resource_adb/image"
+    for png in img_root.rglob("*.png"):
+        rel = png.relative_to(img_root).as_posix()
+        remote_dir = f"{WW_PI}/resource/image/{png.parent.relative_to(img_root).as_posix()}"
+        adb(cfg, "shell", "mkdir", "-p", remote_dir)
+        adb(cfg, "push", str(png), f"{WW_PI}/resource/image/{rel}")
+    if not try_load(cfg, "+images"):
+        print("BREAKER: images")
+        return 1
+    print("ALL OK")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

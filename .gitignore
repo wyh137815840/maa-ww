@@ -48,3 +48,19 @@ review/inbox/**
 !review/inbox/.gitkeep
 !review/inbox/*.brief.json
 review/cards/**/*.png
+
+# Local scratch / captures / extracted binaries
+tools/_shots/
+tools/_tmp_apk/
+Android/_apk_extract/
+Android/agent-dist/
+*.apk
+
+Android/MaaFwApp/**/build/
+Android/MaaFwApp/.gradle/
+Android/MaaFwApp/.git.bak-nested/
+
+
+# Junction to external MaaFwApp-analysis checkout; not vendored here
+Android/MaaFwApp/
+

@@ -1,0 +1,43 @@
+{
+    "id": "20261101-113712-solaguidebookextra",
+    "created_at": "2026-11-01T03:37:12.929902+00:00",
+    "label": "SolaGuidebookExtra",
+    "note": "手柄模式索拉指南额外操作。基准 1280x720。",
+    "expected_next": "GuidebookTacetTab",
+    "source_image": "review/inbox/20261101-113630-annot-sola-extra.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        51,
+        214
+    ],
+    "roi": [
+        25,
+        193,
+        53,
+        49
+    ],
+    "files": {
+        "screen": "review/cards/20261101-113712-solaguidebookextra/screen.png",
+        "preview": "review/cards/20261101-113712-solaguidebookextra/preview.png",
+        "template": "review/cards/20261101-113712-solaguidebookextra/template.png",
+        "card": "review/cards/20261101-113712-solaguidebookextra/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/SolaGuidebookExtra.png",
+        "roi": [
+            25,
+            193,
+            53,
+            49
+        ],
+        "target": [
+            51,
+            214
+        ]
+    }
+}

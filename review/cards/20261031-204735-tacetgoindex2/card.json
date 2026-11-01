@@ -1,0 +1,43 @@
+{
+    "id": "20261031-204735-tacetgoindex2",
+    "created_at": "2026-10-31T12:47:35.493964+00:00",
+    "label": "TacetGoIndex2",
+    "note": "同列表图续标第2行。Index1 已入库 20261031-204447。",
+    "expected_next": "TacetStartChallenge",
+    "source_image": "review/inbox/20261031-tacet-go-index2.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1148,
+        338
+    ],
+    "roi": [
+        1070,
+        321,
+        157,
+        38
+    ],
+    "files": {
+        "screen": "review/cards/20261031-204735-tacetgoindex2/screen.png",
+        "preview": "review/cards/20261031-204735-tacetgoindex2/preview.png",
+        "template": "review/cards/20261031-204735-tacetgoindex2/template.png",
+        "card": "review/cards/20261031-204735-tacetgoindex2/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/TacetGoIndex2.png",
+        "roi": [
+            1070,
+            321,
+            157,
+            38
+        ],
+        "target": [
+            1148,
+            338
+        ]
+    }
+}

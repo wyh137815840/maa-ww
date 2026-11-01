@@ -1,0 +1,21 @@
+{
+    "image": "20261031-tacet-go-index2.png",
+    "updated_at": "2026-10-31T12:46:17.974225+00:00",
+    "title": "无音区 · 多副本选行：第2行「直接挑战」",
+    "goal": "标第2行右侧「直接挑战」（炽心域无音区一带）。与第1行错开，勿框到第1/3行。",
+    "steps": [
+        "框住第2行「直接挑战」整颗。",
+        "点击点在按钮中心。",
+        "label=TacetGoIndex2 → 导出后说「已导出」。"
+    ],
+    "suggested_label": "TacetGoIndex2",
+    "suggested_expected_next": "TacetStartChallenge",
+    "suggested_note": "同列表图续标第2行。Index1 已入库 20261031-204447。",
+    "do_not": [
+        "不要标第1行",
+        "不要标第3行及以下"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-204735-tacetgoindex2",
+    "exported_at": "2026-10-31T12:47:35.508895+00:00"
+}

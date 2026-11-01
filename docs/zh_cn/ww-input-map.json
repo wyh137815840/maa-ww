@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "note": "Wuthering Waves Xbox pad ↔ PC KBM. Combat uses logical actions; UI menus stay Pipeline.",
+  "actions": [
+    { "id": "Move", "xbox": "LeftStick", "pc": ["W", "A", "S", "D"] },
+    { "id": "Look", "xbox": "RightStick", "pc": ["Mouse"] },
+    { "id": "Attack", "xbox": "X", "pc": ["MouseLeft"], "hold": "HeavyAttack" },
+    { "id": "Dodge", "xbox": "RB", "pc": ["MouseRight", "LeftShift"], "alias": ["Sprint"] },
+    { "id": "Jump", "xbox": "A", "pc": ["Space"] },
+    { "id": "ResonanceSkill", "xbox": "Y", "pc": ["E"] },
+    { "id": "Liberation", "xbox": "RT", "pc": ["R"] },
+    { "id": "EchoSkill", "xbox": "LT", "pc": ["Q"] },
+    { "id": "Tool", "xbox": ["LB", "Y"], "pc": ["T"] },
+    { "id": "AimToggle", "xbox": ["LB", "X"], "pc": ["G"] },
+    { "id": "Interact", "xbox": "B", "pc": ["F"] },
+    { "id": "ClimbDrop", "xbox": "X", "pc": ["X"], "note": "Same face button as Attack; context-dependent" },
+    { "id": "Swap1", "xbox": "DPadUp", "pc": ["1"] },
+    { "id": "Swap2", "xbox": "DPadRight", "pc": ["2"] },
+    { "id": "Swap3", "xbox": "DPadDown", "pc": ["3"] },
+    { "id": "Swap4", "xbox": ["LB", "DPadDown"], "pc": ["4"] },
+    { "id": "Wheel", "xbox": "DPadLeft", "pc": ["Tab"] },
+    { "id": "Lock", "xbox": "R3", "pc": ["MouseMiddle"], "hold": "LockCancel" },
+    { "id": "QuestTrack", "xbox": ["LB", "R3"], "pc": ["V"] },
+    { "id": "ModifierLB", "xbox": "LB", "pc": [] },
+    { "id": "Menu", "xbox": "Menu", "pc": ["Escape"] },
+    { "id": "Confirm", "xbox": "A", "pc": [] },
+    { "id": "Cancel", "xbox": "B", "pc": [] },
+    { "id": "Chat", "xbox": "View", "pc": ["Enter"], "hold_required": true }
+  ]
+}

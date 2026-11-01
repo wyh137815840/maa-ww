@@ -1,0 +1,23 @@
+{
+    "image": "20261101-113630-annot-sola-extra.png",
+    "updated_at": "2026-11-01T03:36:32.424809+00:00",
+    "title": "手柄态：索拉指南额外一步",
+    "goal": "标出手柄模式下点「索拉指南」之后（或之前）多出来的那一步要点哪里。",
+    "steps": [
+        "确认当前画面就是那「多一步」所在界面",
+        "框住要点的控件 ROI",
+        "点控件中心",
+        "导出；label 建议 SolaGuidebookExtra 或你习惯的节点名",
+        "若画面不对：手动切到该界面后说「截图」"
+    ],
+    "suggested_label": "SolaGuidebookExtra",
+    "suggested_expected_next": "GuidebookTacetTab",
+    "suggested_note": "手柄模式索拉指南额外操作。基准 1280x720。",
+    "do_not": [
+        "误点返回",
+        "活跃行迹"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-113712-solaguidebookextra",
+    "exported_at": "2026-11-01T03:37:12.943501+00:00"
+}

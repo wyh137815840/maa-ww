@@ -14,9 +14,7 @@
             "label": "$controller.ADB.label",
             "description": "$controller.ADB.description",
             "type": "Adb",
-            "attach_resource_path": [
-                "./resource_adb"
-            ]
+            "attach_resource_path": []
         }
     ],
     "resource": [
@@ -28,38 +26,14 @@
             ]
         }
     ],
-    "agent": {
-        "child_exec": "maa-ww-agent",
-        "child_args": [],
-        "timeout": 60000
-    },
-    "task": [
+    "import": [
+        "tasks/Startup.json",
+        "tasks/Tacet.json",
+        "tasks/SkipDialog.json"
+    ],
+    "agent": [
         {
-            "name": "Startup",
-            "label": "$task.Startup.label",
-            "description": "$task.Startup.description",
-            "entry": "StartupMain",
-            "controller": [
-                "ADB"
-            ]
-        },
-        {
-            "name": "Tacet",
-            "label": "$task.Tacet.label",
-            "description": "$task.Tacet.description",
-            "entry": "TacetMain",
-            "controller": [
-                "ADB"
-            ]
-        },
-        {
-            "name": "SkipDialog",
-            "label": "$task.SkipDialog.label",
-            "description": "$task.SkipDialog.description",
-            "entry": "SkipDialogMain",
-            "controller": [
-                "ADB"
-            ]
+            "child_exec": "agent/go-service"
         }
     ]
 }

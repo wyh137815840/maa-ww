@@ -6,9 +6,9 @@
 
 1. **禁止无界面信息编写 Pipeline**：缺少安卓截图、`roi`、模板与界面跳转时，只写占位并标注待补，不假装可跑。
 2. **状态驱动**：识别 → 操作 → 再识别。优先 `pre_wait_freezes` / `post_wait_freezes` 与中间节点，避免硬 `delay`。
-3. **分辨率基准**：坐标与图片一律按 **1280×720**。
+3. **分辨率基准**：坐标与图片一律按 **1280×720**。真机（奥丁 3 等）可以是 1080p；运行时用 MaaFramework `SetScreenshotTargetLongSide(1280)` 把截图缩到 720p 再识别，点击坐标自动映回设备——**不必按 1080p 重标**（对齐 MaaEnd）。
 4. **职责分离**：流程在 Pipeline JSON；复杂算法 / 战斗循环在 Go Service。
-5. **第一期控制器**：只面向 **ADB（模拟器）**，资源放在 `assets/resource_adb/`。
+5. **第一期控制器**：只面向 **ADB**；联调优先 **AYN Odin 3 WiFi**，弃用模拟器为主路径。资源仍在 `assets/resource_adb/`（720p 模板）。
 6. **Git 推送**：远程为 Cursor Origin；**永远在 WSL 用 `origin` 登录后 `git push`**，禁止原生 Windows / PowerShell 直推。
 
 ## 关键路径

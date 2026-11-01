@@ -1,0 +1,23 @@
+{
+    "image": "20261101-111048-annot-user.png",
+    "updated_at": "2026-11-01T03:11:04.712029+00:00",
+    "title": "② Terminal → 索拉指南",
+    "goal": "标出「索拉指南」磁贴的 ROI 与点击中心（第三行最左，书本/门图标）。",
+    "steps": [
+        "框住「索拉指南」整块磁贴（含文字）",
+        "在磁贴正中点一次点击点",
+        "导出审查卡；label=SolaGuidebookTile"
+    ],
+    "suggested_label": "SolaGuidebookTile",
+    "suggested_expected_next": "GuidebookTacetTab",
+    "suggested_note": "第三行最左。勿点活动/唤取/成就。基准 1280x720。",
+    "do_not": [
+        "活动",
+        "唤取",
+        "周度游历",
+        "活跃行迹"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-111149-solaguidebooktile",
+    "exported_at": "2026-11-01T03:11:49.446645+00:00"
+}

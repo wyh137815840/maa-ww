@@ -1,0 +1,21 @@
+{
+    "image": "20261101-112324-annot-pad-hud.png",
+    "updated_at": "2026-11-01T03:23:26.503267+00:00",
+    "title": "手柄模式检查点",
+    "goal": "标出能证明「已是手柄/控制器模式」的 HUD 图标。",
+    "steps": [
+        "框只在手柄模式出现的图标 ROI",
+        "点图标中心",
+        "导出 label=StartupPadReady"
+    ],
+    "suggested_label": "StartupPadReady",
+    "suggested_expected_next": "",
+    "suggested_note": "基准 1280x720。识别用。",
+    "do_not": [
+        "纯技能图标",
+        "小地图圆盘本身"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-112446-startuppadready",
+    "exported_at": "2026-11-01T03:24:46.827419+00:00"
+}

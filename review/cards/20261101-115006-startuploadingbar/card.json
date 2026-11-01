@@ -1,0 +1,43 @@
+{
+    "id": "20261101-115006-startuploadingbar",
+    "created_at": "2026-11-01T03:50:06.999947+00:00",
+    "label": "StartupLoadingBar",
+    "note": "有进度条则 DoNothing 回等待，不进 PadWatch。基准 1280x720。",
+    "expected_next": "StartUpGameWait",
+    "source_image": "review/inbox/20261101-114927-annot-loading-bar.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        136,
+        661
+    ],
+    "roi": [
+        60,
+        628,
+        1168,
+        57
+    ],
+    "files": {
+        "screen": "review/cards/20261101-115006-startuploadingbar/screen.png",
+        "preview": "review/cards/20261101-115006-startuploadingbar/preview.png",
+        "template": "review/cards/20261101-115006-startuploadingbar/template.png",
+        "card": "review/cards/20261101-115006-startuploadingbar/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/StartupLoadingBar.png",
+        "roi": [
+            60,
+            628,
+            1168,
+            57
+        ],
+        "target": [
+            136,
+            661
+        ]
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "image": "20261101-110427-annot-world-hud.png",
+    "updated_at": "2026-11-01T03:05:50.553044+00:00",
+    "title": "① 大世界顶栏：Terminal 入口",
+    "goal": "在手柄模式下，标出能打开 Terminal（进入索拉指南的入口）的正确点击点 + ROI。",
+    "steps": [
+        "看右上角一排图标（星标/三条杠/活动等）",
+        "框住你认为应点的入口图标 ROI",
+        "在图标正中点一次点击点",
+        "导出审查卡，label=OpenGuidebook"
+    ],
+    "suggested_label": "OpenGuidebook",
+    "suggested_expected_next": "SolaGuidebookTile",
+    "suggested_note": "当前流水线误用过 1225,28（易进系统菜单）和 1198,38。请按你实测能打开 Terminal 的点标注。基准 1280x720。",
+    "do_not": [
+        "最右纯系统设置若打不开 Terminal",
+        "小地图",
+        "任务追踪"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-110736-openguidebook",
+    "exported_at": "2026-11-01T03:07:36.701533+00:00"
+}

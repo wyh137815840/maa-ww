@@ -1,0 +1,19 @@
+{
+    "image": "20261031-tacet-go-index4.png",
+    "updated_at": "2026-10-31T12:48:37.191152+00:00",
+    "title": "无音区 · 多副本选行：第4行「直接挑战」",
+    "goal": "标第4行右侧「直接挑战」（玄幽东岳无音区一带，首屏最后一行）。勿框到第3行。",
+    "steps": [
+        "框住第4行「直接挑战」整颗。",
+        "点击点在按钮中心。",
+        "label=TacetGoIndex4 → 导出后说「已导出」。",
+        "第5行及以后需滚动，首屏4行标完再议。"
+    ],
+    "suggested_label": "TacetGoIndex4",
+    "suggested_expected_next": "TacetStartChallenge",
+    "suggested_note": "同列表图。Index y≈235/338/439，第4行约540。",
+    "do_not": [
+        "不要标第3行",
+        "不要标滚动条"
+    ]
+}

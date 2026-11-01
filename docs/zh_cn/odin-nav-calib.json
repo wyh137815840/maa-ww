@@ -1,0 +1,75 @@
+{
+  "device_raw": [
+    1920,
+    1080
+  ],
+  "serial": "192.168.1.3:45749",
+  "coords_720p": {
+    "terminal_menu": [
+      1221,
+      35
+    ],
+    "sola_guidebook_tile": [
+      634,
+      499
+    ],
+    "sola_guidebook_extra": [
+      51,
+      214
+    ],
+    "tacet_tab_in_material": [
+      183,
+      531
+    ],
+    "startup_pad_ready": [
+      37,
+      682
+    ],
+    "notes": {
+      "1198_38": "旧触摸态 Terminal，手柄态失效",
+      "1225_28": "过偏，易误触",
+      "pad_terminal_card": "20261101-110736-openguidebook",
+      "sola_card": "20261101-111149-solaguidebooktile",
+      "sola_extra_card": "20261101-113712-solaguidebookextra",
+      "sola_opened_card": "20261101-113824-solaguidebookopened",
+      "pad_ready_card": "20261101-113017-startuppadready",
+      "tacet": "素材获取左侧第6项≈(183,531)",
+      "pad_ready": "左下 View+地图，非右下 RT"
+    }
+  },
+  "nav_path": [
+    "启动：大世界 → SwitchPad(A×3) → PadReady(View+地图)",
+    "大世界 → Terminal(1221,35)",
+    "→ 索拉指南(634,499)",
+    "→ 手柄额外一步：左栏双剑(51,214)",
+    "→ 验证 SolaGuidebookOpened（双剑选中）",
+    "→ 无音清剿 tab",
+    "→ SelectTacetRow"
+  ],
+  "final": {
+    "file": "20261031-225244-odin-tacetrail-183-531.png",
+    "buttons": [
+      [
+        1131,
+        163
+      ],
+      [
+        1146,
+        237
+      ],
+      [
+        1146,
+        339
+      ],
+      [
+        1146,
+        441
+      ],
+      [
+        1146,
+        543
+      ]
+    ],
+    "ok": true
+  }
+}

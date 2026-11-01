@@ -1,0 +1,23 @@
+---
+description: Odin3 验证纪律——Python 可直操；固化 MaaWW 禁止直操；测完关屏
+alwaysApply: true
+---
+
+# Odin3 联调 / 验收纪律
+
+## Python 逻辑验证（`tools/touch-review/` 等脚本）
+
+- **允许** ADB 直接点击、滑动、截图看屏。
+- 坐标仍按 1280×720 + `device_geom` 换算。
+
+## 固化 MaaWW 软件验证（Pipeline / MXU / Go agent / 正式任务）
+
+- **禁止** ADB 直接替软件点奥丁（不要手写 tap/swipe「帮跑」流程）。
+- **必须**走固化测试流程（任务入口、调试器/MXU 跑任务）。
+- **允许**截图看图、读日志做判断。
+
+## 测完关屏 / 需要时再解锁
+
+- Python 验证或 MaaWW 固化测试**结束后**：关闭奥丁屏幕（`adb shell input keyevent KEYCODE_SLEEP`）。
+- 下次需要操作再解锁：PIN **`753698`**（仅本机联调用；勿提交到公开文档/FEATURES）。
+---

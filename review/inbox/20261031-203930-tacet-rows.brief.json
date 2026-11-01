@@ -1,0 +1,22 @@
+{
+    "image": "20261031-203930-tacet-rows.png",
+    "updated_at": "2026-10-31T12:39:30.491347+00:00",
+    "title": "无音区 · 多副本选行：第1行",
+    "goal": "标列表最上第1行右侧「直接挑战」（沉心域无音区）。序号从1起。",
+    "steps": [
+        "框住第1行「直接挑战」整颗，勿含第2行。",
+        "点击点在按钮中心。",
+        "label=TacetGoIndex1 → 导出后说「已导出」。",
+        "随后标 Index2/3/4。"
+    ],
+    "suggested_label": "TacetGoIndex1",
+    "suggested_expected_next": "TacetStartChallenge",
+    "suggested_note": "多副本选行。ok-ww 配置序号1起；首屏约4行。现网若在登录页，用本历史列表图即可。",
+    "do_not": [
+        "不要标第2行及以下",
+        "不要标左侧页签"
+    ],
+    "exported": true,
+    "exported_card_id": "20261031-204447-tacetgoindex1",
+    "exported_at": "2026-10-31T12:44:47.428162+00:00"
+}

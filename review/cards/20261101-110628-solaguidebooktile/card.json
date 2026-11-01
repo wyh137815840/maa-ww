@@ -1,0 +1,43 @@
+{
+    "id": "20261101-110628-solaguidebooktile",
+    "created_at": "2026-11-01T03:06:28.980477+00:00",
+    "label": "SolaGuidebookTile",
+    "note": "禁止点「活跃行迹 / 周度游历」。坐标基准 1280×720。",
+    "expected_next": "GuidebookTacetTab",
+    "source_image": "review/inbox/20261101-110431-annot-terminal-menu.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1113,
+        33
+    ],
+    "roi": [
+        1095,
+        16,
+        37,
+        39
+    ],
+    "files": {
+        "screen": "review/cards/20261101-110628-solaguidebooktile/screen.png",
+        "preview": "review/cards/20261101-110628-solaguidebooktile/preview.png",
+        "template": "review/cards/20261101-110628-solaguidebooktile/template.png",
+        "card": "review/cards/20261101-110628-solaguidebooktile/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/SolaGuidebookTile.png",
+        "roi": [
+            1095,
+            16,
+            37,
+            39
+        ],
+        "target": [
+            1113,
+            33
+        ]
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "image": "20261101-114840-annot-loading-bar.png",
+    "updated_at": "2026-11-01T03:48:41.856359+00:00",
+    "title": "加载进度条（有则不进手柄轮询）",
+    "goal": "标出底部加载进度条。命中=仍在读条，禁止进入 StartupPadWatch。",
+    "steps": [
+        "框底部进度条 ROI",
+        "点进度条中心",
+        "导出 label=StartupLoadingBar"
+    ],
+    "suggested_label": "StartupLoadingBar",
+    "suggested_expected_next": "StartUpGameWait",
+    "suggested_note": "有进度条则 DoNothing 回等待，不进 PadWatch。基准 1280x720。",
+    "do_not": [
+        "点击连接",
+        "血条",
+        "地图提示"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "image": "20261101-110431-annot-terminal-menu.png",
+    "updated_at": "2026-11-01T03:04:33.727305+00:00",
+    "title": "② Terminal 菜单 → 索拉指南",
+    "goal": "若已是 Terminal 磁贴页：标「索拉指南」磁贴；若不是，先说明画面是什么，再标正确入口。",
+    "steps": [
+        "确认画面是否为 Terminal 主菜单（多磁贴）。若不是请在 note 写明当前界面名。",
+        "框住「索拉指南」整块磁贴 ROI。",
+        "在磁贴中心点一次点击点。",
+        "导出审查卡；label 用 SolaGuidebookTile。"
+    ],
+    "suggested_label": "SolaGuidebookTile",
+    "suggested_expected_next": "GuidebookTacetTab",
+    "suggested_note": "禁止点「活跃行迹 / 周度游历」。坐标基准 1280×720。",
+    "do_not": [
+        "活跃行迹",
+        "周度游历",
+        "点 OCR 漂移框"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-110628-solaguidebooktile",
+    "exported_at": "2026-11-01T03:06:28.992022+00:00"
+}

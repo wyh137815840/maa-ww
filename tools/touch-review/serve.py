@@ -44,7 +44,16 @@ def list_cards(cfg: dict) -> list[dict]:
     cards = []
     for p in sorted(cfg["cards_dir"].glob("*/card.json"), key=lambda x: x.stat().st_mtime, reverse=True):
         data = json.loads(p.read_text(encoding="utf-8"))
+        cid = str(data.get("id") or p.parent.name)
+        data["id"] = cid
         data["_dir"] = p.parent.name
+        # Status lives on the card, never by re-briefing inbox copies.
+        data["status"] = "已标注"
+        data["has_screen"] = (p.parent / "screen.png").is_file()
+        data["screen_url"] = f"/cards/{p.parent.name}/screen.png" if data["has_screen"] else None
+        data["preview_url"] = (
+            f"/cards/{p.parent.name}/preview.png" if (p.parent / "preview.png").is_file() else data["screen_url"]
+        )
         cards.append(data)
     return cards
 
@@ -304,7 +313,8 @@ HTML = r"""<!doctype html>
   <aside>
     <h2>Inbox 截图</h2>
     <div class="list" id="inbox"></div>
-    <h2 style="margin-top:16px">已导出 Cards</h2>
+    <h2 style="margin-top:16px">已标注 Cards（只读预览）</h2>
+    <p style="margin:0 0 8px;color:var(--muted);font-size:12px">点卡片看图；状态在卡片上。不要往 inbox 复挂已导出图。</p>
     <div class="list" id="cards"></div>
   </aside>
   <aside>
@@ -356,6 +366,8 @@ const state = {
   roi: null,
   drag: null,
   inbox: [],
+  cards: [],
+  view: null, // 'inbox' | 'card'
 };
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
@@ -455,18 +467,55 @@ async function refresh(autoSelect=false) {
     div.onclick = () => loadImage(it);
     inbox.appendChild(div);
   });
+  state.cards = data.cards || [];
   const cards = document.getElementById('cards');
   cards.innerHTML = '';
-  data.cards.forEach(c => {
+  state.cards.forEach(c => {
     const div = document.createElement('div');
-    div.className = 'item';
-    div.innerHTML = `<strong>${c.label}</strong><small>${c.id}<br>click ${JSON.stringify(c.click)} · roi ${JSON.stringify(c.roi)}</small>`;
+    const active = state.view === 'card' && state.source === c.id;
+    div.className = 'item done' + (active ? ' active' : '');
+    div.innerHTML = `<strong>${c.label || c.id}</strong>
+      <small>${c.id}<br>click ${JSON.stringify(c.click)} · roi ${JSON.stringify(c.roi)}</small>
+      <span class="badge ok">${c.status || '已标注'}</span>`;
+    div.onclick = () => loadCard(c);
     cards.appendChild(div);
   });
   if (autoSelect && !state.source) {
     const first = state.inbox.find(it => it.needs_annotation) || state.inbox[0];
     if (first) loadImage(first);
   }
+}
+
+function loadCard(c) {
+  if (!c || !c.screen_url) {
+    setStatus('该卡没有 screen.png，无法预览', 'err');
+    return;
+  }
+  const img = new Image();
+  img.onload = () => {
+    state.image = img;
+    state.source = c.id;
+    state.view = 'card';
+    state.brief = null;
+    state.click = c.click || null;
+    state.roi = c.roi || null;
+    state.drag = null;
+    document.getElementById('click').value = c.click ? JSON.stringify(c.click) : '';
+    document.getElementById('roi').value = c.roi ? JSON.stringify(c.roi) : '';
+    document.getElementById('label').value = c.label || '';
+    document.getElementById('expected').value = c.expected_next || '';
+    document.getElementById('note').value = c.note || '';
+    const box = document.getElementById('briefBox');
+    box.className = 'brief empty';
+    box.innerHTML = `<h3>【已标注】${c.label || c.id}</h3>
+      <p class="goal">只读预览审查卡，不会变成「待标注」。若要复用请在聊天发 card id：<code>${c.id}</code></p>
+      <ol><li>label=${c.label || ''}</li><li>click=${JSON.stringify(c.click)} roi=${JSON.stringify(c.roi)}</li><li>${(c.note || '').replace(/</g,'&lt;')}</li></ol>`;
+    draw();
+    refresh(false);
+    setStatus('只读预览已标注卡 ' + c.id + '。复用时把这个 id 发给我即可。', 'ok');
+  };
+  img.onerror = () => setStatus('加载卡片画面失败', 'err');
+  img.src = c.screen_url + '?t=' + Date.now();
 }
 
 function loadImage(it) {
@@ -477,6 +526,7 @@ function loadImage(it) {
   img.onload = () => {
     state.image = img;
     state.source = name;
+    state.view = 'inbox';
     state.brief = meta ? meta.brief : null;
     state.click = null;
     state.roi = null;
@@ -553,6 +603,7 @@ document.getElementById('clearMarks').onclick = () => {
 document.getElementById('btnRefresh').onclick = () => refresh(false);
 document.getElementById('btnOpenIndex').onclick = () => window.open('/cards/INDEX.md', '_blank');
 document.getElementById('btnSave').onclick = async () => {
+  if (state.view === 'card') { setStatus('当前是已标注卡只读预览，不能再导出。请选 Inbox 里的待标注图。', 'err'); return; }
   if (!state.source) { setStatus('请先选择截图', 'err'); return; }
   if (!state.roi) { setStatus('请先用「ROI 框」圈住目标按钮/文字', 'err'); return; }
   if (!state.click) { setStatus('请再用「点击点」点一下要点的位置', 'err'); return; }

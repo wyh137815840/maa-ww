@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+from pathlib import Path
+from brief import write_brief
+from common import load_config
+from PIL import Image
+
+cfg = load_config()
+dest = Path(cfg["inbox_dir"]) / "20261031-194247-tacet-after-go.png"
+print("size", Image.open(dest).size)
+write_brief(
+    dest,
+    title="无音区 · 第4步：编队页「开启挑战」",
+    goal="标底部右侧「开启挑战」按钮。导出 TacetStartChallenge。",
+    steps=[
+        "确认是挑战准备/编队界面（左侧队伍 01–07，中间角色立绘）。",
+        "只框右下「开启挑战」按钮为 ROI（不要框「快速编队」）。",
+        "点「开启挑战」文字中心。",
+        "导出后说「已导出」。左上副本名可稍后用于多副本识别，本次不用标。",
+    ],
+    suggested_label="TacetStartChallenge",
+    suggested_expected_next="InTacetCombat or Loading",
+    suggested_note="ADB mumuscreen001。点「直接挑战」后进入的编队页；确认进本按钮是「开启挑战」。",
+    do_not=["不要点快速编队", "不要点左上返回/右上关闭", "不要改左侧队伍编号（除非另有任务）"],
+)
+print(dest)

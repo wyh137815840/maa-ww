@@ -1,0 +1,58 @@
+{
+  "row_pitch_px": 102,
+  "click_x": 1146,
+  "index_click_y": {
+    "1": 235,
+    "2": 338,
+    "3": 439
+  },
+  "index4_click_y": 541,
+  "first_screen_rows": 4,
+  "ok_ww_structure": [
+    4,
+    5,
+    5,
+    7
+  ],
+  "layout": "left=name, right=直接挑战",
+  "scroll": "Prefer scrollbar click (see tacet-scrollbar-calib.json); fallback swipe",
+  "scrollbar_calib": "docs/zh_cn/tacet-scrollbar-calib.json",
+  "scrolled_4_to_7_source": "review/inbox/20261031-205201-snap.png",
+  "scrollbar_sequence": [
+    "review/inbox/20261031-205657-snap.png",
+    "review/inbox/20261031-205700-snap.png",
+    "review/inbox/20261031-205704-snap.png",
+    "review/inbox/20261031-205708-snap.png"
+  ],
+  "index_4_to_7": {
+    "4": {
+      "click": [
+        1145,
+        193
+      ],
+      "name_guess": "玄幽东岳无音区"
+    },
+    "5": {
+      "click": [
+        1145,
+        340
+      ],
+      "name_guess": "落日堤屿无音区"
+    },
+    "6": {
+      "click": [
+        1145,
+        442
+      ],
+      "name_guess": "冰原运输港无音区"
+    },
+    "7": {
+      "click": [
+        1145,
+        544
+      ],
+      "name_guess": "加拉尔冠阶无音区"
+    }
+  },
+  "note_region_headers": "分区标题会插入列表，滚动后不能用固定 pitch 外推，需逐行检测或 OCR。"
+}

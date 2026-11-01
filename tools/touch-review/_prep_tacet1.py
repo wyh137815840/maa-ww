@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+from brief import write_brief
+from common import load_config
+
+cfg = load_config()
+inbox = Path(cfg["inbox_dir"])
+src = inbox / "_diag.png"
+stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+dest = inbox / f"{stamp}-explore-open-guidebook.png"
+shutil.copy2(src, dest)
+
+write_brief(
+    dest,
+    title="无音区 · 第1步：打开导能手册（安卓无 F2）",
+    goal="在大世界 HUD 上标出「索拉指南 / 导能手册」入口图标，导出后用于 OpenGuidebook。",
+    steps=[
+        "确认画面是大世界（左上小地图、右下技能键）。",
+        "在顶部一排图标里找到「索拉指南/导能手册」（通常在背包、菜单附近；不是抽卡棋子、不是背包）。",
+        "框住该图标作为 ROI（尽量只含图标，少带背景）。",
+        "再点图标中心作为点击点。",
+        "核对右侧字段后导出审查卡；在聊天发 card id 或说「已导出」。",
+        "导出后请在游戏里手动点开该手册，停在手册主页，等我截下一张标「无音区」页签。",
+    ],
+    suggested_label="OpenGuidebook",
+    suggested_expected_next="GuidebookMain or BossBookTabs",
+    suggested_note="安卓用顶部图标代替 PC 的 F2。无音区在手册左侧分类（ok-ww 点相对坐标约 x=0.24 y=0.73）。",
+    do_not=[
+        "不要点抽卡/共鸣/相机/背包。",
+        "不要点左上小地图。",
+        "不要点右下攻击/闪避。",
+    ],
+)
+print(dest)

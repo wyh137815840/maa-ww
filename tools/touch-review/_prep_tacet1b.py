@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+from pathlib import Path
+from brief import write_brief
+from common import load_config
+
+cfg = load_config()
+inbox = Path(cfg["inbox_dir"])
+dest = inbox / "20261031-182234-explore-open-guidebook.png"
+
+write_brief(
+    dest,
+    title="无音区 · 第1步：打开导能手册（安卓无 F2）",
+    goal="在大世界 HUD 顶部图标里标出「索拉指南 / 导能手册」入口，导出 OpenGuidebook。",
+    steps=[
+        "画面已是大世界（左上小地图、右下技能）。若小地图旁有红叉断网图标，先确认能操作再标；标 UI 不依赖联网。",
+        "看顶部一排图标：不要点抽卡棋子、背包、设置菜单；找「索拉指南/导能手册」（常在中间偏右，书本/指南样式）。",
+        "框住该图标 ROI（尽量只含图标）。",
+        "再点图标中心作为点击点。",
+        "右侧字段核对后导出；聊天发 card id 或「已导出」。",
+        "导出后请手动点开手册，停在手册主页，等下一张标「无音区」页签。",
+    ],
+    suggested_label="OpenGuidebook",
+    suggested_expected_next="GuidebookMain",
+    suggested_note="安卓用顶部图标代替 PC F2。当前任务栏有「清理聚落中的残象」，与后续聚落任务相关，本次先忽略。",
+    do_not=[
+        "不要点抽卡/背包/设置/相机。",
+        "不要点左上小地图或右下攻击键。",
+        "不要点左侧任务「点击追踪」。",
+    ],
+)
+print(dest)

@@ -51,6 +51,16 @@ review/cards/INDEX.md           # 总表
 
 `tools/touch-review/config.json`：
 
-- `adb_path` / `serial`：MuMu ADB  
-- `target_size`：`[1280, 720]`  
+- `adb_path` / `serial`：当前联调以 **Odin 3 WiFi** 为准（端口以无线调试页为准）  
+- `target_size`：`[1280, 720]`（设备可为 1920×1080，截图会缩到 720p 再标）  
 - `port`：标注页端口，默认 `8765`
+
+## 与 Pipeline 的衔接
+
+导出卡后把 card id /「已导出」发回聊天即可写入 `assets/resource_adb/pipeline/`，再用：
+
+```bat
+python tools\_push_pi_only.py
+```
+
+推到设备上的 MaaWW PI。奥丁导航坐标摘要：`docs/zh_cn/odin-nav-calib.json`。

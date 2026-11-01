@@ -1,6 +1,98 @@
 {
-    "Tacet": {
-        "label": "$task.Tacet.label",
-        "description": "$task.Tacet.description"
+    "task": [
+        {
+            "name": "Tacet",
+            "label": "$task.Tacet.label",
+            "description": "$task.Tacet.description",
+            "entry": "TacetMain",
+            "controller": [
+                "ADB"
+            ],
+            "option": [
+                "TacetIndex"
+            ]
+        }
+    ],
+    "option": {
+        "TacetIndex": {
+            "type": "select",
+            "label": "$option.TacetIndex.label",
+            "description": "$option.TacetIndex.description",
+            "default_case": "1",
+            "cases": [
+                {
+                    "name": "1",
+                    "label": "$option.TacetIndex.case1",
+                    "pipeline_override": {
+                        "TacetGoIndex1": {
+                            "enabled": true
+                        },
+                        "TacetGoIndex2": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex3": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex4": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "2",
+                    "label": "$option.TacetIndex.case2",
+                    "pipeline_override": {
+                        "TacetGoIndex1": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex2": {
+                            "enabled": true
+                        },
+                        "TacetGoIndex3": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex4": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "3",
+                    "label": "$option.TacetIndex.case3",
+                    "pipeline_override": {
+                        "TacetGoIndex1": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex2": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex3": {
+                            "enabled": true
+                        },
+                        "TacetGoIndex4": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "4",
+                    "label": "$option.TacetIndex.case4",
+                    "pipeline_override": {
+                        "TacetGoIndex1": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex2": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex3": {
+                            "enabled": false
+                        },
+                        "TacetGoIndex4": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        }
     }
 }

@@ -1,12 +1,23 @@
 {
     "description": "基于 MaaFramework 的鸣潮自动化（功能对标 ok-ww，首期 ADB 模拟器）。",
     "controller.ADB.label": "ADB（模拟器）",
-    "controller.ADB.description": "通过 ADB 连接安卓模拟器。分辨率请设为 1280×720（16:9）。",
+    "controller.ADB.description": "通过 ADB 连接真机（优先 AYN Odin 3 WiFi）。资源按 1280×720；框架自动缩放截图/点击。",
     "resource.Official.label": "官服",
-    "task.Startup.label": "启动进游戏（开发中）",
-    "task.Startup.description": "从标题页「点击连接」开始进入游戏。后续登录界面需继续标注。",
-    "task.Tacet.label": "无音区（开发中）",
-    "task.Tacet.description": "从大世界打开导能手册进入无音区。页签与刷本流程待继续标注。",
+    "task.Startup.label": "启动进游戏",
+    "task.Startup.description": "边界：拉起鸣潮 → 标题「点击连接」/登录确认 → 等读条 → 识别大世界 HUD 才成功。未确认大世界前不算完成（勿立刻接无音区）。Cold=force-stop+StartApp；Soft=已在大世界/标题则接着走。",
+    "option.LaunchMode.label": "拉起方式",
+    "option.LaunchMode.description": "Cold=force-stop 后 am start，再等进大世界；Soft=已在大世界则直接成功，否则点连接/登录或补拉起。",
+    "option.LaunchMode.cases.Soft.label": "软拉起（前台化）",
+    "option.LaunchMode.cases.Cold.label": "冷启动（force-stop + start）",
+    "task.Tacet.label": "无音区",
+    "task.Tacet.description": "手册→无音清剿→按序号点「直接挑战」。已验收首屏 1–4；结算链已入库，战斗循环待接。",
+    "option.TacetIndex.label": "无音区序号（首屏）",
+    "option.TacetIndex.description": "验收范围 1–4（首屏可见行）。5+ 滚动选行待 Go SelectTacetRow。",
+    "option.TacetIndex.case1": "1 · 沉心域",
+    "option.TacetIndex.case2": "2 · 炽心域",
+    "option.TacetIndex.case3": "3 · 方擎西峰",
+    "option.TacetIndex.case4": "4 · 玄幽东岳",
     "task.SkipDialog.label": "跳过剧情（占位）",
     "task.SkipDialog.description": "第一期占位任务。补齐截图与 Pipeline 后可用。"
 }
+

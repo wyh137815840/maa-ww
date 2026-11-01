@@ -1,0 +1,19 @@
+{
+    "image": "20261101-112143-annot-pad-hud.png",
+    "updated_at": "2026-11-01T03:21:44.883138+00:00",
+    "title": "手柄模式检查点",
+    "goal": "标出能证明「已是手柄/控制器模式」的 HUD 图标。",
+    "steps": [
+        "选一个只在手柄模式出现的图标",
+        "框 ROI → 点图标中心",
+        "导出；label=StartupPadReady",
+        "多个检查点可导出后再说，我继续截"
+    ],
+    "suggested_label": "StartupPadReady",
+    "suggested_expected_next": "",
+    "suggested_note": "基准 1280x720。识别用；勿标触摸态也有的控件。",
+    "do_not": [
+        "纯技能图标",
+        "小地图圆盘本身"
+    ]
+}

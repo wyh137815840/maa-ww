@@ -1,12 +1,23 @@
 {
     "description": "Wuthering Waves automation on MaaFramework (feature parity with ok-ww; ADB emulator first).",
     "controller.ADB.label": "ADB (emulator)",
-    "controller.ADB.description": "Connect an Android emulator via ADB. Use 1280×720 (16:9).",
+    "controller.ADB.description": "Connect a real device via ADB (prefer AYN Odin 3 Wi‑Fi). Assets are 1280×720; framework scales capture/clicks.",
     "resource.Official.label": "Official",
-    "task.Startup.label": "Startup (in progress)",
-    "task.Startup.description": "Enter the game from the title screen Click-to-Connect button. Later login screens still need review cards.",
-    "task.Tacet.label": "Tacet Suppression (in progress)",
-    "task.Tacet.description": "Open guidebook from the overworld, then farm Tacet. Tab and dungeon steps still need review cards.",
+    "task.Startup.label": "Launch game",
+    "task.Startup.description": "Boundary: launch → title Click-to-Connect / login confirm → wait load → succeed only when ExploreHUD (open world) is recognized. Do not hand off to Tacet before world confirm. Cold=force-stop+StartApp; Soft=continue from title/world if already there.",
+    "option.LaunchMode.label": "Launch mode",
+    "option.LaunchMode.description": "Cold=force-stop then am start, then wait for open world; Soft=succeed if already in world, else connect/login or StartApp.",
+    "option.LaunchMode.cases.Soft.label": "Soft (bring to front)",
+    "option.LaunchMode.cases.Cold.label": "Cold (force-stop + start)",
+    "task.Tacet.label": "Tacet Suppression",
+    "task.Tacet.description": "Guidebook → Tacet list → Direct Challenge by index. First-page 1–4 accepted; combat loop TBD.",
+    "option.TacetIndex.label": "Tacet index (first page)",
+    "option.TacetIndex.description": "Acceptance scope 1–4. Index 5+ needs Go SelectTacetRow.",
+    "option.TacetIndex.case1": "1 · 沉心域",
+    "option.TacetIndex.case2": "2 · 炽心域",
+    "option.TacetIndex.case3": "3 · 方擎西峰",
+    "option.TacetIndex.case4": "4 · 玄幽东岳",
     "task.SkipDialog.label": "Skip Dialog (placeholder)",
     "task.SkipDialog.description": "Phase-1 placeholder. Needs screenshots and a real Pipeline."
 }
+

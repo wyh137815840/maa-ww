@@ -1,0 +1,43 @@
+{
+    "id": "20261101-111149-solaguidebooktile",
+    "created_at": "2026-11-01T03:11:49.434096+00:00",
+    "label": "SolaGuidebookTile",
+    "note": "第三行最左。勿点活动/唤取/成就。基准 1280x720。",
+    "expected_next": "GuidebookTacetTab",
+    "source_image": "review/inbox/20261101-111048-annot-user.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        634,
+        499
+    ],
+    "roi": [
+        589,
+        474,
+        87,
+        118
+    ],
+    "files": {
+        "screen": "review/cards/20261101-111149-solaguidebooktile/screen.png",
+        "preview": "review/cards/20261101-111149-solaguidebooktile/preview.png",
+        "template": "review/cards/20261101-111149-solaguidebooktile/template.png",
+        "card": "review/cards/20261101-111149-solaguidebooktile/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/SolaGuidebookTile.png",
+        "roi": [
+            589,
+            474,
+            87,
+            118
+        ],
+        "target": [
+            634,
+            499
+        ]
+    }
+}

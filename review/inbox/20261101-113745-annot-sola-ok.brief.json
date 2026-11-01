@@ -1,0 +1,21 @@
+{
+    "image": "20261101-113745-annot-sola-ok.png",
+    "updated_at": "2026-11-01T03:37:46.976276+00:00",
+    "title": "索拉指南：点击成功验证",
+    "goal": "标出「额外一步已点成功」后的界面特征（用于识别成功态，不是要点的按钮）。",
+    "steps": [
+        "框住成功态最稳特征 ROI（标题/侧栏/页签等）",
+        "点特征中心（识别用，可忽略点击）",
+        "导出；label 建议 SolaGuidebookOpened 或 GuidebookMain"
+    ],
+    "suggested_label": "SolaGuidebookOpened",
+    "suggested_expected_next": "GuidebookTacetTab",
+    "suggested_note": "成功验证节点：DoNothing。基准 1280x720。",
+    "do_not": [
+        "活跃行迹",
+        "周度游历"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-113824-solaguidebookopened",
+    "exported_at": "2026-11-01T03:38:24.770756+00:00"
+}
