@@ -13,6 +13,8 @@ import (
 type BaseChar struct {
 	pad  *Pad
 	slot int
+	// pickNext chooses the slot to swap to (skips dead teammates). nil = cyclic.
+	pickNext func(cur int) int
 }
 
 func NewBaseChar(pad *Pad, slot int) *BaseChar {
@@ -70,6 +72,14 @@ func (c *BaseChar) Perform(stop func() bool) (int, bool) {
 	}
 
 	next := (c.slot + 1) % 3
+	if c.pickNext != nil {
+		next = c.pickNext(c.slot)
+	}
+	if next == c.slot {
+		// Nobody else alive: keep fighting with the current character.
+		c.continuesAttack(220*time.Millisecond, 90*time.Millisecond, check)
+		return c.slot, aborted
+	}
 	c.pad.SwapSlot(next)
 	// Brief swap recovery with attacks (ok-ww may add continues_normal_attack when swap too fast).
 	c.continuesAttack(220*time.Millisecond, 90*time.Millisecond, check)

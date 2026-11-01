@@ -1,0 +1,43 @@
+{
+    "id": "20261101-185827-nestcombathud",
+    "created_at": "2026-11-01T10:58:28.141896+00:00",
+    "label": "NestCombatHud",
+    "note": "没有计时器，通过左侧roi的文字判断，当“已击败残像：n/m”变成“明日更新”说明敌人全部消灭，战斗结束。点击点点击无反应，无需点击",
+    "expected_next": "战斗结束 / 吸收残象",
+    "source_image": "review/inbox/20261101-185403-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        90,
+        206
+    ],
+    "roi": [
+        33,
+        178,
+        180,
+        57
+    ],
+    "files": {
+        "screen": "review/cards/20261101-185827-nestcombathud/screen.png",
+        "preview": "review/cards/20261101-185827-nestcombathud/preview.png",
+        "template": "review/cards/20261101-185827-nestcombathud/template.png",
+        "card": "review/cards/20261101-185827-nestcombathud/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestCombatHud.png",
+        "roi": [
+            33,
+            178,
+            180,
+            57
+        ],
+        "target": [
+            90,
+            206
+        ]
+    }
+}

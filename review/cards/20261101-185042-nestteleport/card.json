@@ -1,0 +1,43 @@
+{
+    "id": "20261101-185042-nestteleport",
+    "created_at": "2026-11-01T10:50:42.303734+00:00",
+    "label": "NestTeleport",
+    "note": "没有确认框，点了直接传送",
+    "expected_next": "确认框 / 传送加载 / 到达聚落",
+    "source_image": "review/inbox/20261101-184747-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1074,
+        669
+    ],
+    "roi": [
+        1005,
+        652,
+        127,
+        35
+    ],
+    "files": {
+        "screen": "review/cards/20261101-185042-nestteleport/screen.png",
+        "preview": "review/cards/20261101-185042-nestteleport/preview.png",
+        "template": "review/cards/20261101-185042-nestteleport/template.png",
+        "card": "review/cards/20261101-185042-nestteleport/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestTeleport.png",
+        "roi": [
+            1005,
+            652,
+            127,
+            35
+        ],
+        "target": [
+            1074,
+            669
+        ]
+    }
+}

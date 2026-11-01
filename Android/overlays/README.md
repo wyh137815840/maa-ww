@@ -17,6 +17,12 @@
 
 该 Forwarder 增加摇杆文件泵：周期性读 `/data/local/tmp/maaww_stick`，解析后注入 Xbox 节点（左摇杆 `ABS_X/ABS_Y`，右摇杆/镜头 `ABS_Z` 偏航、`ABS_RZ` 俯仰）。
 
+**手柄关联（按需）**：把物理 Xbox 关联到虚拟屏是系统级状态（存在 InputManager，与 MaaWW 进程生死无关）。
+为避免“跑过一次后，直接在主屏打开鸣潮手柄没反应”，Forwarder 只在有摇杆/按键注入时才关联虚拟屏，
+空闲 6 秒还给主屏；还手柄 = 先关联到主屏（刷新 InputReader 缓存）再移除；服务启动时清遗留关联。
+关联异常残留时手动救：`pwsh -NoProfile -File tools\pad-unbind.ps1`（需要 `MAAWW_ANDROID_BUILD` 指向工具链 ASCII 路径时设上）。
+注意：游戏本身若还在虚拟屏上，要先停 MaaWW 的虚拟显示/把游戏拉回主屏，否则手柄回主屏也没有可控的游戏。
+
 协议（单行，ABS 原始值 ±32767，Y 负=前进）：
 
 - `lx ly holdMs`：仅左摇杆（旧版 agent 写这种）。

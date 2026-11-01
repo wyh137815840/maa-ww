@@ -1,0 +1,56 @@
+{
+    "task": [
+        {
+            "name": "Nest",
+            "label": "$task.Nest.label",
+            "description": "$task.Nest.description",
+            "entry": "NestMain",
+            "controller": [
+                "ADB"
+            ],
+            "option": [
+                "NestKind"
+            ]
+        }
+    ],
+    "option": {
+        "NestKind": {
+            "type": "select",
+            "label": "$option.NestKind.label",
+            "description": "$option.NestKind.description",
+            "default_case": "Canxiang",
+            "cases": [
+                {
+                    "name": "Canxiang",
+                    "label": "$option.NestKind.case.Canxiang",
+                    "pipeline_override": {
+                        "NestTabCanxiang": {
+                            "enabled": true
+                        },
+                        "NestTabNightmare": {
+                            "enabled": false
+                        },
+                        "NestLeftListSwipe": {
+                            "enabled": false
+                        }
+                    }
+                },
+                {
+                    "name": "Nightmare",
+                    "label": "$option.NestKind.case.Nightmare",
+                    "pipeline_override": {
+                        "NestTabCanxiang": {
+                            "enabled": false
+                        },
+                        "NestTabNightmare": {
+                            "enabled": true
+                        },
+                        "NestLeftListSwipe": {
+                            "enabled": true
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

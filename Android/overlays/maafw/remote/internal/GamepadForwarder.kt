@@ -18,6 +18,10 @@ import java.io.FileOutputStream
  * 优先：把物理 Xbox 的 descriptor 关联到游戏虚拟屏（Joystick/Key 都按关联 display 派发），
  * 不 grab、不重映射，键位与摇杆保持系统原样。
  *
+ * **按需关联**：关联存在系统 InputManager 里（与本进程生死无关），常驻会让用户在主屏直接
+ * 打开鸣潮时手柄“指向别的屏”。所以只在有摇杆/按键注入时才关联虚拟屏，空闲
+ * [IDLE_UNBIND_MS] 后交还主屏；启动时清掉上次遗留的关联。
+ *
  * 关联失败时退回：grab 物理设备 → uinput 镜像 → 关联虚拟设备。
  */
 object GamepadForwarder {
@@ -26,6 +30,10 @@ object GamepadForwarder {
     private const val EVIOCGRAB = 0x40044590
     private const val RETRY_MS = 2000L
     private const val HEARTBEAT_MS = 3000L
+    /** 无注入这么久后把手柄还给主屏（纯 Maa 点按/按键任务间隙不抢手柄）。 */
+    private const val IDLE_UNBIND_MS = 6000L
+    /** 刚关联完等一下再注入，避免首个摇杆/按键落到旧屏。 */
+    private const val BIND_SETTLE_MS = 120L
     private const val PROBE = "/data/local/tmp/maaww-gamepad.log"
     private const val XBOX_NAME = "Xbox Wireless Controller"
     private val EVENT_NODE = Regex("event\\d+")
@@ -37,6 +45,13 @@ object GamepadForwarder {
     @Volatile
     private var fallbackDisplayId = -1
     private var associatedDescriptor: String? = null
+    private var boundDisplayId = -1
+    /** true = 原生关联可用，按需绑定（见 [ensureBound]）；false = 走 uinput 兜底。 */
+    @Volatile
+    private var lazyNative = false
+    @Volatile
+    private var lastUseMs = 0L
+    private val bindLock = Any()
 
     /** Go agent writes `x y hold_ms` here; this process (shell/input) pumps Xbox ABS. */
     private const val STICK_CMD = "/data/local/tmp/maaww_stick"
@@ -45,8 +60,9 @@ object GamepadForwarder {
         if (displayId <= 0) return
         fallbackDisplayId = displayId
         if (running) {
-            Ln.i("$TAG: already running, rebind display=$displayId")
-            bindDescriptorToDisplay(findXboxDescriptor(), displayId)
+            Ln.i("$TAG: already running, display=$displayId")
+            // 按需模式下不在这里绑定（app 会反复调 start）；ensureBound 在注入时处理显示变化。
+            if (!lazyNative) bindDescriptorToDisplay(findXboxDescriptor(), displayId)
             if (stickThread?.isAlive != true) {
                 stickThread = Thread({ stickPumpLoop() }, "gamepad-stick-pump").also { it.start() }
             }
@@ -64,8 +80,10 @@ object GamepadForwarder {
         stickThread?.interrupt()
         stickThread = null
         fallbackDisplayId = -1
-        unbind()
+        // 先回中（仍关联虚拟屏，游戏才收得到），再还手柄给主屏。
         injectAxisNeutral()
+        unbind()
+        lazyNative = false
     }
 
     private fun probe(msg: String) {
@@ -83,17 +101,13 @@ object GamepadForwarder {
             val displayId = resolveDisplay()
             val desc = findXboxDescriptor()
             if (desc != null && bindDescriptorToDisplay(desc, displayId)) {
-                probe("native associate OK, waiting (no grab/reinject)")
-                var boundDisplay = displayId
-                // 心跳保持关联；物理事件由系统直接送到虚拟屏
+                // 能力探测成功；同时清掉上次遗留的关联（覆盖后立即还给主屏）。之后按需绑定。
+                unbind()
+                lazyNative = true
+                probe("native associate OK, lazy mode (bind on input, release after ${IDLE_UNBIND_MS}ms idle)")
                 while (running && !Thread.currentThread().isInterrupted) {
-                    sleepQuiet(HEARTBEAT_MS)
-                    val nowDisplay = resolveDisplay()
-                    if (nowDisplay != boundDisplay || associatedDescriptor != desc) {
-                        if (bindDescriptorToDisplay(desc, nowDisplay)) {
-                            boundDisplay = nowDisplay
-                        }
-                    }
+                    sleepQuiet(HEARTBEAT_MS / 3)
+                    releaseIfIdle()
                 }
                 break
             }
@@ -155,27 +169,67 @@ object GamepadForwarder {
     private fun bindDescriptorToDisplay(descriptor: String?, displayId: Int): Boolean {
         if (descriptor.isNullOrEmpty() || displayId <= 0) return false
         val uniqueId = displayUniqueId(displayId) ?: return false
-        return try {
-            if (associatedDescriptor != null && associatedDescriptor != descriptor) {
-                unbind()
+        synchronized(bindLock) {
+            return try {
+                if (associatedDescriptor != null && associatedDescriptor != descriptor) {
+                    unbind()
+                }
+                ServiceManager.getInputManager().addUniqueIdAssociationByDescriptor(descriptor, uniqueId)
+                associatedDescriptor = descriptor
+                boundDisplayId = displayId
+                probe("associated $descriptor -> $uniqueId (display=$displayId)")
+                true
+            } catch (e: Exception) {
+                probe("associate failed: ${e.message}")
+                false
             }
-            ServiceManager.getInputManager().addUniqueIdAssociationByDescriptor(descriptor, uniqueId)
-            associatedDescriptor = descriptor
-            probe("associated $descriptor -> $uniqueId (display=$displayId)")
-            true
-        } catch (e: Exception) {
-            probe("associate failed: ${e.message}")
-            false
         }
     }
 
+    /**
+     * 还手柄给主屏。只 remove 不够：InputReader 里已配置的设备会一直缓存旧的关联屏，
+     * 所以先把它关联到主屏（触发刷新，且正是想要的状态），再移除关联项。
+     */
     private fun unbind() {
-        val desc = associatedDescriptor ?: return
-        associatedDescriptor = null
-        runCatching {
-            ServiceManager.getInputManager().removeUniqueIdAssociationByDescriptor(desc)
-            probe("removed association $desc")
+        synchronized(bindLock) {
+            val desc = associatedDescriptor ?: return
+            associatedDescriptor = null
+            boundDisplayId = -1
+            runCatching {
+                val im = ServiceManager.getInputManager()
+                displayUniqueId(0)?.let {
+                    im.addUniqueIdAssociationByDescriptor(desc, it)
+                    SystemClock.sleep(150)
+                }
+                im.removeUniqueIdAssociationByDescriptor(desc)
+                probe("released $desc to main display")
+            }.onFailure { probe("release failed: ${it.message}") }
         }
+    }
+
+    /**
+     * 按需关联：有摇杆/按键注入时才把手柄指到虚拟屏。非按需（uinput 兜底）模式下什么都不做。
+     * 同一时刻只关联一次；显示变了（VD 重建）则重绑。
+     */
+    private fun ensureBound(): Boolean {
+        if (!lazyNative) return true
+        lastUseMs = SystemClock.uptimeMillis()
+        synchronized(bindLock) {
+            val display = resolveDisplay()
+            val desc = findXboxDescriptor() ?: return false
+            if (associatedDescriptor == desc && boundDisplayId == display) return true
+            if (!bindDescriptorToDisplay(desc, display)) return false
+            SystemClock.sleep(BIND_SETTLE_MS)
+            return true
+        }
+    }
+
+    private fun releaseIfIdle() {
+        if (!lazyNative || associatedDescriptor == null) return
+        if (SystemClock.uptimeMillis() - lastUseMs < IDLE_UNBIND_MS) return
+        // 先回中，再还手柄（回中事件必须在仍关联虚拟屏时发，游戏才不会卡着摇杆）。
+        runCatching { injectAxes(0, 0, 0, 0, force = true) }
+        unbind()
     }
 
     private fun displayUniqueId(displayId: Int): String? =
@@ -384,6 +438,13 @@ object GamepadForwarder {
      */
     @JvmStatic
     fun injectAxes(lx: Int, ly: Int, rx: Int, ry: Int, force: Boolean = false): Boolean {
+        // Neutral never (re)binds: it must not grab the pad back from the main screen.
+        if (lx != 0 || ly != 0 || rx != 0 || ry != 0) {
+            if (!ensureBound()) {
+                probe("injectAxes: pad not bound to game display")
+                return false
+            }
+        }
         val path = findXboxNode() ?: run {
             probe("injectAxes: Xbox node missing")
             return false
@@ -411,6 +472,10 @@ object GamepadForwarder {
     @JvmStatic
     fun injectAndroidKey(androidKeyCode: Int, down: Boolean): Boolean {
         val linux = androidToLinux[androidKeyCode] ?: return false
+        if (!ensureBound()) {
+            probe("injectAndroidKey: pad not bound to game display key=$androidKeyCode")
+            return false
+        }
         val path = findXboxNode() ?: run {
             probe("injectAndroidKey: Xbox node missing key=$androidKeyCode")
             return false

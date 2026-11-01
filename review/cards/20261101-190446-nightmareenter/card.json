@@ -1,0 +1,43 @@
+{
+    "id": "20261101-190446-nightmareenter",
+    "created_at": "2026-11-01T11:04:46.680217+00:00",
+    "label": "NightmareEnter",
+    "note": "",
+    "expected_next": "战斗 / 加载",
+    "source_image": "review/inbox/20261101-190356-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1103,
+        661
+    ],
+    "roi": [
+        1043,
+        645,
+        125,
+        36
+    ],
+    "files": {
+        "screen": "review/cards/20261101-190446-nightmareenter/screen.png",
+        "preview": "review/cards/20261101-190446-nightmareenter/preview.png",
+        "template": "review/cards/20261101-190446-nightmareenter/template.png",
+        "card": "review/cards/20261101-190446-nightmareenter/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NightmareEnter.png",
+        "roi": [
+            1043,
+            645,
+            125,
+            36
+        ],
+        "target": [
+            1103,
+            661
+        ]
+    }
+}

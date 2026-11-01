@@ -18,6 +18,11 @@
     "option.TacetIndex.case3": "3 · 方擎西峰",
     "option.TacetIndex.case4": "4 · 玄幽东岳",
     "task.SkipDialog.label": "Skip Dialog (placeholder)",
-    "task.SkipDialog.description": "Phase-1 placeholder. Needs screenshots and a real Pipeline."
+    "task.SkipDialog.description": "Phase-1 placeholder. Needs screenshots and a real Pipeline.",
+    "task.Nest.label": "Nest (Echo / Nightmare)",
+    "task.Nest.description": "Guidebook → Materials → Echo Nest / Nightmare: OCR the first unfinished row (n/m with n=0) → Fast Travel / Direct Challenge → combat (quest bar says cleared) → absorb echoes → next. P1 skeleton, pending Odin acceptance.",
+    "option.NestKind.label": "Nest kind",
+    "option.NestKind.description": "Echo Nest: Go → Fast Travel (no confirm). Nightmare: Direct Challenge → Start Challenge on the team page (combat HUD TBD).",
+    "option.NestKind.case.Canxiang": "Echo Nest",
+    "option.NestKind.case.Nightmare": "Nightmare"
 }
-

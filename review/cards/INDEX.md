@@ -1,9 +1,18 @@
 # Touch Review Cards
 
-Updated: 2026-11-01T11:58:16
+Updated: 2026-11-01T19:04:46
 
 | id | label | click | roi | expected_next | note |
 | --- | --- | --- | --- | --- | --- |
+| `20261101-190446-nightmareenter` | NightmareEnter | `[1103, 661]` | `[1043, 645, 125, 36]` | 战斗 / 加载 |  |
+| `20261101-190309-nestabsorbdone` | NestAbsorbDone | `[69, 378]` | `[35, 347, 261, 64]` | 下一个聚落 / 结束 | 一次吸收吸走全部声骸，点击点无需点击 |
+| `20261101-185931-nestabsorbprompt` | NestAbsorbPrompt | `[881, 371]` | `[849, 349, 206, 44]` | 吸收完成 / 下一个声骸 | 出现在右侧，和宝箱/其他 F 提示共用同一位置。距离我无法判断 |
+| `20261101-185827-nestcombathud` | NestCombatHud | `[90, 206]` | `[33, 178, 180, 57]` | 战斗结束 / 吸收残象 | 没有计时器，通过左侧roi的文字判断，当“已击败残像：n/m”变成“明日更新”说明敌人全部消灭，战斗结束。点击点点击无反应，无需点击 |
+| `20261101-185042-nestteleport` | NestTeleport | `[1074, 669]` | `[1005, 652, 127, 35]` | 确认框 / 传送加载 / 到达聚落 | 没有确认框，点了直接传送 |
+| `20261101-184706-nestrow` | NestRow | `[1145, 543]` | `[682, 555, 45, 23]` | 传送键 / 确认框 | m是roi右侧数字，聚落已经到底无需继续向下滚动 |
+| `20261101-184336-nestrow` | NestRow | `[1146, 235]` | `[679, 249, 52, 24]` | 传送键 / 确认框 | m是roi右边的数字，需要滚动 |
+| `20261101-184221-nestrow` | NestRow | `[1147, 235]` | `[680, 248, 47, 25]` | 传送键 / 确认框 | m是roi右边的数字，已经滚到底，无需再乡下滚动 |
+| `20261101-184120-nestrow` | NestRow | `[1144, 237]` | `[680, 247, 57, 28]` | 传送键 / 确认框 | m取ROI中右边的数字；列表需要滚动 |
 | `20261101-115816-startupworldloadingbar` | StartupWorldLoadingBar | `[1207, 682]` | `[16, 660, 1236, 48]` | StartUpGameWait | 大世界加载读条，非更新下载条。基准 1280x720。有则禁止 PadWatch。点击点是个数字，变成100时读取完毕，或者数字消失读取完毕 |
 | `20261101-115006-startuploadingbar` | StartupLoadingBar | `[136, 661]` | `[60, 628, 1168, 57]` | StartUpGameWait | 有进度条则 DoNothing 回等待，不进 PadWatch。基准 1280x720。 |
 | `20261101-113824-solaguidebookopened` | SolaGuidebookOpened | `[50, 217]` | `[9, 187, 78, 61]` | GuidebookTacetTab | 成功验证节点：DoNothing。基准 1280x720。 |

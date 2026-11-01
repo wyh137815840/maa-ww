@@ -1,0 +1,43 @@
+{
+    "id": "20261101-184120-nestrow",
+    "created_at": "2026-11-01T10:41:20.200814+00:00",
+    "label": "NestRow",
+    "note": "m取ROI中右边的数字；列表需要滚动",
+    "expected_next": "传送键 / 确认框",
+    "source_image": "review/inbox/20261101-183915-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1144,
+        237
+    ],
+    "roi": [
+        680,
+        247,
+        57,
+        28
+    ],
+    "files": {
+        "screen": "review/cards/20261101-184120-nestrow/screen.png",
+        "preview": "review/cards/20261101-184120-nestrow/preview.png",
+        "template": "review/cards/20261101-184120-nestrow/template.png",
+        "card": "review/cards/20261101-184120-nestrow/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestRow.png",
+        "roi": [
+            680,
+            247,
+            57,
+            28
+        ],
+        "target": [
+            1144,
+            237
+        ]
+    }
+}

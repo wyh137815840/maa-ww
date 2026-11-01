@@ -1,0 +1,43 @@
+{
+    "id": "20261101-185931-nestabsorbprompt",
+    "created_at": "2026-11-01T10:59:31.519988+00:00",
+    "label": "NestAbsorbPrompt",
+    "note": "出现在右侧，和宝箱/其他 F 提示共用同一位置。距离我无法判断",
+    "expected_next": "吸收完成 / 下一个声骸",
+    "source_image": "review/inbox/20261101-185542-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        881,
+        371
+    ],
+    "roi": [
+        849,
+        349,
+        206,
+        44
+    ],
+    "files": {
+        "screen": "review/cards/20261101-185931-nestabsorbprompt/screen.png",
+        "preview": "review/cards/20261101-185931-nestabsorbprompt/preview.png",
+        "template": "review/cards/20261101-185931-nestabsorbprompt/template.png",
+        "card": "review/cards/20261101-185931-nestabsorbprompt/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestAbsorbPrompt.png",
+        "roi": [
+            849,
+            349,
+            206,
+            44
+        ],
+        "target": [
+            881,
+            371
+        ]
+    }
+}

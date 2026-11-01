@@ -12,6 +12,8 @@ import (
 const (
 	NodeCombatHasTarget = "CombatHasTarget"
 	NodeCombatEnemyHP   = "CombatEnemyHP"
+	// Popup shown when swapping onto a dead teammate (defined in Nest.json).
+	NodeCombatRevivePopup = "CombatRevivePopup"
 )
 
 // inCombat reports active combat (ok-ww style), with tighter rules than raw red pixels:
@@ -95,7 +97,9 @@ func waitForCombatHUD(ctx *maa.Context, ctrl *maa.Controller, tasker *maa.Tasker
 }
 
 // peekExit captures once and reports exit-node / settle hit without sleeping long.
-func peekExit(ctx *maa.Context, ctrl *maa.Controller, exitNodes []string) (bool, string) {
+// When tw is set it also feeds the countdown watch with the same frame and reports
+// "<timer node>:gone" once the HUD timer has been seen and then stayed absent.
+func peekExit(ctx *maa.Context, ctrl *maa.Controller, exitNodes []string, tw *timerWatch) (bool, string) {
 	if ctrl == nil {
 		return false, ""
 	}
@@ -104,5 +108,11 @@ func peekExit(ctx *maa.Context, ctrl *maa.Controller, exitNodes []string) (bool,
 	if err != nil || img == nil {
 		return false, ""
 	}
-	return anyExitHit(ctx, img, exitNodes)
+	if hit, name := anyExitHit(ctx, img, exitNodes); hit {
+		return true, name
+	}
+	if tw != nil && tw.observe(time.Now(), nodeHit(ctx, img, tw.node)) {
+		return true, tw.node + ":gone"
+	}
+	return false, ""
 }

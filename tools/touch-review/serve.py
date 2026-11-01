@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 import webbrowser
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -703,10 +704,11 @@ def main() -> int:
     print(f"touch-review UI: {url}")
     print(f"inbox: {cfg['inbox_dir']}")
     print(f"cards: {cfg['cards_dir']}")
-    try:
-        webbrowser.open(url)
-    except Exception:  # noqa: BLE001
-        pass
+    if "--no-browser" not in sys.argv:
+        try:
+            webbrowser.open(url)
+        except Exception:  # noqa: BLE001
+            pass
     server.serve_forever()
     return 0
 

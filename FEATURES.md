@@ -30,7 +30,7 @@
 | DomainTask | 副本 | todo |
 | ForgeryTask | 伪作 | todo |
 | SimulationTask | 模拟挑战 | todo |
-| NightmareNestTask | 梦魇巢穴（图鉴传送与聚落相关） | todo |
+| NightmareNestTask | 梦魇巢穴 / 残象聚落（任务 `Nest`，选项 NestKind）。P1 骨架已入库（`Nest.json`）：手册选未完成行 → 快速旅行/直接挑战 → CombatLoop（任务栏「已清剿」判结束）→ 吸收声骸；待补：梦魇战斗 HUD、列表到底判定、Go 搜声骸 | wip（未联调） |
 
 ## 第三期（声骸养成 / 周常）
 

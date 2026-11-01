@@ -455,6 +455,14 @@
             "TacetContinue"
         ]
     },
+    "TacetTimerOCR": {
+        "desc": "战斗中顶部居中的挑战倒计时（如 04:28:55）。仅供 Go CombatLoop RunRecognition，勿挂入口 next：见过后又消失 ≥12s = 挑战结束（20261101 实测：清完后计时消失，但 CombatHasTarget 误命中让循环空转 70s）。",
+        "recognition": "OCR",
+        "roi": [400, 40, 480, 160],
+        "expected": ["\\d{2}:\\d{2}"],
+        "action": "DoNothing",
+        "next": []
+    },
     "TacetNeedSettle": {
         "desc": "占位已禁用：勿用 DirectHit 提前结束。结算走 ChallengeComplete/Claim* / Exit。",
         "recognition": "DirectHit",

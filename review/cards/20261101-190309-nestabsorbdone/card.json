@@ -1,0 +1,43 @@
+{
+    "id": "20261101-190309-nestabsorbdone",
+    "created_at": "2026-11-01T11:03:09.540246+00:00",
+    "label": "NestAbsorbDone",
+    "note": "一次吸收吸走全部声骸，点击点无需点击",
+    "expected_next": "下一个聚落 / 结束",
+    "source_image": "review/inbox/20261101-190025-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        69,
+        378
+    ],
+    "roi": [
+        35,
+        347,
+        261,
+        64
+    ],
+    "files": {
+        "screen": "review/cards/20261101-190309-nestabsorbdone/screen.png",
+        "preview": "review/cards/20261101-190309-nestabsorbdone/preview.png",
+        "template": "review/cards/20261101-190309-nestabsorbdone/template.png",
+        "card": "review/cards/20261101-190309-nestabsorbdone/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestAbsorbDone.png",
+        "roi": [
+            35,
+            347,
+            261,
+            64
+        ],
+        "target": [
+            69,
+            378
+        ]
+    }
+}

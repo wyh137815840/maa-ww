@@ -7,8 +7,12 @@
 在仓库根目录 `D:\git\maa-ww`：
 
 ```bat
-REM 0) 短时 UI：桌面打开「鸣潮快截服务.bat」，保持黑窗，按 Ctrl+Alt+空格 秒截
-REM    成功会哔一声，文件进 review/inbox/*-snap.png（只截游戏层，比双击 bat 快）
+REM 0) 快截服务（奥丁）：python tools\touch-review\snap_service.py（或 start_snap_service.bat），保持运行
+REM    按 Ctrl+Alt+空格：截奥丁当前屏 → review/inbox/*-snap.png，并自动生成「待标注」卡片
+REM    （卡片说明取自 review/snap_session.json，由 agent 按场景更新；首次截图自动打开标注页）
+REM    哔一声=成功；低哔=失败。截到全黑会报错不入库：奥丁息屏，或游戏在 MaaWW 虚拟显示上
+REM    （screencap 截不到虚拟显示）——先停 MaaWW 任务，让游戏在主屏前台。
+REM    测试不用热键：python tools\touch-review\snap_service.py --once
 
 REM 1) 截一张当前模拟器画面（默认连 config.json 的 serial，内部 1280x720）
 REM    MuMu 安卓15 上会优先截 mumuscreen001（游戏层），避免截到桌面

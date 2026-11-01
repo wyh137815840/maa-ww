@@ -2,6 +2,7 @@ package combat
 
 import (
 	"encoding/json"
+	"fmt"
 	"image"
 	"time"
 
@@ -21,6 +22,9 @@ type combatLoopParam struct {
 	LockEveryN        int      `json:"lock_every_n"` // 0 = only lock at start / retarget (ok-ww style)
 	RetargetTimeoutMs int64    `json:"retarget_timeout_ms"`
 	ExitCheckEveryN   int      `json:"exit_check_every_n"` // settle scan cadence; default 4 rounds
+	// Countdown watch (see timer_watch.go): leave when the HUD timer was seen, then is gone this long.
+	TimerNode   string `json:"timer_node"`
+	TimerGoneMs int64  `json:"timer_gone_ms"`
 }
 
 func defaultCombatLoopParam() combatLoopParam {
@@ -37,6 +41,8 @@ func defaultCombatLoopParam() combatLoopParam {
 		LockEveryN:        0, // was 3 — periodic R3 makes combat stutter
 		RetargetTimeoutMs: 4000,
 		ExitCheckEveryN:   4,
+		TimerNode:         "TacetTimerOCR",
+		TimerGoneMs:       12000,
 	}
 }
 
@@ -67,6 +73,16 @@ func parseCombatLoopParam(raw string) combatLoopParam {
 	}
 	if override.ExitCheckEveryN > 0 {
 		p.ExitCheckEveryN = override.ExitCheckEveryN
+	}
+	var rawMap map[string]json.RawMessage
+	if json.Unmarshal([]byte(raw), &rawMap) == nil {
+		// Present-but-empty timer_node (or 0 ms) explicitly disables the watch.
+		if _, ok := rawMap["timer_node"]; ok {
+			p.TimerNode = override.TimerNode
+		}
+		if _, ok := rawMap["timer_gone_ms"]; ok {
+			p.TimerGoneMs = override.TimerGoneMs
+		}
 	}
 	return p
 }
@@ -112,10 +128,16 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		Int64("max_duration_ms", param.MaxDurationMs).
 		Int("lock_every_n", param.LockEveryN).
 		Int("exit_check_every_n", param.ExitCheckEveryN).
+		Str("timer_node", param.TimerNode).
+		Int64("timer_gone_ms", param.TimerGoneMs).
 		Msg("CombatLoop: start")
+	timer := newTimerWatch(param.TimerNode, time.Duration(param.TimerGoneMs)*time.Millisecond)
 
 	pad := NewPad(ctrl)
 	slot := 0
+	team := teamState{Current: -1}
+	lastTeamLog := ""
+	preSwapDumps := 0
 	rounds := 0
 	enteredCombat := false
 	deadline := time.Now().Add(time.Duration(param.MaxDurationMs) * time.Millisecond)
@@ -143,7 +165,7 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			lastExitRound = rounds
 		}
 		lastExitCheck = time.Now()
-		hit, name := peekExit(ctx, ctrl, param.ExitNodes)
+		hit, name := peekExit(ctx, ctrl, param.ExitNodes, timer)
 		if hit {
 			log.Info().Str("node", name).Msg("CombatLoop: exit during perform")
 			return true
@@ -166,7 +188,7 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 				lastExitRound = rounds
 			}
 			lastExitCheck = time.Now()
-			if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
+			if hit, name := peekExit(ctx, ctrl, param.ExitNodes, timer); hit {
 				log.Info().Str("node", name).Msg("CombatLoop: exit node hit")
 				return true
 			}
@@ -180,13 +202,22 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			continue
 		}
 
+		// Switching onto a fallen teammate opens "选择复苏物品": close it (A = back), never confirm items.
+		if nodeHit(ctx, img, NodeCombatRevivePopup) {
+			log.Warn().Msg("CombatLoop: revive item popup, closing with A")
+			dumpDebugFrame(img, "revive_popup")
+			pad.Click(KeyJump)
+			time.Sleep(500 * time.Millisecond)
+			continue
+		}
+
 		combatNow := inCombat(ctx, img)
 		if combatNow {
 			enteredCombat = true
 		} else {
 			ok := ensureInCombat(ctx, ctrl, pad, retargetTO)
 			if !ok {
-				if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
+				if hit, name := peekExit(ctx, ctrl, param.ExitNodes, timer); hit {
 					log.Info().Str("node", name).Msg("CombatLoop: exit node hit after retarget fail")
 					return true
 				}
@@ -205,7 +236,35 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			time.Sleep(60 * time.Millisecond)
 		}
 
-		next, aborted := NewBaseChar(pad, slot).Perform(stop)
+		team = readTeam(img, &team)
+		if logTeamChange(&lastTeamLog, team) && team.aliveCount() < 3 {
+			dumpDebugFrame(img, "team_dead")
+		}
+		if team.Current >= 0 && team.Current != slot {
+			log.Info().Int("tracked", slot).Int("hud", team.Current).Msg("CombatLoop: slot resync from HUD")
+			slot = team.Current
+		}
+
+		char := NewBaseChar(pad, slot)
+		char.pickNext = func(cur int) int {
+			// Fresh frame: a teammate may have died during this rotation.
+			ctrl.PostScreencap().Wait()
+			if fresh, err := ctrl.CacheImage(); err == nil && fresh != nil {
+				team = readTeam(fresh, &team)
+			}
+			n := team.nextAlive(cur)
+			if preSwapDumps < 8 {
+				preSwapDumps++
+				if fresh, err := ctrl.CacheImage(); err == nil {
+					dumpDebugFrame(fresh, fmt.Sprintf("preswap_%d_to%d", cur, n))
+				}
+			}
+			if n != (cur+1)%3 {
+				log.Info().Int("from", cur).Int("to", n).Msg("CombatLoop: skipped dead teammate")
+			}
+			return n
+		}
+		next, aborted := char.Perform(stop)
 		slot = next
 		rounds++
 		if aborted {

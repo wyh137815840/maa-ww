@@ -1,0 +1,456 @@
+{
+    "NestMain": {
+        "desc": "聚落（残象聚落 / 梦魇祛除）入口。状态驱动：吸收提示 → 战斗中 → 大世界开手册 → 手册 → 页签 → 选行 → 传送/挑战 → 战斗 → 吸收 → 回本入口找下一个。界面情报见 review/cards/*nest* / *nightmare*（P1 骨架，Go 搜声骸/列表到底判定在 P2）。",
+        "next": [
+            "NestCloseRevivePopup",
+            "NestAbsorbPrompt",
+            "NestInCombat",
+            "NestOpenGuidebookFromWorld",
+            "NestOpenGuidebook",
+            "NestSolaTile",
+            "NestSolaTileOCR",
+            "NestDismissActivity",
+            "NestSolaExtra",
+            "NestSolaOpened",
+            "NestTabCanxiang",
+            "NestTabNightmare"
+        ]
+    },
+    "NestOpenGuidebookFromWorld": {
+        "desc": "大世界（认小地图）后点右上 Terminal。同 OpenGuidebookFromWorld，但 next 进聚落链（禁止走无音区页签）。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 10, 200, 180],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.55,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestSolaTile",
+            "NestSolaTileOCR",
+            "NestDismissActivity",
+            "NestSolaExtra",
+            "NestSolaOpened"
+        ]
+    },
+    "NestOpenGuidebook": {
+        "desc": "手柄态顶栏 Terminal 图标（同 OpenGuidebook，next 进聚落链）。",
+        "recognition": "TemplateMatch",
+        "roi": [1180, 0, 100, 80],
+        "template": "Guidebook/OpenGuidebookPad.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestSolaTile",
+            "NestSolaTileOCR",
+            "NestDismissActivity",
+            "NestSolaExtra",
+            "NestSolaOpened"
+        ]
+    },
+    "NestSolaTile": {
+        "desc": "Terminal「索拉指南」磁贴（同 SolaGuidebookTile，next 进聚落链）。",
+        "recognition": "TemplateMatch",
+        "roi": [560, 450, 160, 180],
+        "template": "Guidebook/SolaGuidebookTile.png",
+        "threshold": 0.65,
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestDismissActivity",
+            "NestSolaExtra",
+            "NestSolaOpened"
+        ]
+    },
+    "NestSolaTileOCR": {
+        "desc": "「索拉指南」OCR 兜底；点击固定 634,499。",
+        "recognition": "OCR",
+        "roi": [560, 450, 160, 180],
+        "expected": ["索拉指南"],
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestDismissActivity",
+            "NestSolaExtra",
+            "NestSolaOpened"
+        ]
+    },
+    "NestDismissActivity": {
+        "desc": "点索拉后落在「活跃行迹」：先点左栏双剑(51,214)进素材获取。",
+        "recognition": "OCR",
+        "roi": [0, 0, 700, 120],
+        "expected": ["活跃行迹", "活跃度", "周度游历"],
+        "action": "Click",
+        "target": [51, 214],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestSolaOpened",
+            "NestSolaExtra",
+            "NestDismissActivity"
+        ]
+    },
+    "NestSolaExtra": {
+        "desc": "手柄态点索拉指南后的额外一步：点左侧双剑/素材图标（51,214）。",
+        "recognition": "TemplateMatch",
+        "roi": [0, 160, 120, 120],
+        "template": "Guidebook/SolaGuidebookExtra.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [51, 214],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestSolaOpened",
+            "NestDismissActivity"
+        ]
+    },
+    "NestSolaOpened": {
+        "desc": "素材获取已打开：认左侧子项文案。命中后选页签（残象聚落 / 梦魇祛除，由任务选项 NestKind 启用其一）。",
+        "recognition": "OCR",
+        "roi": [60, 200, 340, 420],
+        "expected": ["模拟领域", "凝素领域", "讨伐强敌", "战歌重奏", "无音清剿", "无音清则", "残象聚落", "梦魇祛除"],
+        "action": "DoNothing",
+        "next": [
+            "NestTabCanxiang",
+            "NestTabNightmare",
+            "NestLeftListSwipe"
+        ]
+    },
+    "NestTabCanxiang": {
+        "desc": "素材获取左栏「残象聚落」页签。位置随左栏滚动变化，用 OCR 点文字（ROI 只含左栏，避开右侧「残象聚落·梦州」分区标题）。审查卡 20261101-184120-nestrow。",
+        "recognition": "OCR",
+        "roi": [110, 90, 350, 560],
+        "expected": ["残象聚落"],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 6000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestListScan"
+        ]
+    },
+    "NestTabNightmare": {
+        "desc": "素材获取左栏「梦魇祛除」页签（默认被「残象聚落」下方挤出屏幕，需先 NestLeftListSwipe）。默认关闭，任务选项 NestKind=Nightmare 启用。审查卡 20261101-184706-nestrow。",
+        "enabled": false,
+        "recognition": "OCR",
+        "roi": [110, 90, 350, 560],
+        "expected": ["梦魇祛除", "梦魇拔除"],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 6000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestListScan"
+        ]
+    },
+    "NestLeftListSwipe": {
+        "desc": "左栏上划一页，露出「梦魇祛除」。仅梦魇模式启用；到底后继续划无副作用，有 max_hit 上限。",
+        "enabled": false,
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [280, 560],
+                "end": [280, 280],
+                "end_hold": 200,
+                "duration": 400
+            }
+        },
+        "post_delay": 400,
+        "timeout": 6000,
+        "next": [
+            "NestTabNightmare",
+            "NestLeftListSwipe"
+        ]
+    },
+    "NestListScan": {
+        "desc": "页签列表页：找未完成行（n/m 中 n==0），没有则上划再找，划到上限仍没有则视为全部完成。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "post_delay": 300,
+        "timeout": 15000,
+        "next": [
+            "NestPickRow",
+            "NestListSwipe"
+        ],
+        "on_error": [
+            "NestAllDone"
+        ]
+    },
+    "NestPickRow": {
+        "desc": "OCR 列表右侧「n/m」数字列，选未完成（n≠m，含打了一半的 5/48）的行：点同一行右侧按钮（残象=前往 / 梦魇=直接挑战）。ROI 只含数字列（x≈680-737），OCR 框中心约 (708,y+14)，按钮中心约 (1146,y-10)，偏移 [438,-24]。卡 184120/184221/184336（残象）、184706（梦魇）。正则避免 10/48、20/36 误判。",
+        "recognition": "OCR",
+        "roi": [676, 145, 90, 500],
+        "expected": ["(?:^|\\D)(\\d+)/(?!\\1\\b)\\d+"],
+        "order_by": "Vertical",
+        "action": "Click",
+        "target_offset": [438, -24, 0, 0],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestTeleport",
+            "NestStartChallenge"
+        ]
+    },
+    "NestListSwipe": {
+        "desc": "右侧列表上划一页（按需露出下方聚落）。上限用 max_hit；耗尽后 NestListScan/本节点超时 → NestAllDone。",
+        "max_hit": 30,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [860, 600],
+                "end": [860, 300],
+                "end_hold": 200,
+                "duration": 400
+            }
+        },
+        "post_delay": 500,
+        "timeout": 6000,
+        "next": [
+            "NestPickRow",
+            "NestListSwipe"
+        ],
+        "on_error": [
+            "NestAllDone"
+        ]
+    },
+    "NestTeleport": {
+        "desc": "残象聚落：点「前往」后的地图页右下「快速旅行」。没有确认框，点后直接传送，落地即进战斗。卡 20261101-185042-nestteleport（ROI 1005,652,127,35 / 点 1074,669）。传送失败/不可达：超时回 NestTeleportFailed。",
+        "recognition": "OCR",
+        "roi": [980, 640, 200, 60],
+        "expected": ["快速旅行"],
+        "action": "Click",
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 10000,
+            "threshold": 0.95
+        },
+        "timeout": 120000,
+        "next": [
+            "NestInCombat",
+            "NestClearedOCR",
+            "NestApproach"
+        ],
+        "on_error": [
+            "NestTeleportFailed"
+        ]
+    },
+    "NestApproach": {
+        "desc": "残象聚落传送落地后离敌人还有一段距离（20261101 实测：落渊南丘落地无敌人、无清剿任务栏），需向正前方走，走到任务栏「清剿残象聚落」出现再交给 NestInCombat。识别=大世界左下 HUD「地图」文字（读条结束才出现；小地图模板在聚落附近只有 0.22，不可用），动作=Go NestApproach（左摇杆前推，每 0.5s 看一次任务栏，最多 15s：首个聚落约 10s 到达，90s 盲走会走进海里）。梦魇传送后直接看到敌人，不走这里。",
+        "recognition": "OCR",
+        "roi": [20, 660, 140, 50],
+        "expected": ["地图"],
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "NestApproach",
+                "custom_action_param": {
+                    "gate_nodes": [
+                        "NestInCombat"
+                    ],
+                    "timeout_ms": 15000,
+                    "step_ms": 900,
+                    "forward": 30000,
+                    "check_ms": 500
+                }
+            }
+        },
+        "timeout": 25000,
+        "next": [
+            "NestInCombat",
+            "NestClearedOCR"
+        ],
+        "on_error": [
+            "NestTeleportFailed"
+        ]
+    },
+    "NestTeleportFailed": {
+        "desc": "待补（P3）：传送超时/不可达。先按 A 返回列表页；并没有「本轮不可达」去重，P2 Go 补。当前直接结束，避免死循环。",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 96
+            }
+        },
+        "next": []
+    },
+    "NestStartChallenge": {
+        "desc": "梦魇祛除：点「直接挑战」后的编队页右下「开启挑战」（与无音区同一界面，同模板）。卡 20261101-190446-nightmareenter（ROI 1043,645,125,36 / 点 1103,661）。",
+        "recognition": "TemplateMatch",
+        "roi": [960, 600, 280, 110],
+        "template": "Guidebook/TacetStartChallenge.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [1103, 661],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 15000,
+            "threshold": 0.95
+        },
+        "timeout": 120000,
+        "next": [
+            "NestInCombat",
+            "NestClearedOCR"
+        ]
+    },
+    "NestInCombat": {
+        "desc": "聚落战斗门槛：左上任务栏「清剿残象聚落 / 已击败残象: n/m」。命中后进 CombatLoop，由「残象聚落已清剿 / 明日刷新」判结束（无倒计时，timer_node 置空）。卡 20261101-185827-nestcombathud。梦魇战斗 HUD 文案待补（P0 缺图）。",
+        "recognition": "OCR",
+        "roi": [20, 170, 320, 80],
+        "expected": ["清剿残象聚落", "已击败残象", "清理聚落", "聚落中的残象"],
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatLoop",
+                "custom_action_param": {
+                    "exit_nodes": [
+                        "NestClearedOCR"
+                    ],
+                    "max_duration_ms": 900000,
+                    "hud_node": "InTacetCombat",
+                    "lock_every_n": 0,
+                    "retarget_timeout_ms": 4000,
+                    "timer_node": ""
+                }
+            }
+        },
+        "timeout": 960000,
+        "next": [
+            "NestClearedOCR",
+            "NestInCombat"
+        ]
+    },
+    "NestClearedOCR": {
+        "desc": "战斗结束信号：左上任务栏变成「残象聚落已清剿 / 明日刷新」。也是 CombatLoop 的 exit 节点。命中后等「吸收」提示（声骸掉落需要时间），15s 内没出现 → NestAfterAbsorb。卡 20261101-185827-nestcombathud 备注。",
+        "recognition": "OCR",
+        "roi": [20, 170, 320, 80],
+        "expected": ["已清剿", "明日刷新"],
+        "action": "DoNothing",
+        "timeout": 60000,
+        "next": [
+            "NestAbsorbPrompt",
+            "NestAbsorbSearch"
+        ],
+        "on_error": [
+            "NestAfterAbsorb"
+        ]
+    },
+    "NestAbsorbPrompt": {
+        "desc": "声骸旁「B 吸收」提示。按手柄 B（Interact，keycode 97，同 TacetClaimReward）；一次吸走全部声骸。卡 20261101-185931（ROI 849,349,206,44，提示在角色右侧），搜声骸/走近在 P2 Go。提示仍在则再按（max_hit 防死循环）。",
+        "max_hit": 40,
+        "recognition": "OCR",
+        "roi": [760, 250, 380, 260],
+        "expected": ["吸收"],
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 97
+            }
+        },
+        "post_wait_freezes": {
+            "time": 700,
+            "timeout": 6000,
+            "threshold": 0.95
+        },
+        "next": [
+            "NestAbsorbPrompt",
+            "NestAfterAbsorb"
+        ]
+    },
+    "NestAfterAbsorb": {
+        "desc": "吸收完成（提示消失，左侧弹出套装获得弹框，卡 20261101-190309-nestabsorbdone；弹框仅作参考不强依赖）。留出弹框消失时间后回入口，找下一个聚落。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "pre_delay": 1500,
+        "next": [
+            "NestMain"
+        ]
+    },
+    "NestAllDone": {
+        "desc": "没有未完成的聚落（或列表上划到上限）。待补：关闭手册回大世界（P3）。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    },
+    "NestCloseRevivePopup": {
+        "desc": "大世界残留的「选择复苏物品」框（上一次战斗切到阵亡队友时弹出）：按 A 关闭后回 NestMain。",
+        "recognition": "OCR",
+        "expected": ["选择复苏物品", "复苏物品"],
+        "roi": [225, 120, 260, 45],
+        "action": "ClickKey",
+        "key": 96,
+        "post_delay": 600,
+        "next": ["NestMain"]
+    },
+    "CombatRevivePopup": {
+        "desc": "战斗中切人切到阵亡队友时弹出的「选择复苏物品」框（20261101 实测，标题在对话框左上）。CombatLoop 每轮检测，命中就按 A 关闭，绝不确认以免消耗复苏道具。正常情况下 Go 的阵亡槽位跳过逻辑不会触发它。",
+        "recognition": "OCR",
+        "expected": ["选择复苏物品", "复苏物品"],
+        "roi": [225, 120, 260, 45],
+        "action": "DoNothing"
+    },
+    "NestAbsorbSearch": {
+        "desc": "清剿后没有「吸收」提示：声骸掉在敌人死亡的位置（用户确认），即战斗发生的地方附近。Go NestAbsorbSearch：原地转镜头一圈（右摇杆，每片后停看），再向前走 1.2s，循环，最多 45s；一看到提示就停下，交给 NestAbsorbPrompt 按 B。45s 仍没有 → NestAfterAbsorb（跳过本聚落）。注意：20261101 实测落点在水边，截图见 tools/_shots/nest_cleared_fail.png。",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "NestAbsorbSearch",
+                "custom_action_param": {
+                    "prompt_nodes": [
+                        "NestAbsorbPrompt"
+                    ],
+                    "timeout_ms": 45000,
+                    "scan_steps": 8,
+                    "yaw_full_ms": 3000,
+                    "yaw_deflect": 20000,
+                    "walk_ms": 1200
+                }
+            }
+        },
+        "timeout": 55000,
+        "next": [
+            "NestAbsorbPrompt"
+        ],
+        "on_error": [
+            "NestAfterAbsorb"
+        ]
+    }
+}

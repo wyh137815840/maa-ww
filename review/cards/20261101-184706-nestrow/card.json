@@ -1,0 +1,43 @@
+{
+    "id": "20261101-184706-nestrow",
+    "created_at": "2026-11-01T10:47:07.121483+00:00",
+    "label": "NestRow",
+    "note": "m是roi右侧数字，聚落已经到底无需继续向下滚动",
+    "expected_next": "传送键 / 确认框",
+    "source_image": "review/inbox/20261101-184600-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1145,
+        543
+    ],
+    "roi": [
+        682,
+        555,
+        45,
+        23
+    ],
+    "files": {
+        "screen": "review/cards/20261101-184706-nestrow/screen.png",
+        "preview": "review/cards/20261101-184706-nestrow/preview.png",
+        "template": "review/cards/20261101-184706-nestrow/template.png",
+        "card": "review/cards/20261101-184706-nestrow/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/NestRow.png",
+        "roi": [
+            682,
+            555,
+            45,
+            23
+        ],
+        "target": [
+            1145,
+            543
+        ]
+    }
+}
