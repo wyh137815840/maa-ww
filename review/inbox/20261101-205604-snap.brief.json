@@ -1,0 +1,22 @@
+{
+    "image": "20261101-205604-snap.png",
+    "updated_at": "2026-11-01T12:56:05.819925+00:00",
+    "title": "日常·活跃行迹页：点一次「领取」之后",
+    "goal": "点任意一行的「领取」会一次领完所有行，之后界面会显示活跃度（是否到 100）。截点完之后的画面：活跃度数字变成多少、有没有弹窗、底部宝箱的状态。",
+    "steps": [
+        "截图前在 note 写：点的是第几行的「领取」，点完有没有弹窗，活跃度变成多少",
+        "ROI：框住底部「活跃度」的数字（用来判断是否到 100，label 填 DailyPoints）",
+        "ROI：另存一张框「100 宝箱」（label 填 DailyChest100，点击点=宝箱中心），note 写它此刻是可领 / 未达成 / 已领",
+        "本张 label 填 DailyAfterClaim"
+    ],
+    "suggested_label": "DailyAfterClaim",
+    "suggested_expected_next": "DailyChest100 / 关闭弹窗",
+    "suggested_note": "",
+    "do_not": [
+        "先不要点底部 20/40/60/80/100 的宝箱，下一张单独拍",
+        "不要框整张图，只框要识别的小区域"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-205748-dailyafterclaim",
+    "exported_at": "2026-11-01T12:57:48.307491+00:00"
+}

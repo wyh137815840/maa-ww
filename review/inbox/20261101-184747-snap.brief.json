@@ -1,0 +1,22 @@
+{
+    "image": "20261101-184747-snap.png",
+    "updated_at": "2026-11-01T10:47:48.087681+00:00",
+    "title": "聚落·点「前往」后的地图页 · 快速旅行键",
+    "goal": "点残象聚落「前往」后进入的地图页（右侧聚落详情，右下角「快速旅行」按钮）：框出「快速旅行」按钮并点它；这张用来写 NestTeleport。",
+    "steps": [
+        "ROI：框住右下角「快速旅行」按钮（含 B 图标）",
+        "点击点：按钮中心",
+        "label 填 NestTeleport；note 写明点后是否弹确认框"
+    ],
+    "suggested_label": "NestTeleport",
+    "suggested_expected_next": "确认框 / 传送加载 / 到达聚落",
+    "suggested_note": "",
+    "do_not": [
+        "不要点手册里的「无音清剿」",
+        "不要点任务栏的「清理聚落中的残象」",
+        "不要真的确认传送到危险位置时再截——先截再点"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-185042-nestteleport",
+    "exported_at": "2026-11-01T10:50:42.321938+00:00"
+}

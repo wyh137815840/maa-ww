@@ -1,0 +1,21 @@
+{
+    "image": "20261101-205753-snap.png",
+    "updated_at": "2026-11-01T12:57:54.576487+00:00",
+    "title": "日常·活跃行迹页：领取按钮（点之前）",
+    "goal": "标出点哪里领取：框住那个「领取」按钮（点一次就会全部领取），点击点放在按钮中心。这是点之前的画面。",
+    "steps": [
+        "ROI：框住你要点的那个「领取」按钮",
+        "点击点：按钮中心",
+        "label 填 DailyClaimButton；note 写点的是第几行，以及为什么选它（比如固定第一行最稳）"
+    ],
+    "suggested_label": "DailyClaimButton",
+    "suggested_expected_next": "点完之后的画面（下一张 DailyAfterClaim）",
+    "suggested_note": "",
+    "do_not": [
+        "本张不要点领取，只标位置",
+        "不要框整张图，只框要点的按钮"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-210208-dailyclaimbutton",
+    "exported_at": "2026-11-01T13:02:08.212426+00:00"
+}

@@ -1,0 +1,20 @@
+{
+    "image": "20261101-190025-snap.png",
+    "updated_at": "2026-11-01T11:00:27.449841+00:00",
+    "title": "聚落·吸收完成后（左侧获得弹框）",
+    "goal": "按 B 吸收后：「吸收」提示已消失，左侧出现声骸套装获得弹框（套装名 + 属性加成）。框出弹框用于判断吸收成功，这张用来写 NestAbsorbDone。",
+    "steps": [
+        "ROI：框住左侧套装获得弹框",
+        "label 填 NestAbsorbDone；note 写：弹框停留多久、一次吸收是否吸走全部声骸"
+    ],
+    "suggested_label": "NestAbsorbDone",
+    "suggested_expected_next": "下一个聚落 / 结束",
+    "suggested_note": "",
+    "do_not": [
+        "不要在还没有声骸时截图",
+        "不要点任何按钮"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-190309-nestabsorbdone",
+    "exported_at": "2026-11-01T11:03:09.557538+00:00"
+}

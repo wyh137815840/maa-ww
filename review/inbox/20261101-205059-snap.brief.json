@@ -1,0 +1,18 @@
+{
+    "image": "20261101-205059-snap.png",
+    "updated_at": "2026-11-01T12:51:00.200198+00:00",
+    "title": "日常·活跃行迹页（索拉指南落地页）",
+    "goal": "写 DailyClaim：在手册「活跃行迹」页领取日常活跃度奖励。这一张先看清页面：当前活跃度数字在哪、可领取的奖励/按钮在哪。点开 Terminal → 索拉指南后落地的那一页，不要点任何东西。",
+    "steps": [
+        "ROI：框住「当前活跃度 n/100」的数字（用于判断有没有到 100）",
+        "ROI：另存一张框「可领取按钮 / 奖励宝箱」（label 填 DailyClaimButton，点击点=按钮中心），note 写按钮文字",
+        "label 填 DailyPage（本张），note 写这页怎么确认「就是活跃行迹页」（标题文字？）"
+    ],
+    "suggested_label": "DailyPage",
+    "suggested_expected_next": "DailyClaimButton",
+    "suggested_note": "",
+    "do_not": [
+        "不要点任何按钮（先别领取）",
+        "不要框整张图，只框要识别的小区域"
+    ]
+}

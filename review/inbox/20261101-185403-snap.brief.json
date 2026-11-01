@@ -1,0 +1,21 @@
+{
+    "image": "20261101-185403-snap.png",
+    "updated_at": "2026-11-01T10:54:04.694520+00:00",
+    "title": "聚落·战斗中的 HUD",
+    "goal": "进入聚落战斗后的画面：框出 HUD 上能判断「正在战斗 / 战斗结束」的元素（顶部计数或计时、残象数量、血条、目标提示等），并点一下安全的空白处作为点击占位。这张用来写 NestCombatHud。",
+    "steps": [
+        "ROI 1：框住最能代表「还在战斗」的 HUD 元素（如顶部的击败数 / 计时 / 目标提示）",
+        "如果 HUD 上有多个，优先框文字（便于 OCR），note 里列出其余元素的位置",
+        "label 填 NestCombatHud；note 写明：这是战斗中的哪一阶段，战斗结束后该元素是否消失"
+    ],
+    "suggested_label": "NestCombatHud",
+    "suggested_expected_next": "战斗结束 / 吸收残象",
+    "suggested_note": "",
+    "do_not": [
+        "不要在过场动画 / 加载中截图",
+        "不要截战斗结算界面（那是另一张）"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-185827-nestcombathud",
+    "exported_at": "2026-11-01T10:58:28.160316+00:00"
+}

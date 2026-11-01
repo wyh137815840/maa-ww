@@ -1,0 +1,21 @@
+{
+    "image": "20261101-185542-snap.png",
+    "updated_at": "2026-11-01T10:55:44.742467+00:00",
+    "title": "聚落·声骸掉落后的「吸收」提示",
+    "goal": "残象被击败、声骸掉落后，画面上出现的「吸收」交互提示（带 F/B 按钮图标）：框出提示文字「吸收」，并尽量让提示位置清楚可见。这张用来写 NestAbsorbPrompt / AbsorbEcho。",
+    "steps": [
+        "ROI：框住「吸收」提示文字（含按钮图标更好，但文字要完整）",
+        "点击点：提示中心（占位；实际吸收走手柄 B 键）",
+        "label 填 NestAbsorbPrompt；note 写明：提示出现在屏幕哪一侧、需要走到离声骸多近才出现、是否和宝箱/其他 F 提示共用同一位置"
+    ],
+    "suggested_label": "NestAbsorbPrompt",
+    "suggested_expected_next": "吸收完成 / 下一个声骸",
+    "suggested_note": "",
+    "do_not": [
+        "不要在还没有声骸时截图",
+        "不要点任何按钮"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-185931-nestabsorbprompt",
+    "exported_at": "2026-11-01T10:59:31.536164+00:00"
+}

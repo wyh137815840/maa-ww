@@ -1,0 +1,17 @@
+{
+    "image": "20261101-190022-snap.png",
+    "updated_at": "2026-11-01T11:00:24.088229+00:00",
+    "title": "聚落·吸收中（按 B 后动画）",
+    "goal": "按 B 吸收后的动画帧：多团金色声骸被吸入，左侧弹框正在滑入。仅供参考，通常不需要标注。",
+    "steps": [
+        "ROI：框住左侧套装获得弹框",
+        "label 填 NestAbsorbDone；note 写：弹框停留多久、一次吸收是否吸走全部声骸"
+    ],
+    "suggested_label": "NestAbsorbDone",
+    "suggested_expected_next": "下一个聚落 / 结束",
+    "suggested_note": "",
+    "do_not": [
+        "不要在还没有声骸时截图",
+        "不要点任何按钮"
+    ]
+}

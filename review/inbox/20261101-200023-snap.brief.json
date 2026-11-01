@@ -1,0 +1,18 @@
+{
+    "image": "20261101-200023-snap.png",
+    "updated_at": "2026-11-01T12:00:25.179172+00:00",
+    "title": "聚落·梦魇祛除点「直接挑战」之后 #2",
+    "goal": "梦魇祛除页签点某行「直接挑战」后出现的第一个界面（编队页 / 确认框 / 直接进战斗加载）：框出需要点的按钮或能识别该界面的文字。这张用来写 NightmareEnter。",
+    "steps": [
+        "ROI：框住该界面上要点击的按钮文字（或标题）",
+        "点击点：按钮中心；若直接进入加载则无需点击，note 写明",
+        "label 填 NightmareEnter；note 写明点完后是否直接进战斗"
+    ],
+    "suggested_label": "NightmareEnter",
+    "suggested_expected_next": "战斗 / 加载",
+    "suggested_note": "",
+    "do_not": [
+        "不要在还没有声骸时截图",
+        "不要点任何按钮"
+    ]
+}

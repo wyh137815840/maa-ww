@@ -1,0 +1,21 @@
+{
+    "image": "20261101-184600-snap.png",
+    "updated_at": "2026-11-01T10:46:00.939491+00:00",
+    "title": "聚落·手册「残象聚落」页签 #5",
+    "goal": "手册 → 素材获取 → 残象聚落：框出列表里一行「n/m」计数和同一行右侧「前往」按钮；这张用来写 PickNest。",
+    "steps": [
+        "ROI 1：框住一行的 n/m 计数（含数字）",
+        "点击点：同一行右侧「前往」按钮中心",
+        "label 填 NestRow；note 写明 m 的取值和列表是否需要滚动"
+    ],
+    "suggested_label": "NestRow",
+    "suggested_expected_next": "传送键 / 确认框",
+    "suggested_note": "",
+    "do_not": [
+        "不要点手册里的「无音清剿」",
+        "不要点任务栏的「清理聚落中的残象」"
+    ],
+    "exported": true,
+    "exported_card_id": "20261101-184706-nestrow",
+    "exported_at": "2026-11-01T10:47:07.136118+00:00"
+}

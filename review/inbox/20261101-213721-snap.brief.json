@@ -1,0 +1,21 @@
+{
+    "image": "20261101-213721-snap.png",
+    "updated_at": "2026-11-01T13:37:23.046196+00:00",
+    "title": "账号切换：大世界 → 返回登录 → 登录页 → 选号 → 回大世界 #6",
+    "goal": "按顺序截 6 张图，每张一个 label。已有标题页「点击连接」卡，不用重截。",
+    "steps": [
+        "1. AccountPauseMenu：大世界里按返回/打开的暂停菜单（有「返回登录」的那个）。ROI 框「返回登录」，点击点=它",
+        "2. AccountLogoutConfirm：点返回登录后的确认弹窗（如有）。ROI 框「确认」按钮",
+        "3. AccountLoginSheet：库洛登录页，能看到被遮挡的手机号（如 138****1234）和「登录」按钮。ROI 框手机号那一行，note 写后四位位置、下拉小箭头在哪",
+        "4. AccountDropdown：点开下拉后列出多个账号的画面。ROI 框整个列表，note 写每行高度、是否需要滚动",
+        "5. AccountLoginButton：选完号后的登录页。ROI 框「登录」按钮",
+        "6. AccountAfterLogin：点登录后的第一个画面（下载/公告/标题页点击连接/协议勾选等，如有多个都截，label 加后缀）"
+    ],
+    "suggested_label": "AccountPauseMenu",
+    "suggested_expected_next": "确认框 / 登录页",
+    "suggested_note": "",
+    "do_not": [
+        "不要框整张图，只框要识别的小区域",
+        "截图里的手机号请自行打码或只留后四位"
+    ]
+}
