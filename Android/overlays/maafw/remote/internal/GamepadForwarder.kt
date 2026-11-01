@@ -299,30 +299,31 @@ object GamepadForwarder {
     private fun stickPumpLoop() {
         probe("stick pump start")
         val file = File(STICK_CMD)
+        // Axis state is independent of file reads: old hold always expires even if a new read fails.
+        var axisActive = false
+        var axisDeadline = 0L
         while (running && !Thread.currentThread().isInterrupted) {
             try {
-                if (file.isFile && file.length() > 0) {
-                    val raw = file.readBytes()
-                    file.writeText("")
-                    val line = raw.toString(Charsets.UTF_8).trim().lines().firstOrNull().orEmpty()
-                    probe("stick read len=${raw.size} line=$line")
-                    val parts = line.split(Regex("\\s+"))
-                    if (parts.size >= 2) {
-                        val x = parts[0].toIntOrNull() ?: 0
-                        val y = parts[1].toIntOrNull() ?: 0
-                        val hold = (parts.getOrNull(2)?.toLongOrNull() ?: 280L).coerceIn(50L, 2000L)
-                        if (injectAxis(x, y)) {
-                            probe("stick pulse x=$x y=$y hold=$hold")
-                            sleepQuiet(hold)
-                            injectAxisNeutral()
+                // Read failures must not skip the expiry check below.
+                val cmd = try {
+                    takeStickCommand(file)
+                } catch (e: Exception) {
+                    probe("stick read failed: ${e.message}")
+                    null
+                }
+                if (cmd != null) {
+                    val (x, y, hold) = cmd
+                    if (injectAxis(x, y)) {
+                        if (x == 0 && y == 0) {
+                            axisActive = false
                         } else {
-                            probe("stick pulse FAILED x=$x y=$y")
+                            axisActive = true
+                            axisDeadline = SystemClock.uptimeMillis() + hold
                         }
-                    } else if (line.isNotEmpty()) {
-                        probe("stick bad line: $line")
+                        probe("stick pulse x=$x y=$y hold=$hold")
+                    } else {
+                        probe("stick pulse FAILED x=$x y=$y")
                     }
-                } else {
-                    sleepQuiet(20)
                 }
             } catch (t: Throwable) {
                 if (t is InterruptedException) {
@@ -330,11 +331,53 @@ object GamepadForwarder {
                     break
                 }
                 probe("stick pump err: ${t.message}")
-                sleepQuiet(100)
             }
+            // Always runs each tick (including after errors): old hold must expire to neutral.
+            if (axisActive && SystemClock.uptimeMillis() >= axisDeadline) {
+                // Keep axisActive until neutral succeeds so a failed inject is retried next tick.
+                val ok = try {
+                    injectAxis(0, 0)
+                } catch (t: Throwable) {
+                    probe("stick neutral err: ${t.message}")
+                    false
+                }
+                if (ok) axisActive = false
+            }
+            sleepQuiet(20)
         }
         injectAxisNeutral()
         probe("stick pump end")
+    }
+
+    /**
+     * Producer publishes complete files via `STICK_CMD.tmp` + `mv` (atomic). Consumer claims by
+     * rename to `.take`, then reads and deletes only that claim file. No in-place truncate;
+     * if rename fails, skip this tick (retry) — never read+truncate.
+     */
+    private fun takeStickCommand(file: File): Triple<Int, Int, Long>? {
+        if (!file.isFile) return null
+        val claim = File(file.parentFile, "${file.name}.take")
+        if (claim.exists()) {
+            claim.delete()
+        }
+        if (!file.renameTo(claim)) return null
+        val raw = try {
+            claim.readBytes()
+        } finally {
+            claim.delete()
+        }
+        val line = raw.toString(Charsets.UTF_8).trim().lines().firstOrNull().orEmpty()
+        if (line.isEmpty()) return null
+        probe("stick read len=${raw.size} line=$line")
+        val parts = line.split(Regex("\\s+"))
+        if (parts.size < 2) {
+            probe("stick bad line: $line")
+            return null
+        }
+        val x = parts[0].toIntOrNull() ?: 0
+        val y = parts[1].toIntOrNull() ?: 0
+        val hold = (parts.getOrNull(2)?.toLongOrNull() ?: 280L).coerceIn(50L, 2000L)
+        return Triple(x, y, hold)
     }
 
     /** Left stick ABS_X / ABS_Y. Values typically ±20000..±30000. */

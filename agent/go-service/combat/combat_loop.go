@@ -128,26 +128,19 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	pad.Lock()
 	time.Sleep(120 * time.Millisecond)
 
-	// Lightweight stop: only full settle scan every ExitCheckEveryN rounds / on demand.
+	// Lightweight stop: settle scan on round cadence (once per round) or time cadence.
 	lastExitCheck := time.Time{}
-	shouldScanExit := func(force bool) bool {
-		if force {
-			return true
-		}
-		if rounds > 0 && rounds%param.ExitCheckEveryN == 0 {
-			return true
-		}
-		if time.Since(lastExitCheck) > 2*time.Second {
-			return true
-		}
-		return false
-	}
+	lastExitRound := -1
 	stop := func() bool {
 		if tasker.Stopping() {
 			return true
 		}
-		if !shouldScanExit(false) {
+		scan, consumeRound := exitScanDecision(rounds, param.ExitCheckEveryN, lastExitRound, time.Since(lastExitCheck), false)
+		if !scan {
 			return false
+		}
+		if consumeRound {
+			lastExitRound = rounds
 		}
 		lastExitCheck = time.Now()
 		hit, name := peekExit(ctx, ctrl, param.ExitNodes)
@@ -168,7 +161,10 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			return true
 		}
 
-		if shouldScanExit(rounds == 0) {
+		if scan, consumeRound := exitScanDecision(rounds, param.ExitCheckEveryN, lastExitRound, time.Since(lastExitCheck), rounds == 0); scan {
+			if consumeRound {
+				lastExitRound = rounds
+			}
 			lastExitCheck = time.Now()
 			if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
 				log.Info().Str("node", name).Msg("CombatLoop: exit node hit")

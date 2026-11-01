@@ -238,17 +238,12 @@
         "next": ["StartupPadWatch"]
     },
     "StartupPadWatch": {
-        "desc": "手柄轮询环：先认 PadReady* / 副本领取软恢复，再按 A。禁止挂读条。",
+        "desc": "手柄轮询环：只认 PadReady* 或按 A。出本软恢复只在 StartUpGameWait，禁止挂 InInstancePadMenu（大世界会误点右上开系统菜单）。",
         "recognition": "DirectHit",
         "action": "DoNothing",
         "timeout": 160000,
         "next": [
             "LeaveInstanceMenuOCR",
-            "ConfirmLeaveInstanceByOCR",
-            "ConfirmLeaveInstance",
-            "InInstanceClaimHint",
-            "InInstanceExitIcon",
-            "InInstancePadMenu",
             "StartupPadReady",
             "StartupPadReadyRT",
             "StartupPadReadyDPad",
@@ -257,7 +252,7 @@
         ]
     },
     "StartupPadSwitchOnce": {
-        "desc": "非手柄：按物理 Xbox A。最多 8 次。离开弹窗上 A=返回，故 next 先出本确认。",
+        "desc": "非手柄：按物理 Xbox A。最多 8 次。",
         "recognition": "DirectHit",
         "action": {"type": "ClickKey", "param": {"key": 96}},
         "repeat": 2,
@@ -267,11 +262,6 @@
         "next": [
             "StartupPadConfirm",
             "LeaveInstanceMenuOCR",
-            "ConfirmLeaveInstanceByOCR",
-            "ConfirmLeaveInstance",
-            "InInstanceClaimHint",
-            "InInstanceExitIcon",
-            "InInstancePadMenu",
             "StartupPadReady",
             "StartupPadReadyRT",
             "StartupPadReadyDPad",
@@ -290,9 +280,6 @@
         "post_wait_freezes": {"time": 400, "timeout": 5000, "threshold": 0.95},
         "next": [
             "LeaveInstanceMenuOCR",
-            "ConfirmLeaveInstanceByOCR",
-            "ConfirmLeaveInstance",
-            "InInstanceClaimHint",
             "StartupPadReady",
             "StartupPadReadyRT",
             "StartupPadReadyDPad",
@@ -301,17 +288,12 @@
         ]
     },
     "StartupPadCheckWait": {
-        "desc": "短等：先「确认离开」/软出本，再 PadReady* / 按 A（离开弹窗上勿盲按 A）。",
+        "desc": "短等：仅 OCR「确认离开」弹窗 / PadReady* / 再按 A。勿挂 ConfirmLeave 模板或 PadMenu（大世界误点）。",
         "recognition": "DirectHit",
         "action": "DoNothing",
         "post_delay": 4000,
         "next": [
             "LeaveInstanceMenuOCR",
-            "ConfirmLeaveInstanceByOCR",
-            "ConfirmLeaveInstance",
-            "InInstanceClaimHint",
-            "InInstanceExitIcon",
-            "InInstancePadMenu",
             "StartupPadReady",
             "StartupPadReadyRT",
             "StartupPadReadyDPad",
@@ -347,14 +329,11 @@
         "next": []
     },
     "StartupPadReadyMenu": {
-        "desc": "手柄 HUD：右上菜单 X / Pad 入口。",
+        "desc": "手柄 HUD：右上菜单 X（勿用 OpenGuidebookPad，易与 Terminal 混淆导致未真正切手柄就结束）。",
         "recognition": "TemplateMatch",
         "roi": [1180, 0, 100, 80],
-        "template": [
-            "Explore/PadHUD_MenuX.png",
-            "Guidebook/OpenGuidebookPad.png"
-        ],
-        "threshold": 0.68,
+        "template": "Explore/PadHUD_MenuX.png",
+        "threshold": 0.72,
         "action": "DoNothing",
         "next": []
     },

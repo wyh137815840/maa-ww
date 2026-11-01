@@ -6,7 +6,6 @@
             "TacetConfirmLeave",
             "TacetConfirmLeaveByOCR",
             "TacetLeaveInstanceIcon",
-            "TacetPadMenuLeave",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
             "TacetDismissActivity",
@@ -521,16 +520,23 @@
                 "custom_action_param": {
                     "timeout_ms": 60000,
                     "claim_nodes": [
-                        "TacetClaimReward",
+                        "TacetClaimReward"
+                    ],
+                    "claim_ocr_nodes": [
                         "TacetClaimRewardByOCR"
                     ],
                     "treasure_nodes": [
-                        "TacetTreasureDist",
-                        "TacetTreasureDistOCR",
+                        "TacetTreasureSeen",
                         "TacetTreasureAim",
-                        "TacetTreasureSeen"
+                        "TacetTreasureDist"
                     ],
-                    "x_threshold": 90
+                    "treasure_ocr_nodes": [
+                        "TacetTreasureDistOCR"
+                    ],
+                    "x_threshold": 90,
+                    "gate_ms": 2500,
+                    "marker_ttl_ms": 1500,
+                    "ocr_every": 5
                 }
             }
         },
@@ -1280,7 +1286,7 @@
         ]
     },
     "TacetReturnWorld": {
-        "desc": "关窗后等到回到大世界：先处理离开弹窗/出门图标；认到 Terminal 即结束；三横杠仅作无出门图标时的手柄兜底（须排在 Terminal 之后，避免大世界误开系统菜单）。",
+        "desc": "退出副本后等回大世界：先处理离开弹窗/出门图标；再认大世界（触屏小地图 或 手柄 HUD：左下 View+地图/D-Pad/右下 RT）即结束。手柄态小地图模板得分仅 ~0.3，必须靠 PadReady*；三横杠仅作最后兜底。实测 20261101 16:47 仅靠 ExploreHUD 会卡死并误开系统菜单。",
         "timeout": 120000,
         "next": [
             "TacetConfirmLeave",
@@ -1288,8 +1294,11 @@
             "TacetLeaveConfirmOCR",
             "TacetLeaveInstanceIcon",
             "ExploreWorldReady",
-            "TacetPadMenuLeave",
-            "ExploreHUD"
+            "StartupPadReady",
+            "StartupPadReadyRT",
+            "StartupPadReadyDPad",
+            "ExploreHUD",
+            "TacetPadMenuLeave"
         ]
     },
     "TacetTreasureSeen": {
