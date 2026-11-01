@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Diagnose why MaaWW won't open — no UI taps except unlock if needed."""
 from __future__ import annotations
+import _local_cfg
 
 import json
 import subprocess
@@ -33,7 +34,7 @@ def main() -> int:
     time.sleep(0.4)
     sh("shell", "input", "keyevent", "82")
     time.sleep(0.35)
-    sh("shell", "input", "text", "753698")
+    sh("shell", "input", "text", _local_cfg.pin())
     time.sleep(0.15)
     sh("shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(1.0)

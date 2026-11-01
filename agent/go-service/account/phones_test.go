@@ -24,19 +24,19 @@ func TestParsePhonesEmpty(t *testing.T) {
 }
 
 func TestPickOverride(t *testing.T) {
-	ov := pickOverride("0075", "AccountPickRow", "AccountCurrentIsTarget", "")
+	ov := pickOverride("1234", "AccountPickRow", "AccountCurrentIsTarget", "")
 	if len(ov) != 2 {
 		t.Fatalf("override = %v", ov)
 	}
 	exp := ov["AccountPickRow"].(map[string]any)["expected"].([]string)
-	if len(exp) != 1 || exp[0] != "0075" {
+	if len(exp) != 1 || exp[0] != "1234" {
 		t.Fatalf("expected = %v", exp)
 	}
 }
 
 func TestParseLoopParamKeepsDefaultTasks(t *testing.T) {
-	p := parseLoopParam(`{"phones":"0075"}`)
-	if p.Phones != "0075" || len(p.Tasks) != len(defaultTasks) {
+	p := parseLoopParam(`{"phones":"1234"}`)
+	if p.Phones != "1234" || len(p.Tasks) != len(defaultTasks) {
 		t.Fatalf("got %+v", p)
 	}
 }

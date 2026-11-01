@@ -1,6 +1,6 @@
 # Reconnect AYN Odin3 WiFi ADB. Usage:
 #   pwsh -File _odin_reconnect.ps1
-#   pwsh -File _odin_reconnect.ps1 -Serial 192.168.1.3:41277
+#   pwsh -File _odin_reconnect.ps1 -Serial <ip:port>
 param(
   [string]$Serial = '',
   [string]$Adb = 'D:\leidian\LDPlayer14\adb.exe'

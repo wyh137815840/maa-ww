@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Push single-bundle PI, keep only Startup enabled, cold-start, assert mingchao pid."""
 from __future__ import annotations
+import _local_cfg
 
 import json
 import re
@@ -39,7 +40,7 @@ def unlock(cfg):
     time.sleep(0.4)
     adb(cfg, "shell", "input", "keyevent", "82")
     time.sleep(0.35)
-    adb(cfg, "shell", "input", "text", "753698")
+    adb(cfg, "shell", "input", "text", _local_cfg.pin())
     time.sleep(0.2)
     adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(0.9)

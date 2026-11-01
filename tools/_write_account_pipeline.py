@@ -97,7 +97,7 @@ d.update({
         "on_error": ["AccountSwitchFail"],
     },
     "AccountCurrentIsTarget": {
-        "desc": "当前选中行（如 153****0075）后四位 = 目标 → 点「登录」(639,415)，转入启动等待链。expected 由 Go override 为目标后四位。",
+        "desc": "当前选中行（如 138****1234）后四位 = 目标 → 点「登录」(639,415)，转入启动等待链。expected 由 Go override 为目标后四位。",
         "recognition": "OCR",
         "roi": [387, 285, 502, 66],
         "expected": ["__ACCOUNT_LAST4__"],

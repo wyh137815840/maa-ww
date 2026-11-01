@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import _local_cfg
 from pathlib import Path
 import json
 import subprocess
@@ -34,7 +35,7 @@ sh("shell", "input", "keyevent", "KEYCODE_WAKEUP")
 time.sleep(0.4)
 sh("shell", "input", "keyevent", "82")
 time.sleep(0.3)
-sh("shell", "input", "text", "753698")
+sh("shell", "input", "text", _local_cfg.pin())
 sh("shell", "input", "keyevent", "KEYCODE_ENTER")
 time.sleep(0.8)
 sh("shell", "monkey", "-p", WW, "-c", "android.intent.category.LAUNCHER", "1")

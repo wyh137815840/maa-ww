@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Diagnose whether stick file is visible across adb/shell vs pump consumption."""
 from __future__ import annotations
+import _local_cfg
 
 import subprocess
 import sys
@@ -33,7 +34,7 @@ def main():
     time.sleep(0.3)
     adb(cfg, "shell", "input", "keyevent", "82")
     time.sleep(0.2)
-    adb(cfg, "shell", "input", "text", "753698")
+    adb(cfg, "shell", "input", "text", _local_cfg.pin())
     adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(0.5)
 

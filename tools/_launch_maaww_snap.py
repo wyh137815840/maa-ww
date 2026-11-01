@@ -1,3 +1,4 @@
+import _local_cfg
 from datetime import datetime
 from pathlib import Path
 import subprocess
@@ -18,7 +19,7 @@ subprocess.run([adb, "-s", serial, "shell", "input", "keyevent", "KEYCODE_WAKEUP
 time.sleep(0.4)
 subprocess.run([adb, "-s", serial, "shell", "input", "keyevent", "82"], check=False)
 time.sleep(0.3)
-subprocess.run([adb, "-s", serial, "shell", "input", "text", "753698"], check=False)
+subprocess.run([adb, "-s", serial, "shell", "input", "text", _local_cfg.pin()], check=False)
 time.sleep(0.2)
 subprocess.run([adb, "-s", serial, "shell", "input", "keyevent", "KEYCODE_ENTER"], check=False)
 time.sleep(0.8)

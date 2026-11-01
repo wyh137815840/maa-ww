@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Final: stub+model base + clean resource_adb attach; add Startup then start; verify game launch."""
 from __future__ import annotations
+import _local_cfg
 
 import json
 import re
@@ -36,7 +37,7 @@ def unlock(cfg):
     time.sleep(0.3)
     adb(cfg, "shell", "input", "keyevent", "82")
     time.sleep(0.3)
-    adb(cfg, "shell", "input", "text", "753698")
+    adb(cfg, "shell", "input", "text", _local_cfg.pin())
     time.sleep(0.2)
     adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(0.8)

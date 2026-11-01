@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Try remount primary/emulated storage so MaaWW can open."""
 from __future__ import annotations
+import _local_cfg
 
 import json
 import subprocess
@@ -82,7 +83,7 @@ def main() -> int:
             time.sleep(1)
             subprocess.run([adb, "-s", s, "shell", "input", "keyevent", "82"], capture_output=True)
             time.sleep(0.5)
-            subprocess.run([adb, "-s", s, "shell", "input", "text", "753698"], capture_output=True)
+            subprocess.run([adb, "-s", s, "shell", "input", "text", _local_cfg.pin()], capture_output=True)
             time.sleep(0.2)
             subprocess.run([adb, "-s", s, "shell", "input", "keyevent", "KEYCODE_ENTER"], capture_output=True)
             time.sleep(3)

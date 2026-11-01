@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import _local_cfg
 from pathlib import Path
 import json
 import subprocess
@@ -32,7 +33,7 @@ time.sleep(0.5)
 # dismiss keyguard via wm if possible
 sh("wm dismiss-keyguard")
 time.sleep(0.3)
-subprocess.run([adb, "-s", s, "shell", "input", "text", "753698"], capture_output=True)
+subprocess.run([adb, "-s", s, "shell", "input", "text", _local_cfg.pin()], capture_output=True)
 time.sleep(0.2)
 subprocess.run([adb, "-s", s, "shell", "input", "keyevent", "KEYCODE_ENTER"], capture_output=True)
 time.sleep(1.5)

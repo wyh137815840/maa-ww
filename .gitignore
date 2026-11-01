@@ -64,3 +64,11 @@ Android/MaaFwApp/.git.bak-nested/
 # Junction to external MaaFwApp-analysis checkout; not vendored here
 Android/MaaFwApp/
 
+
+# Machine-local secrets (device PIN / serial / internal hosts); see tools/touch-review/config.example.json
+tools/touch-review/config.json
+tools/*.local.json
+*.local.json
+
+# Snapshot-service session scratch
+review/snap_*

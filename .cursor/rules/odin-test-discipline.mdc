@@ -19,5 +19,5 @@ alwaysApply: true
 ## 测完关屏 / 需要时再解锁
 
 - Python 验证或 MaaWW 固化测试**结束后**：关闭奥丁屏幕（`adb shell input keyevent KEYCODE_SLEEP`）。
-- 下次需要操作再解锁：PIN **`753698`**（仅本机联调用；勿提交到公开文档/FEATURES）。
+- 下次需要操作再解锁：PIN 存在本机 `tools/touch-review/config.json` 的 `pin` 字段（git 忽略；脚本经 `tools/_local_cfg.py` 读取，环境变量 `ODIN_PIN` 可覆盖）。**禁止**把 PIN、序列号、手机号写进脚本 / 文档 / 测试 / Pipeline。
 ---

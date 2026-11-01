@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Short retest: start tasks, watch for leave-confirm / guidebook / combat."""
 from __future__ import annotations
+import _local_cfg
 
 import re
 import subprocess
@@ -36,7 +37,7 @@ def unlock(cfg):
     time.sleep(0.4)
     adb(cfg, "shell", "input", "keyevent", "82")
     time.sleep(0.3)
-    adb(cfg, "shell", "input", "text", "753698")
+    adb(cfg, "shell", "input", "text", _local_cfg.pin())
     adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(0.5)
 

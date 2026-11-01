@@ -30,7 +30,7 @@
 | DomainTask | 副本 | todo |
 | ForgeryTask | 伪作 | todo |
 | SimulationTask | 模拟挑战 | todo |
-| NightmareNestTask | 梦魇巢穴 / 残象聚落（任务 `Nest`，选项 NestKind）。P1 骨架已入库（`Nest.json`）：手册选未完成行 → 快速旅行/直接挑战 → CombatLoop（任务栏「已清剿」判结束）→ 吸收声骸；待补：梦魇战斗 HUD、列表到底判定、Go 搜声骸 | wip（未联调） |
+| NightmareNestTask | 梦魇巢穴 / 残象聚落（任务 `Nest`，选项 NestKind）。P1 骨架已入库（`Nest.json`）：手册选未完成行 → 快速旅行/直接挑战 → CombatLoop（任务栏「已清剿」判结束）→ 吸收声骸；待补：梦魇战斗 HUD、列表到底判定、Go 搜声骸 | wip（残象聚落已联调：选行 / 传送 / 走近 / 战斗 / 吸收；NestKind 改为**可多选**，入口 `NestRun` + Go `NestKinds` 依次跑；待补：梦魇战斗 HUD、吸收搜索实机不命中） |
 
 ## 第三期（声骸养成 / 周常）
 
@@ -50,8 +50,8 @@
 | CharacterCodeTask | 角色码 | todo |
 | FarmMapTask | 地图相关 | todo |
 | DiagnosisTask | 诊断 | todo |
-| MultiAccountDailyTask | 多账号日常 | wip（Go 轮跑循环 + 手机号配置已就绪，切号流水线待截图） |
-| MultiAccountConfigTask | 多账号配置 | wip（任务选项 AccountPhones 输入后四位） |
+| MultiAccountDailyTask | 多账号日常（任务 `MultiAccount`：逐账号切号后按 聚落 → 无音区 → 日常 跑勾选任务） | wip（奥丁实测两账号切号通过；聚落 / 无音区放进循环后未实跑） |
+| MultiAccountConfigTask | 多账号配置 | done（任务选项 `AccountPhones`：手机号或后四位，逗号 / 分号 / 空格分隔） |
 | MouseResetTask | 防鼠标漂移 | wontfix（PC） |
 | 后台静音等 | Windows 专属 | wontfix（PC） |
 | 全角色战斗脚本（约 60） | 在基础战斗稳定后逐个移植 | todo |

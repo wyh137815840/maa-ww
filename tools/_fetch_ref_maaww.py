@@ -8,7 +8,9 @@ import sys
 import urllib.request
 from pathlib import Path
 
-BASE = "http://192.168.1.4:8929"
+import _local_cfg
+
+BASE = _local_cfg.ref_git_base()
 OWNER = "wyh"
 REPO = "maaww"
 DEST = Path(r"D:\git\_ref_maaww")

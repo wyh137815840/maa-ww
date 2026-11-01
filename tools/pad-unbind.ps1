@@ -1,6 +1,6 @@
 ﻿# Give the physical Xbox pad back to the main screen (remove the MaaWW virtual-display association).
 # Use when the pad "does nothing" in the game opened normally after a MaaWW run.
-#   pwsh -NoProfile -File tools\pad-unbind.ps1 [-Serial f6498093]
+#   pwsh -NoProfile -File tools\pad-unbind.ps1 [-Serial <serial>]
 param([string]$Serial = "")
 $ErrorActionPreference = "Stop"
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")

@@ -2,6 +2,7 @@
 """Poll maafw.log / go-service.log: print the node sequence since the last start."""
 from __future__ import annotations
 
+import _local_cfg
 import re
 import subprocess
 import sys
@@ -16,7 +17,7 @@ PKG = "com.aliothmoon.maafw.maaww"
 LOG = f"/sdcard/Android/data/{PKG}/files/log/maafw.log"
 GO = f"/sdcard/Android/data/{PKG}/files/pi/debug/go-service.log"
 OUT = ROOT / "tools/_shots"
-SER = "f6498093"
+SER = _local_cfg.serial()
 
 
 def pull(cfg, remote, local):

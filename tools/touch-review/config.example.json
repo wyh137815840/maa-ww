@@ -1,0 +1,18 @@
+{
+    "adb_path": "adb",
+    "serial": "<设备序列号或 ip:端口，见无线调试页>",
+    "pin": "",
+    "ref_git_base": "",
+    "display_name": "",
+    "display_id": "",
+    "note": "复制为 config.json（已 git 忽略）后填本机值。pin=设备锁屏 PIN，serial=ADB 序列号/WiFi 地址，ref_git_base=参考仓库的内网地址。环境变量 ODIN_PIN / ANDROID_SERIAL / REF_GIT_BASE 可覆盖。设备可为 1920×1080；标注/模板仍缩到 1280×720。",
+    "emulator": "odin3-wifi",
+    "target_size": [
+        1280,
+        720
+    ],
+    "host": "127.0.0.1",
+    "port": 8765,
+    "inbox_dir": "review/inbox",
+    "cards_dir": "review/cards"
+}

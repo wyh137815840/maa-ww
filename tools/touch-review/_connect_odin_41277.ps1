@@ -1,5 +1,6 @@
-$adb = 'D:\leidian\LDPlayer14\adb.exe'
-$serial = '192.168.1.3:41277'
+$cfg = Get-Content (Join-Path $PSScriptRoot 'config.json') -Raw | ConvertFrom-Json
+$adb = [string]$cfg.adb_path
+$serial = [string]$cfg.serial
 
 & $adb connect $serial
 & $adb devices -l

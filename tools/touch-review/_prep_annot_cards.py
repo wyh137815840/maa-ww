@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Unlock Odin, snap world HUD, open Terminal, snap menu — prep touch-review briefs."""
 from __future__ import annotations
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import _local_cfg
 
 import subprocess
 import sys
@@ -28,7 +32,7 @@ def unlock(cfg) -> None:
     time.sleep(0.4)
     adb(cfg, "shell", "input", "keyevent", "82")
     time.sleep(0.3)
-    adb(cfg, "shell", "input", "text", "753698")
+    adb(cfg, "shell", "input", "text", _local_cfg.pin())
     time.sleep(0.2)
     adb(cfg, "shell", "input", "keyevent", "KEYCODE_ENTER")
     time.sleep(0.8)

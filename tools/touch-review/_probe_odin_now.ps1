@@ -1,5 +1,6 @@
-$adb = 'D:\leidian\LDPlayer14\adb.exe'
-$s = '192.168.1.3:41277'
+$cfg = Get-Content (Join-Path $PSScriptRoot 'config.json') -Raw | ConvertFrom-Json
+$adb = [string]$cfg.adb_path
+$s = [string]$cfg.serial
 & $adb -s $s shell wm size
 & $adb -s $s shell wm density
 & $adb -s $s shell dumpsys window displays 2>$null | Select-String 'init=|cur=|app=' | Select-Object -First 12

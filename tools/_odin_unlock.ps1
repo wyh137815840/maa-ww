@@ -8,7 +8,7 @@ $s = $cfg.serial
 Start-Sleep -Milliseconds 400
 & $adb -s $s shell input keyevent 82   # unlock/menu
 Start-Sleep -Milliseconds 300
-& $adb -s $s shell input text 753698
+& $adb -s $s shell input text $($cfg.pin)
 Start-Sleep -Milliseconds 200
 & $adb -s $s shell input keyevent KEYCODE_ENTER
 Write-Output "unlocked"
