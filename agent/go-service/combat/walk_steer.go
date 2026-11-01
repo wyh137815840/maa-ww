@@ -54,13 +54,14 @@ type searchSeg struct {
 }
 
 var searchPlan = []searchSeg{
-	{dirW, 2500 * time.Millisecond},
+	// Every leg <= maxStickHold so one exact-length command covers it.
+	{dirW, 2000 * time.Millisecond},
 	{dirD, 1200 * time.Millisecond},
 	{dirW, 1500 * time.Millisecond},
-	{dirA, 2400 * time.Millisecond},
+	{dirA, 2000 * time.Millisecond},
 	{dirW, 1500 * time.Millisecond},
 	{dirD, 1200 * time.Millisecond},
-	{dirS, 2500 * time.Millisecond},
+	{dirS, 2000 * time.Millisecond},
 }
 
 func searchSegment(i int) searchSeg {
@@ -70,10 +71,59 @@ func searchSegment(i int) searchSeg {
 	return searchPlan[i%len(searchPlan)]
 }
 
-// shouldRefreshHold decides whether to rewrite the stick file for an unchanged direction.
-// The pump expires a hold after holdMs, so refresh at ~60% of it.
-func shouldRefreshHold(sinceWrite, hold time.Duration) bool {
-	return sinceWrite >= hold*6/10
+const (
+	minStickHold = 50 * time.Millisecond
+	maxStickHold = 2000 * time.Millisecond
+)
+
+// clampHold applies the same limits the pump enforces, so refresh decisions use the
+// duration that was actually sent.
+func clampHold(hold time.Duration) time.Duration {
+	if hold < minStickHold {
+		return minStickHold
+	}
+	if hold > maxStickHold {
+		return maxStickHold
+	}
+	return hold
+}
+
+// needsRewrite decides whether to rewrite the stick file for an unchanged direction.
+// `remaining` is the time left on the previously sent (clamped) hold, i.e. holdUntil-now;
+// `hold` is the clamped duration being requested. Rewrite when the live command would expire
+// before ~40% of the new request has elapsed. Judging by the old deadline (not the new
+// duration) is what lets a 700ms steer hold hand over to a long same-direction search leg.
+func needsRewrite(remaining, hold time.Duration) bool {
+	return remaining < hold*4/10
+}
+
+// frameStats accumulates per-frame cost, split by whether OCR nodes ran that frame.
+type frameStats struct {
+	plainSum, ocrSum time.Duration
+	plainN, ocrN     int
+}
+
+func (s *frameStats) add(ocr bool, d time.Duration) {
+	if ocr {
+		s.ocrSum += d
+		s.ocrN++
+		return
+	}
+	s.plainSum += d
+	s.plainN++
+}
+
+func (s *frameStats) avg(ocr bool) time.Duration {
+	if ocr {
+		if s.ocrN == 0 {
+			return 0
+		}
+		return s.ocrSum / time.Duration(s.ocrN)
+	}
+	if s.plainN == 0 {
+		return 0
+	}
+	return s.plainSum / time.Duration(s.plainN)
 }
 
 // markerFresh reports whether a remembered marker is still trustworthy (ok-ww last_target

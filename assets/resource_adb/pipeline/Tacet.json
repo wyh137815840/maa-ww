@@ -527,7 +527,6 @@
                     ],
                     "treasure_nodes": [
                         "TacetTreasureSeen",
-                        "TacetTreasureAim",
                         "TacetTreasureDist"
                     ],
                     "treasure_ocr_nodes": [
@@ -536,7 +535,12 @@
                     "x_threshold": 90,
                     "gate_ms": 2500,
                     "marker_ttl_ms": 1500,
-                    "ocr_every": 5
+                    "ocr_every": 5,
+                    "scan_mode": "camera",
+                    "aim_mode": "strafe",
+                    "yaw_full_ms": 3000,
+                    "yaw_deflect": 20000,
+                    "scan_steps": 8
                 }
             }
         },
@@ -646,9 +650,9 @@
         },
         "next": [
             "TacetLeaveInstanceIcon",
-            "TacetPadMenuLeave",
-            "TacetReturnWorld"
-        ]
+            "TacetPadMenuLeave"
+        ],
+        "timeout": 20000
     },
     "TacetContinue": {
         "desc": "结算页右侧「重新挑战」。点后只等进本/战斗，禁止同屏再点 Exit（会 Continue→Exit 连点卡住）。",
@@ -1176,8 +1180,7 @@
             "TacetConfirmLeaveByOCR",
             "TacetLeaveConfirmOCR",
             "TacetPadMenuLeave",
-            "TacetLeaveInstanceIcon",
-            "TacetReturnWorld"
+            "TacetLeaveInstanceIcon"
         ]
     },
     "TacetPadMenuLeave": {
@@ -1193,7 +1196,7 @@
             "Explore/InstancePadMenu.png",
             "Explore/PadHUD_MenuX.png"
         ],
-        "threshold": 0.7,
+        "threshold": 0.65,
         "action": "Click",
         "target": [
             1224,
@@ -1208,8 +1211,7 @@
             "TacetConfirmLeave",
             "TacetConfirmLeaveByOCR",
             "TacetLeaveConfirmOCR",
-            "TacetPadMenuLeave",
-            "TacetReturnWorld"
+            "TacetPadMenuLeave"
         ]
     },
     "TacetLeaveConfirmOCR": {

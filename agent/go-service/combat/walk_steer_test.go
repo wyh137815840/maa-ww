@@ -67,13 +67,66 @@ func TestSearchPlanNoFlipFlop(t *testing.T) {
 	}
 }
 
-func TestShouldRefreshHold(t *testing.T) {
+func TestNeedsRewriteSteadyHold(t *testing.T) {
 	hold := 700 * time.Millisecond
-	if shouldRefreshHold(100*time.Millisecond, hold) {
+	// 100ms elapsed of a 700ms hold -> 600ms remaining: no rewrite.
+	if needsRewrite(600*time.Millisecond, hold) {
 		t.Fatal("too early to refresh")
 	}
-	if !shouldRefreshHold(450*time.Millisecond, hold) {
+	// 450ms elapsed -> 250ms remaining (<280ms): refresh before expiry.
+	if !needsRewrite(250*time.Millisecond, hold) {
 		t.Fatal("should refresh before expiry")
+	}
+	// Already expired (negative remaining) must rewrite.
+	if !needsRewrite(-10*time.Millisecond, hold) {
+		t.Fatal("expired hold must be rewritten")
+	}
+}
+
+// 700ms steer hold, 500ms elapsed, then a same-direction 2200ms search leg is requested.
+// The old hold only has 200ms left, so it must be rewritten (otherwise it expires and the
+// stick recenters mid-leg).
+func TestNeedsRewriteSteerToLongSearch(t *testing.T) {
+	oldRemaining := 700*time.Millisecond - 500*time.Millisecond
+	newHold := clampHold(2200 * time.Millisecond)
+	if newHold != 2000*time.Millisecond {
+		t.Fatalf("clamp: %v", newHold)
+	}
+	if !needsRewrite(oldRemaining, newHold) {
+		t.Fatal("old 200ms remaining must trigger rewrite for a 2000ms leg")
+	}
+	// The pre-fix rule (elapsed >= 60% of the NEW hold) would have skipped it.
+	if 500*time.Millisecond >= newHold*6/10 {
+		t.Fatal("test premise broken: old rule should have skipped")
+	}
+}
+
+func TestClampHold(t *testing.T) {
+	if clampHold(10*time.Millisecond) != minStickHold || clampHold(5*time.Second) != maxStickHold {
+		t.Fatal("clamp bounds wrong")
+	}
+	if clampHold(700*time.Millisecond) != 700*time.Millisecond {
+		t.Fatal("in-range hold must pass through")
+	}
+	// Must match what the pump receives.
+	if _, ms := stickPayload(0, -30000, 5*time.Second); ms != maxStickHold.Milliseconds() {
+		t.Fatalf("payload clamp %d", ms)
+	}
+}
+
+func TestFrameStats(t *testing.T) {
+	var s frameStats
+	if s.avg(true) != 0 || s.avg(false) != 0 {
+		t.Fatal("empty avg must be 0")
+	}
+	s.add(false, 100*time.Millisecond)
+	s.add(false, 300*time.Millisecond)
+	s.add(true, 700*time.Millisecond)
+	if s.avg(false) != 200*time.Millisecond || s.avg(true) != 700*time.Millisecond {
+		t.Fatalf("avg plain=%v ocr=%v", s.avg(false), s.avg(true))
+	}
+	if s.plainN != 2 || s.ocrN != 1 {
+		t.Fatalf("counts %d %d", s.plainN, s.ocrN)
 	}
 }
 

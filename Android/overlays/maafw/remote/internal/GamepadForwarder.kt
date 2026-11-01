@@ -1,4 +1,4 @@
-package com.aliothmoon.maafw.remote.internal
+﻿package com.aliothmoon.maafw.remote.internal
 
 import android.os.SystemClock
 import android.system.Os
@@ -293,8 +293,9 @@ object GamepadForwarder {
 
     /**
      * Go `WalkToTacetTreasure` 等无法直接 sendevent（app uid 无 input 权限）。
-     * 约定：agent 写入 STICK_CMD 一行 `absX absY holdMs`（ABS 原始值，Y 负=前进），
-     * 本线程以 shell 权限泵到 Xbox 节点后清空文件。
+     * 约定：agent 原子发布 STICK_CMD 一行（见 [StickCommand]）：
+     * `lx ly holdMs`（仅左摇杆）或 `lx ly rx ry holdMs`（右摇杆=镜头：ABS_Z 偏航、ABS_RZ 俯仰）。
+     * ABS 原始值，Y 负=前进。本线程以 shell 权限泵到 Xbox 节点。
      */
     private fun stickPumpLoop() {
         probe("stick pump start")
@@ -312,17 +313,16 @@ object GamepadForwarder {
                     null
                 }
                 if (cmd != null) {
-                    val (x, y, hold) = cmd
-                    if (injectAxis(x, y)) {
-                        if (x == 0 && y == 0) {
+                    if (injectAxes(cmd.lx, cmd.ly, cmd.rx, cmd.ry)) {
+                        if (cmd.isNeutral) {
                             axisActive = false
                         } else {
                             axisActive = true
-                            axisDeadline = SystemClock.uptimeMillis() + hold
+                            axisDeadline = SystemClock.uptimeMillis() + cmd.holdMs
                         }
-                        probe("stick pulse x=$x y=$y hold=$hold")
+                        probe("stick pulse l=(${cmd.lx},${cmd.ly}) r=(${cmd.rx},${cmd.ry}) hold=${cmd.holdMs}")
                     } else {
-                        probe("stick pulse FAILED x=$x y=$y")
+                        probe("stick pulse FAILED l=(${cmd.lx},${cmd.ly}) r=(${cmd.rx},${cmd.ry})")
                     }
                 }
             } catch (t: Throwable) {
@@ -336,7 +336,7 @@ object GamepadForwarder {
             if (axisActive && SystemClock.uptimeMillis() >= axisDeadline) {
                 // Keep axisActive until neutral succeeds so a failed inject is retried next tick.
                 val ok = try {
-                    injectAxis(0, 0)
+                    injectAxes(0, 0, 0, 0, force = true)
                 } catch (t: Throwable) {
                     probe("stick neutral err: ${t.message}")
                     false
@@ -354,7 +354,7 @@ object GamepadForwarder {
      * rename to `.take`, then reads and deletes only that claim file. No in-place truncate;
      * if rename fails, skip this tick (retry) — never read+truncate.
      */
-    private fun takeStickCommand(file: File): Triple<Int, Int, Long>? {
+    private fun takeStickCommand(file: File): StickCommand? {
         if (!file.isFile) return null
         val claim = File(file.parentFile, "${file.name}.take")
         if (claim.exists()) {
@@ -369,38 +369,37 @@ object GamepadForwarder {
         val line = raw.toString(Charsets.UTF_8).trim().lines().firstOrNull().orEmpty()
         if (line.isEmpty()) return null
         probe("stick read len=${raw.size} line=$line")
-        val parts = line.split(Regex("\\s+"))
-        if (parts.size < 2) {
-            probe("stick bad line: $line")
-            return null
+        return StickCommand.parse(line).also {
+            if (it == null) probe("stick bad line: $line")
         }
-        val x = parts[0].toIntOrNull() ?: 0
-        val y = parts[1].toIntOrNull() ?: 0
-        val hold = (parts.getOrNull(2)?.toLongOrNull() ?: 280L).coerceIn(50L, 2000L)
-        return Triple(x, y, hold)
     }
 
-    /** Left stick ABS_X / ABS_Y. Values typically ±20000..±30000. */
+    // Caches what was last sent per input node, so unchanged axes don't spawn sendevent processes.
+    // The cache is bound to the node path (reconnect → new path → full resend), see AxisWriter.
+    private val axisWriter = AxisWriter { path, type, code, value -> sendevent(path, type, code, value) }
+
+    /**
+     * Left stick (ABS_X/ABS_Y) + right stick (ABS_Z/ABS_RZ), raw ±32767. Only axes whose value
+     * changed since the last successful write to the SAME node are sent, followed by one SYN.
+     */
     @JvmStatic
-    fun injectAxis(absX: Int, absY: Int): Boolean {
+    fun injectAxes(lx: Int, ly: Int, rx: Int, ry: Int, force: Boolean = false): Boolean {
         val path = findXboxNode() ?: run {
-            probe("injectAxis: Xbox node missing")
+            probe("injectAxes: Xbox node missing")
             return false
         }
-        return runCatching {
-            sendevent(path, 3, 0, absX) // ABS_X
-            sendevent(path, 3, 1, absY) // ABS_Y
-            sendevent(path, 0, 0, 0) // SYN
-            true
-        }.getOrElse {
-            probe("injectAxis failed: ${it.message}")
+        return runCatching { axisWriter.write(path, lx, ly, rx, ry, force) }.getOrElse {
+            probe("injectAxes failed: ${it.message}")
             false
         }
     }
+    /** Left stick only (legacy callers); also recenters the right stick. */
+    @JvmStatic
+    fun injectAxis(absX: Int, absY: Int): Boolean = injectAxes(absX, absY, 0, 0)
 
     @JvmStatic
     fun injectAxisNeutral() {
-        injectAxis(0, 0)
+        injectAxes(0, 0, 0, 0, force = true)
     }
 
     /**

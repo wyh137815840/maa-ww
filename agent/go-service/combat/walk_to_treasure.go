@@ -1,11 +1,8 @@
-package combat
+﻿package combat
 
 import (
 	"encoding/json"
-	"fmt"
 	"image"
-	"os"
-	"runtime"
 	"time"
 
 	"github.com/MaaXYZ/maa-framework-go/v4"
@@ -23,7 +20,9 @@ import (
 //
 // Pad adaptations:
 //   - cheap template checks every frame, OCR only every ocr_every frames (OCR made frames ~0.7s)
-//   - no marker after the gate: follow a fixed search path instead of W/S flip-flop (net zero motion)
+//   - no marker after the gate: camera scan (right stick yaw in slices) or a fixed walk path
+//     instead of W/S flip-flop (net zero motion)
+//   - aim_mode "yaw": turn the camera toward the marker and walk forward (no strafing)
 type WalkToTacetTreasureAction struct{}
 
 var _ maa.CustomActionRunner = &WalkToTacetTreasureAction{}
@@ -34,11 +33,22 @@ type walkTreasureParam struct {
 	ClaimOCRNodes    []string `json:"claim_ocr_nodes"`    // OCR — every ocr_every frames
 	TreasureNodes    []string `json:"treasure_nodes"`     // cheap (template) — every frame
 	TreasureOCRNodes []string `json:"treasure_ocr_nodes"` // OCR — only when templates miss, every ocr_every frames
-	XThreshold       int      `json:"x_threshold"`        // pixels; ok-ww ~0.07*1280≈90
+	XThreshold       int      `json:"x_threshold"`        // pixels; ok-ww ~0.07*1280≈90 (strafe mode)
 	YOffset          int      `json:"y_offset"`           // pixels; ok-ww 0.05*720≈36, aim slightly above marker
 	GateMs           int64    `json:"gate_ms"`            // stand still waiting for marker/claim before searching
 	MarkerTTLMs      int64    `json:"marker_ttl_ms"`      // remembered marker expiry
 	OCREvery         int      `json:"ocr_every"`          // run OCR nodes on frame 1 and every N frames
+
+	// Camera (right stick). Requires a GamepadForwarder build that parses `lx ly rx ry hold`.
+	ScanMode      string `json:"scan_mode"`       // "camera" (yaw scan) | "walk" (legacy path)
+	AimMode       string `json:"aim_mode"`        // "strafe" (ok-ww A/D) | "yaw" (turn camera + forward)
+	YawFullMs     int64  `json:"yaw_full_ms"`     // 360° time at yaw_deflect — CALIBRATE on device
+	YawDeflect    int    `json:"yaw_deflect"`     // scan yaw ABS value
+	ScanSteps     int    `json:"scan_steps"`      // yaw slices per circle
+	YawDeadPx     int    `json:"yaw_dead_px"`     // aim_mode yaw dead zone
+	YawWidePx     int    `json:"yaw_wide_px"`     // beyond this: rotate in place first
+	YawMinDeflect int    `json:"yaw_min_deflect"` // aim_mode yaw min stick
+	YawMaxDeflect int    `json:"yaw_max_deflect"` // aim_mode yaw max stick
 }
 
 func defaultWalkTreasureParam() walkTreasureParam {
@@ -46,13 +56,22 @@ func defaultWalkTreasureParam() walkTreasureParam {
 		TimeoutMs:        60000,
 		ClaimNodes:       []string{"TacetClaimReward"},
 		ClaimOCRNodes:    []string{"TacetClaimRewardByOCR"},
-		TreasureNodes:    []string{"TacetTreasureSeen", "TacetTreasureAim", "TacetTreasureDist"},
+		TreasureNodes:    []string{"TacetTreasureSeen", "TacetTreasureDist"},
 		TreasureOCRNodes: []string{"TacetTreasureDistOCR"},
 		XThreshold:       90,
 		YOffset:          36,
 		GateMs:           2500,
 		MarkerTTLMs:      1500,
 		OCREvery:         5,
+		ScanMode:         "camera",
+		AimMode:          "strafe", // switch to "yaw" after yaw calibration
+		YawFullMs:        3000,
+		YawDeflect:       20000,
+		ScanSteps:        8,
+		YawDeadPx:        60,
+		YawWidePx:        260,
+		YawMinDeflect:    8000,
+		YawMaxDeflect:    22000,
 	}
 }
 
@@ -96,6 +115,33 @@ func parseWalkTreasureParam(raw string) walkTreasureParam {
 	if override.OCREvery > 0 {
 		p.OCREvery = override.OCREvery
 	}
+	if override.ScanMode == "camera" || override.ScanMode == "walk" {
+		p.ScanMode = override.ScanMode
+	}
+	if override.AimMode == "strafe" || override.AimMode == "yaw" {
+		p.AimMode = override.AimMode
+	}
+	if override.YawFullMs > 0 {
+		p.YawFullMs = override.YawFullMs
+	}
+	if override.YawDeflect > 0 {
+		p.YawDeflect = override.YawDeflect
+	}
+	if override.ScanSteps > 0 {
+		p.ScanSteps = override.ScanSteps
+	}
+	if override.YawDeadPx > 0 {
+		p.YawDeadPx = override.YawDeadPx
+	}
+	if override.YawWidePx > 0 {
+		p.YawWidePx = override.YawWidePx
+	}
+	if override.YawMinDeflect > 0 {
+		p.YawMinDeflect = override.YawMinDeflect
+	}
+	if override.YawMaxDeflect > 0 {
+		p.YawMaxDeflect = override.YawMaxDeflect
+	}
 	return p
 }
 
@@ -111,6 +157,25 @@ const (
 	dirS
 	dirD
 )
+
+// vecDir classifies a vector for logging / steerDecision's last-direction memory.
+func vecDir(v stickVec) walkDir {
+	// dirA/dirD carry a small forward bias (see dirStick), so compare magnitudes.
+	if absInt(v.LX) > absInt(v.LY) {
+		if v.LX > 0 {
+			return dirD
+		}
+		return dirA
+	}
+	switch {
+	case v.LY < 0:
+		return dirW
+	case v.LY > 0:
+		return dirS
+	default:
+		return dirNone
+	}
+}
 
 func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
 	tasker := ctx.GetTasker()
@@ -136,51 +201,88 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 		Strs("treasure_ocr_nodes", param.TreasureOCRNodes).
 		Int("x_threshold", param.XThreshold).
 		Int64("gate_ms", param.GateMs).
+		Str("scan_mode", param.ScanMode).
+		Str("aim_mode", param.AimMode).
+		Int64("yaw_full_ms", param.YawFullMs).
 		Msg("WalkToTacetTreasure: start (ok-ww walk_to_box)")
 
 	start := time.Now()
 	deadline := start.Add(time.Duration(param.TimeoutMs) * time.Millisecond)
 	gateEnd := start.Add(time.Duration(param.GateMs) * time.Millisecond)
 	markerTTL := time.Duration(param.MarkerTTLMs) * time.Millisecond
+	if param.AimMode == "yaw" && markerTTL > 500*time.Millisecond {
+		// While the camera is turning a remembered box goes stale fast.
+		markerTTL = 500 * time.Millisecond
+	}
 
-	const holdDur = 700 * time.Millisecond
+	scanPlan := walkSearchLegs()
+	if param.ScanMode == "camera" {
+		scanPlan = cameraScanPlan(param.ScanSteps, time.Duration(param.YawFullMs)*time.Millisecond, param.YawDeflect)
+	}
+	seq := newScanSeq(scanPlan)
+
+	const (
+		strafeHold = 700 * time.Millisecond
+		yawHold    = 300 * time.Millisecond // short: a lost frame must not keep turning
+	)
 
 	var (
 		lastDir   walkDir
+		lastVec   stickVec
 		lastBox   *maa.Rect
 		lastName  string
 		lastSeen  time.Time
-		lastWrite time.Time
+		holdUntil time.Time // deadline of the last stick command actually sent (clamped hold)
+		stats     frameStats
 		centered  bool
 		frames    int
 		missed    int
-		searchIdx int
-		segStart  time.Time
 		searching bool
 	)
 
-	// setDir holds `d` continuously: rewrite only on direction change or near hold expiry.
-	setDir := func(d walkDir, hold time.Duration) bool {
+	// setVec holds `v` continuously. A changed vector is always (re)sent — the pump applies the
+	// newest command immediately, so no neutral is needed between legs. An unchanged vector is
+	// only refreshed near expiry of the last command actually sent.
+	setVec := func(v stickVec, hold time.Duration) bool {
 		now := time.Now()
-		if d == lastDir && !shouldRefreshHold(now.Sub(lastWrite), hold) {
-			return true
+		hold = clampHold(hold)
+		if v == lastVec {
+			if v.zero() {
+				return true
+			}
+			if !needsRewrite(holdUntil.Sub(now), hold) {
+				return true
+			}
 		}
-		if d != lastDir && lastDir != dirNone {
-			stickNeutral(ctrl)
-			time.Sleep(15 * time.Millisecond)
+		lastVec = v
+		lastDir = vecDir(v)
+		if v.zero() {
+			holdUntil = time.Time{}
+			return pulseSticks(ctrl, stickVec{}, minStickHold)
 		}
-		lastDir = d
-		lastWrite = now
-		if d == dirNone {
-			return pulseStickHold(ctrl, 0, 0, 50*time.Millisecond)
+		holdUntil = now.Add(hold)
+		return pulseSticks(ctrl, v, hold)
+	}
+
+	// sendVec sends  unconditionally with an exact hold (scan legs): the pump self-expires
+	// it, so the leg length does not depend on how slow the next frame is.
+	sendVec := func(v stickVec, hold time.Duration) bool {
+		hold = clampHold(hold)
+		lastVec = v
+		lastDir = vecDir(v)
+		if v.zero() {
+			holdUntil = time.Time{}
+			return pulseSticks(ctrl, stickVec{}, minStickHold)
 		}
-		x, y := dirStick(d)
-		return pulseStickHold(ctrl, x, y, hold)
+		holdUntil = time.Now().Add(hold)
+		return pulseSticks(ctrl, v, hold)
 	}
 
 	release := func() {
 		stickNeutral(ctrl)
 		lastDir = dirNone
+		lastVec = stickVec{}
+		holdUntil = time.Time{}
 	}
 
 	for time.Now().Before(deadline) {
@@ -189,12 +291,14 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 			return false
 		}
 
+		frameStart := time.Now()
 		ctrl.PostScreencap().Wait()
 		img, err := ctrl.CacheImage()
 		if err != nil || img == nil {
 			time.Sleep(80 * time.Millisecond)
 			continue
 		}
+		capMs := time.Since(frameStart)
 		frames++
 		ocrFrame := cadence(frames, param.OCREvery)
 
@@ -205,9 +309,15 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 			claimNodes = append(append([]string{}, param.ClaimNodes...), param.ClaimOCRNodes...)
 		}
 		if hit, name := anyExitHit(ctx, img, claimNodes); hit {
+			// Fix the frame cost (capture + recognition) before release() so the stick
+			// write/wait is not counted; same definition as every other frame.
+			claimFrameDur := time.Since(frameStart)
+			stats.add(ocrFrame, claimFrameDur)
 			release()
 			log.Info().Str("node", name).Int("frames", frames).
-				Dur("elapsed", time.Since(start)).
+				Dur("total", time.Since(start)).
+				Dur("frame_ms", claimFrameDur).Dur("cap_ms", capMs).Bool("ocr", ocrFrame).
+				Dur("plain_avg", stats.avg(false)).Dur("ocr_avg", stats.avg(true)).
 				Msg("WalkToTacetTreasure: claim prompt → Interact(B)")
 			pad.Interact()
 			time.Sleep(500 * time.Millisecond)
@@ -219,16 +329,25 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 			box, name = firstTreasureBox(ctx, img, param.TreasureOCRNodes)
 		}
 		now := time.Now()
+		frameDur := now.Sub(frameStart) // capture + all recognition this frame (before actuation)
+		stats.add(ocrFrame, frameDur)
+		if frames%20 == 0 {
+			log.Info().Int("frames", frames).
+				Dur("plain_avg", stats.avg(false)).Int("plain_n", stats.plainN).
+				Dur("ocr_avg", stats.avg(true)).Int("ocr_n", stats.ocrN).
+				Msg("WalkToTacetTreasure: frame stats")
+		}
 		if box != nil {
 			if lastBox == nil || searching {
 				log.Info().Str("node", name).Int("frames", frames).
-					Dur("elapsed", now.Sub(start)).Msg("WalkToTacetTreasure: marker acquired")
+					Dur("total", now.Sub(start)).
+					Dur("frame_ms", frameDur).Bool("ocr", ocrFrame).
+					Msg("WalkToTacetTreasure: marker acquired")
 			}
 			lastBox, lastName, lastSeen = box, name, now
 			missed = 0
 			searching = false
-			searchIdx = 0
-			segStart = time.Time{}
+			seq.reset()
 		} else {
 			missed++
 			if lastBox != nil && !markerFresh(now.Sub(lastSeen), markerTTL) {
@@ -240,56 +359,66 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 
 		switch {
 		case lastBox != nil:
-			next, c := steerDecision(steerInput{
-				BoxCX:      lastBox.X() + lastBox.Width()/2,
-				BoxCY:      lastBox.Y() + lastBox.Height()/2,
-				LastDir:    lastDir,
-				Centered:   centered,
-				XThreshold: param.XThreshold,
-				YOffset:    param.YOffset,
-			})
-			centered = c
+			cx := lastBox.X() + lastBox.Width()/2
+			cy := lastBox.Y() + lastBox.Height()/2
+			var (
+				vec  stickVec
+				hold time.Duration
+			)
+			if param.AimMode == "yaw" {
+				vec, centered = aimYaw(aimInput{
+					BoxCX: cx, BoxCY: cy, YOffset: param.YOffset,
+					DeadPx: param.YawDeadPx, WidePx: param.YawWidePx,
+					YawMin: param.YawMinDeflect, YawMax: param.YawMaxDeflect,
+				})
+				hold = yawHold
+			} else {
+				var next walkDir
+				next, centered = steerDecision(steerInput{
+					BoxCX: cx, BoxCY: cy,
+					LastDir:    lastDir,
+					Centered:   centered,
+					XThreshold: param.XThreshold,
+					YOffset:    param.YOffset,
+				})
+				vec = dirVec(next)
+				hold = strafeHold
+			}
 			if frames%8 == 1 {
 				log.Info().
 					Str("node", lastName).
-					Int("cx", lastBox.X()+lastBox.Width()/2).
-					Int("cy", lastBox.Y()+lastBox.Height()/2).
+					Int("cx", cx).Int("cy", cy).
 					Bool("centered", centered).
-					Str("dir", dirName(next)).
+					Str("aim", param.AimMode).
+					Int("lx", vec.LX).Int("ly", vec.LY).Int("rx", vec.RX).
+					Dur("frame_ms", frameDur).Dur("cap_ms", capMs).Bool("ocr", ocrFrame).
 					Msg("WalkToTacetTreasure: steer")
 			}
-			if !setDir(next, holdDur) {
+			if !setVec(vec, hold) {
 				release()
 				return false
 			}
 
-		case lastDir == dirNone && !searching && now.Before(gateEnd):
+		case lastVec.zero() && !searching && now.Before(gateEnd):
 			// ok-ww wait_until(end_condition or find_function): stand still while waiting.
 			if frames == 1 {
 				log.Info().Msg("WalkToTacetTreasure: gate — waiting for marker/claim (no movement)")
 			}
 
 		default:
-			// Gate expired, no marker: follow a fixed search path (continuous legs).
+			// Gate expired, no marker: scan the camera (or follow the walk path).
 			if !searching {
 				searching = true
-				searchIdx = 0
-				segStart = now
-				log.Info().Int("missed", missed).Msg("WalkToTacetTreasure: no marker → search path")
+				seq.reset()
+				log.Info().Int("missed", missed).Str("scan_mode", param.ScanMode).
+					Msg("WalkToTacetTreasure: no marker → search")
 			}
-			seg := searchSegment(searchIdx)
-			if now.Sub(segStart) >= seg.Dur {
-				searchIdx++
-				segStart = now
-				seg = searchSegment(searchIdx)
-			}
-			remain := seg.Dur - now.Sub(segStart)
-			if remain > 2000*time.Millisecond {
-				remain = 2000 * time.Millisecond
-			}
-			if !setDir(seg.Dir, remain+200*time.Millisecond) {
-				release()
-				return false
+			// Leg timing is independent of recognition cost (see scanSeq).
+			if act := seq.step(now, frameStart); act.Send {
+				if !sendVec(act.Vec, act.Hold) {
+					release()
+					return false
+				}
 			}
 			if missed%15 == 0 {
 				pad.Interact() // may already be in F range without a claim template hit
@@ -310,7 +439,8 @@ func (a *WalkToTacetTreasureAction) Run(ctx *maa.Context, arg *maa.CustomActionA
 		}
 	}
 	log.Warn().Int("frames", frames).
-		Dur("elapsed", time.Since(start)).
+		Dur("total", time.Since(start)).
+		Dur("plain_avg", stats.avg(false)).Dur("ocr_avg", stats.avg(true)).
 		Msg("WalkToTacetTreasure: timeout without claim")
 	return false
 }
@@ -380,65 +510,4 @@ func absInt(v int) int {
 		return -v
 	}
 	return v
-}
-
-func stickNeutral(ctrl *maa.Controller) {
-	_ = pulseStickHold(ctrl, 0, 0, 50*time.Millisecond)
-}
-
-// stickPayload is one command line for GamepadForwarder: "absX absY holdMs\n".
-func stickPayload(x, y int, hold time.Duration) (string, int64) {
-	ms := hold.Milliseconds()
-	if ms < 50 {
-		ms = 50
-	}
-	if ms > 2000 {
-		ms = 2000
-	}
-	return fmt.Sprintf("%d %d %d\n", x, y, ms), ms
-}
-
-// stickShellCmd publishes atomically on the device: full write to .tmp, then mv over the live path.
-func stickShellCmd(x, y int, ms int64) string {
-	tmp := stickCmdPath + ".tmp"
-	return fmt.Sprintf("echo %d %d %d > %s && mv -f %s %s", x, y, ms, tmp, tmp, stickCmdPath)
-}
-
-// writeStickLocal publishes on the same filesystem as the pump (GOOS=android agent only).
-func writeStickLocal(payload string) error {
-	tmp := stickCmdPath + ".tmp"
-	if err := os.WriteFile(tmp, []byte(payload), 0o666); err != nil {
-		return err
-	}
-	if err := os.Rename(tmp, stickCmdPath); err != nil {
-		_ = os.Remove(tmp)
-		return err
-	}
-	return nil
-}
-
-// pulseStickHold asks GamepadForwarder to set left stick (atomic publish, no truncate-in-place).
-// GOOS=android: local tmp+rename. Host + ADB: PostShell only — never os.WriteFile on the PC.
-func pulseStickHold(ctrl *maa.Controller, x, y int, hold time.Duration) bool {
-	if ctrl == nil {
-		return false
-	}
-	payload, ms := stickPayload(x, y, hold)
-
-	if runtime.GOOS == "android" {
-		if err := writeStickLocal(payload); err != nil {
-			log.Error().Err(err).Str("path", stickCmdPath).Msg("pulseStick: on-device write failed")
-			return false
-		}
-		time.Sleep(25 * time.Millisecond)
-		return true
-	}
-
-	job := ctrl.PostShell(stickShellCmd(x, y, ms), 800*time.Millisecond).Wait()
-	if job == nil || !job.Success() {
-		log.Error().Int("x", x).Int("y", y).Msg("pulseStick: device PostShell failed")
-		return false
-	}
-	time.Sleep(25 * time.Millisecond)
-	return true
 }
