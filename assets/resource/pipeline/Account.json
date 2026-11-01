@@ -12,11 +12,6 @@
                     "pick_node": "AccountPickRow",
                     "tasks": [
                         {
-                            "name": "Daily",
-                            "entry": "DailyMain",
-                            "gate": "AccountTaskDaily"
-                        },
-                        {
                             "name": "Nest",
                             "entry": "NestMain",
                             "gate": "AccountTaskNest"
@@ -25,6 +20,11 @@
                             "name": "Tacet",
                             "entry": "TacetMain",
                             "gate": "AccountTaskTacet"
+                        },
+                        {
+                            "name": "Daily",
+                            "entry": "DailyMain",
+                            "gate": "AccountTaskDaily"
                         }
                     ],
                     "current_node": "AccountCurrentIsTarget",

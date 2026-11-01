@@ -22,7 +22,7 @@
     "task.Nest.label": "聚落（残象 / 梦魇）",
     "task.Nest.description": "手册→素材获取→残象聚落/梦魇祛除：OCR 选未完成行（n/m 中 n=0）→ 快速旅行 / 直接挑战 → 战斗（任务栏「已清剿」判结束）→ 吸收声骸 → 下一个。P1 骨架，待奥丁联调。",
     "option.NestKind.label": "聚落类型",
-    "option.NestKind.description": "残象聚落：前往→快速旅行（无确认框）。梦魇祛除：直接挑战→编队页开启挑战（战斗 HUD 待补）。",
+    "option.NestKind.description": "可多选，选了几种就依次跑几种。残象聚落：前往→快速旅行（无确认框）。梦魇祛除：直接挑战→编队页开启挑战（战斗 HUD 待补）。",
     "option.NestKind.case.Canxiang": "残象聚落",
     "option.NestKind.case.Nightmare": "梦魇祛除",
     "task.Daily.label": "日常奖励领取",
@@ -35,5 +35,5 @@
     "option.AccountPhones.input.phones.description": "多个账号用逗号、分号或空格分隔，例如：13800001234,13900005678（也可只填后四位）。后四位相同的账号无法区分，只保留第一个。",
     "option.AccountPhones.input.phones.pattern_msg": "只能填数字，账号之间用逗号/分号/空格分隔",
     "option.AccountTasks.label": "每个账号要跑的任务",
-    "option.AccountTasks.description": "每切到一个账号，按「日常 → 聚落 → 无音区」顺序执行勾选的任务。"
+    "option.AccountTasks.description": "每切到一个账号，按「聚落 → 无音区 → 日常」顺序执行勾选的任务（日常最后，领取前面任务攒的活跃度）。"
 }

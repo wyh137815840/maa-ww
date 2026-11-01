@@ -49,22 +49,11 @@
             "label": "$option.AccountTasks.label",
             "description": "$option.AccountTasks.description",
             "default_case": [
-                "Daily",
                 "Nest",
-                "Tacet"
+                "Tacet",
+                "Daily"
             ],
             "cases": [
-                {
-                    "name": "Daily",
-                    "label": "$task.Daily.label",
-                    "pipeline_override": {
-                        "AccountTaskDaily": {
-                            "attach": {
-                                "on": true
-                            }
-                        }
-                    }
-                },
                 {
                     "name": "Nest",
                     "label": "$task.Nest.label",
@@ -81,6 +70,17 @@
                     "label": "$task.Tacet.label",
                     "pipeline_override": {
                         "AccountTaskTacet": {
+                            "attach": {
+                                "on": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Daily",
+                    "label": "$task.Daily.label",
+                    "pipeline_override": {
+                        "AccountTaskDaily": {
                             "attach": {
                                 "on": true
                             }

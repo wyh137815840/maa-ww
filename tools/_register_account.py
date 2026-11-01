@@ -12,7 +12,7 @@ zh = {
     "option.AccountPhones.input.phones.description": "多个账号用逗号、分号或空格分隔，例如：13800001234,13900005678（也可只填后四位）。后四位相同的账号无法区分，只保留第一个。",
     "option.AccountPhones.input.phones.pattern_msg": "只能填数字，账号之间用逗号/分号/空格分隔",
     "option.AccountTasks.label": "每个账号要跑的任务",
-    "option.AccountTasks.description": "每切到一个账号，按「日常 → 聚落 → 无音区」顺序执行勾选的任务。",
+    "option.AccountTasks.description": "每切到一个账号，按「聚落 → 无音区 → 日常」顺序执行勾选的任务（日常最后，领取前面任务攒的活跃度）。",
 }
 en = {
     "task.MultiAccount.label": "Multi-account run",
@@ -23,7 +23,7 @@ en = {
     "option.AccountPhones.input.phones.description": "Separate with comma, semicolon or space; last 4 digits alone also work.",
     "option.AccountPhones.input.phones.pattern_msg": "Digits only, separated by comma/semicolon/space",
     "option.AccountTasks.label": "Tasks per account",
-    "option.AccountTasks.description": "Run in order Daily, Nest, Tacet for each account.",
+    "option.AccountTasks.description": "Run in order Nest, Tacet, Daily (Daily last) for each account.",
 }
 for name, add in (("zh_cn.json", zh), ("en_us.json", en)):
     p = root / name

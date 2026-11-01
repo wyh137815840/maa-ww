@@ -22,7 +22,7 @@
     "task.Nest.label": "Nest (Echo / Nightmare)",
     "task.Nest.description": "Guidebook → Materials → Echo Nest / Nightmare: OCR the first unfinished row (n/m with n=0) → Fast Travel / Direct Challenge → combat (quest bar says cleared) → absorb echoes → next. P1 skeleton, pending Odin acceptance.",
     "option.NestKind.label": "Nest kind",
-    "option.NestKind.description": "Echo Nest: Go → Fast Travel (no confirm). Nightmare: Direct Challenge → Start Challenge on the team page (combat HUD TBD).",
+    "option.NestKind.description": "Multi-select; each selected kind runs in turn.",
     "option.NestKind.case.Canxiang": "Echo Nest",
     "option.NestKind.case.Nightmare": "Nightmare",
     "task.Daily.label": "Claim Daily Rewards",
@@ -35,5 +35,5 @@
     "option.AccountPhones.input.phones.description": "Separate with comma, semicolon or space; last 4 digits alone also work.",
     "option.AccountPhones.input.phones.pattern_msg": "Digits only, separated by comma/semicolon/space",
     "option.AccountTasks.label": "Tasks per account",
-    "option.AccountTasks.description": "Run in order Daily, Nest, Tacet for each account."
+    "option.AccountTasks.description": "Run in order Nest, Tacet, Daily (Daily last) for each account."
 }

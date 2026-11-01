@@ -47,9 +47,10 @@ type loopParam struct {
 // custom_action_param, because the AccountPhones input option overrides that whole param object
 // ({"phones": "..."}) and would wipe any other keys declared in the pipeline.
 var defaultTasks = []TaskSpec{
-	{Name: "Daily", Entry: "DailyMain", Gate: "AccountTaskDaily"},
-	{Name: "Nest", Entry: "NestMain", Gate: "AccountTaskNest"},
+	{Name: "Nest", Entry: "NestRun", Gate: "AccountTaskNest"},
 	{Name: "Tacet", Entry: "TacetMain", Gate: "AccountTaskTacet"},
+	// Daily last: the activity points it claims come from the tasks above.
+	{Name: "Daily", Entry: "DailyMain", Gate: "AccountTaskDaily"},
 }
 
 func defaultLoopParam() loopParam {

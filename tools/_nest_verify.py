@@ -21,7 +21,7 @@ PKG = "com.aliothmoon.maafw.maaww"
 LOG = f"/sdcard/Android/data/{PKG}/files/log/maafw.log"
 GOLOG = f"/sdcard/Android/data/{PKG}/files/pi/debug/go-service.log"
 OUT = ROOT / "tools/_shots"
-SERIAL = "f6498093"
+SERIAL = os.environ.get("ANDROID_SERIAL") or load_config()["serial"]
 
 
 def adb(cfg, *args):
