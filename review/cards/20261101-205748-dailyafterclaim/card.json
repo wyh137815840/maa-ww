@@ -1,0 +1,43 @@
+{
+    "id": "20261101-205748-dailyafterclaim",
+    "created_at": "2026-11-01T12:57:48.290271+00:00",
+    "label": "DailyClaimButton",
+    "note": "点一次即全部领取（点第一行）；点完没有弹窗。画面为点之前的活跃行迹页。",
+    "expected_next": "DailyPoints / 宝箱",
+    "source_image": "review/inbox/20261101-205604-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1124,
+        177
+    ],
+    "roi": [
+        1047,
+        158,
+        161,
+        44
+    ],
+    "files": {
+        "screen": "review/cards/20261101-205748-dailyafterclaim/screen.png",
+        "preview": "review/cards/20261101-205748-dailyafterclaim/preview.png",
+        "template": "review/cards/20261101-205748-dailyafterclaim/template.png",
+        "card": "review/cards/20261101-205748-dailyafterclaim/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/DailyAfterClaim.png",
+        "roi": [
+            1047,
+            158,
+            161,
+            44
+        ],
+        "target": [
+            1124,
+            177
+        ]
+    }
+}

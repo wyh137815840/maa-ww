@@ -30,6 +30,8 @@
         "tasks/Startup.json",
         "tasks/Tacet.json",
         "tasks/Nest.json",
+        "tasks/Daily.json",
+        "tasks/MultiAccount.json",
         "tasks/SkipDialog.json"
     ],
     "agent": [

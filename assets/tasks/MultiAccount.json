@@ -1,0 +1,93 @@
+{
+    "task": [
+        {
+            "name": "MultiAccount",
+            "label": "$task.MultiAccount.label",
+            "description": "$task.MultiAccount.description",
+            "entry": "AccountLoopMain",
+            "controller": [
+                "ADB"
+            ],
+            "option": [
+                "AccountPhones",
+                "AccountTasks",
+                "TacetIndex",
+                "NestKind"
+            ]
+        }
+    ],
+    "option": {
+        "AccountPhones": {
+            "type": "input",
+            "label": "$option.AccountPhones.label",
+            "description": "$option.AccountPhones.description",
+            "inputs": [
+                {
+                    "name": "phones",
+                    "label": "$option.AccountPhones.input.phones",
+                    "description": "$option.AccountPhones.input.phones.description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": "^[0-9\\s,，;；、-]*$",
+                    "pattern_msg": "$option.AccountPhones.input.phones.pattern_msg"
+                }
+            ],
+            "pipeline_override": {
+                "AccountLoopMain": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "phones": "{phones}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "AccountTasks": {
+            "type": "checkbox",
+            "label": "$option.AccountTasks.label",
+            "description": "$option.AccountTasks.description",
+            "default_case": [
+                "Daily",
+                "Nest",
+                "Tacet"
+            ],
+            "cases": [
+                {
+                    "name": "Daily",
+                    "label": "$task.Daily.label",
+                    "pipeline_override": {
+                        "AccountTaskDaily": {
+                            "attach": {
+                                "on": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Nest",
+                    "label": "$task.Nest.label",
+                    "pipeline_override": {
+                        "AccountTaskNest": {
+                            "attach": {
+                                "on": true
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Tacet",
+                    "label": "$task.Tacet.label",
+                    "pipeline_override": {
+                        "AccountTaskTacet": {
+                            "attach": {
+                                "on": true
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

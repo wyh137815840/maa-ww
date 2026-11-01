@@ -1,0 +1,43 @@
+{
+    "id": "20261101-210208-dailyclaimbutton",
+    "created_at": "2026-11-01T13:02:08.195830+00:00",
+    "label": "DailyChest100",
+    "note": "活跃度>=100 时 100 宝箱亮起（红点 + 下方 Y 图标），可触屏点击领取，也可按 Y 直接领取。画面为已点过日常领取（活跃度 140）后的活跃行迹页。",
+    "expected_next": "领取后画面（DailyChestClaimed）",
+    "source_image": "review/inbox/20261101-205753-snap.png",
+    "image_size": [
+        1280,
+        720
+    ],
+    "click": [
+        1184,
+        641
+    ],
+    "roi": [
+        1116,
+        611,
+        119,
+        80
+    ],
+    "files": {
+        "screen": "review/cards/20261101-210208-dailyclaimbutton/screen.png",
+        "preview": "review/cards/20261101-210208-dailyclaimbutton/preview.png",
+        "template": "review/cards/20261101-210208-dailyclaimbutton/template.png",
+        "card": "review/cards/20261101-210208-dailyclaimbutton/card.json"
+    },
+    "pipeline_hint": {
+        "recognition": "TemplateMatch",
+        "action": "Click",
+        "template": "image/DailyClaimButton.png",
+        "roi": [
+            1116,
+            611,
+            119,
+            80
+        ],
+        "target": [
+            1184,
+            641
+        ]
+    }
+}

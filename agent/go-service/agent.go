@@ -7,6 +7,7 @@ import (
 
 	"github.com/MaaXYZ/maa-framework-go/v4"
 	"github.com/rs/zerolog/log"
+	"github.com/yuanhao-wei/maa-ww/agent/go-service/account"
 	"github.com/yuanhao-wei/maa-ww/agent/go-service/combat"
 )
 
@@ -36,6 +37,7 @@ func runAgent(identifier string) {
 	}
 
 	combat.Register()
+	account.Register()
 
 	if err := maa.AgentServerStartUp(identifier); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start agent server")

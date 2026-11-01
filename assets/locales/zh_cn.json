@@ -24,5 +24,16 @@
     "option.NestKind.label": "聚落类型",
     "option.NestKind.description": "残象聚落：前往→快速旅行（无确认框）。梦魇祛除：直接挑战→编队页开启挑战（战斗 HUD 待补）。",
     "option.NestKind.case.Canxiang": "残象聚落",
-    "option.NestKind.case.Nightmare": "梦魇祛除"
+    "option.NestKind.case.Nightmare": "梦魇祛除",
+    "task.Daily.label": "日常奖励领取",
+    "task.Daily.description": "手册→索拉指南→活跃行迹：点一次「领取」领完所有已完成任务，活跃度到 100 时按 Y 领取全部宝箱，关闭奖励弹窗后离开手册。P1，待奥丁联调。",
+    "task.MultiAccount.label": "多账号轮跑",
+    "task.MultiAccount.description": "按「手机号」列表逐个切号（库洛登录页按后四位选号），每个账号把勾选的任务各跑一遍。切号失败的账号会被跳过。任务选项（聚落类型、无音区序号）对所有账号生效。",
+    "option.AccountPhones.label": "账号手机号",
+    "option.AccountPhones.description": "填你要轮跑的账号。登录页只显示被遮挡的手机号，实际按后四位匹配；手机号只保存在本机配置里。",
+    "option.AccountPhones.input.phones": "手机号列表",
+    "option.AccountPhones.input.phones.description": "多个账号用逗号、分号或空格分隔，例如：13800001234,13900005678（也可只填后四位）。后四位相同的账号无法区分，只保留第一个。",
+    "option.AccountPhones.input.phones.pattern_msg": "只能填数字，账号之间用逗号/分号/空格分隔",
+    "option.AccountTasks.label": "每个账号要跑的任务",
+    "option.AccountTasks.description": "每切到一个账号，按「日常 → 聚落 → 无音区」顺序执行勾选的任务。"
 }

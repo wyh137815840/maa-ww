@@ -10,7 +10,7 @@
 | SkipDialogTask | 跳过剧情对话 | todo |
 | AutoPickTask | 自动拾取 | todo |
 | AutoLoginTask | 自动登录 | todo |
-| DailyTask | 日常一条龙骨架 | todo |
+| DailyTask | 日常一条龙骨架（已有：活跃度领取 `Daily` 任务 P1；刷体力 / 邮件 / 战令待做） | wip |
 | AutoCombatTask | 自动战斗（先通用 BaseChar；专精角色后补） | wip |
 | BaseCombatTask / BaseChar | 战斗与角色基类（移植为 Go `CombatLoop`） | wip |
 
@@ -50,8 +50,8 @@
 | CharacterCodeTask | 角色码 | todo |
 | FarmMapTask | 地图相关 | todo |
 | DiagnosisTask | 诊断 | todo |
-| MultiAccountDailyTask | 多账号日常 | todo |
-| MultiAccountConfigTask | 多账号配置 | todo |
+| MultiAccountDailyTask | 多账号日常 | wip（Go 轮跑循环 + 手机号配置已就绪，切号流水线待截图） |
+| MultiAccountConfigTask | 多账号配置 | wip（任务选项 AccountPhones 输入后四位） |
 | MouseResetTask | 防鼠标漂移 | wontfix（PC） |
 | 后台静音等 | Windows 专属 | wontfix（PC） |
 | 全角色战斗脚本（约 60） | 在基础战斗稳定后逐个移植 | todo |

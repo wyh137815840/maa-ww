@@ -1,0 +1,13 @@
+{
+    "task": [
+        {
+            "name": "Daily",
+            "label": "$task.Daily.label",
+            "description": "$task.Daily.description",
+            "entry": "DailyMain",
+            "controller": [
+                "ADB"
+            ]
+        }
+    ]
+}

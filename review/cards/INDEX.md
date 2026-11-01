@@ -1,9 +1,11 @@
 # Touch Review Cards
 
-Updated: 2026-11-01T19:04:46
+Updated: 2026-11-01T21:02:08
 
 | id | label | click | roi | expected_next | note |
 | --- | --- | --- | --- | --- | --- |
+| `20261101-210208-dailyclaimbutton` | DailyChest100 | `[1184, 641]` | `[1116, 611, 119, 80]` | 点完之后的画面（下一张 DailyAfterClaim） | 这张图是已经点过领取的了，100的已经亮起，可以触屏点击点领取，也可以按Y直接领取 |
+| `20261101-205748-dailyafterclaim` | DailyClaimButton | `[1124, 177]` | `[1047, 158, 161, 44]` | DailyPoints / 宝箱 | 点一次即全部领取（点第一行）；点完没有弹窗。画面为点之前的活跃行迹页。 |
 | `20261101-190446-nightmareenter` | NightmareEnter | `[1103, 661]` | `[1043, 645, 125, 36]` | 战斗 / 加载 |  |
 | `20261101-190309-nestabsorbdone` | NestAbsorbDone | `[69, 378]` | `[35, 347, 261, 64]` | 下一个聚落 / 结束 | 一次吸收吸走全部声骸，点击点无需点击 |
 | `20261101-185931-nestabsorbprompt` | NestAbsorbPrompt | `[881, 371]` | `[849, 349, 206, 44]` | 吸收完成 / 下一个声骸 | 出现在右侧，和宝箱/其他 F 提示共用同一位置。距离我无法判断 |

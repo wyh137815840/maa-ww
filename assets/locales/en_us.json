@@ -24,5 +24,16 @@
     "option.NestKind.label": "Nest kind",
     "option.NestKind.description": "Echo Nest: Go → Fast Travel (no confirm). Nightmare: Direct Challenge → Start Challenge on the team page (combat HUD TBD).",
     "option.NestKind.case.Canxiang": "Echo Nest",
-    "option.NestKind.case.Nightmare": "Nightmare"
+    "option.NestKind.case.Nightmare": "Nightmare",
+    "task.Daily.label": "Claim Daily Rewards",
+    "task.Daily.description": "Guidebook → Sola Guide → Daily Activity: click Claim once to collect every finished task, press Y for the chests when activity reaches 100, close the reward popup and leave. P1, pending Odin acceptance.",
+    "task.MultiAccount.label": "Multi-account run",
+    "task.MultiAccount.description": "Switch through the phone list (Kuro login sheet, matched by last 4 digits) and run the checked tasks on every account.",
+    "option.AccountPhones.label": "Account phones",
+    "option.AccountPhones.description": "The login sheet masks phones, so the last 4 digits are matched.",
+    "option.AccountPhones.input.phones": "Phone list",
+    "option.AccountPhones.input.phones.description": "Separate with comma, semicolon or space; last 4 digits alone also work.",
+    "option.AccountPhones.input.phones.pattern_msg": "Digits only, separated by comma/semicolon/space",
+    "option.AccountTasks.label": "Tasks per account",
+    "option.AccountTasks.description": "Run in order Daily, Nest, Tacet for each account."
 }

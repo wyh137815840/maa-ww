@@ -1,0 +1,214 @@
+{
+    "DailyMain": {
+        "desc": "日常奖励领取入口（对标 ok-ww DailyTask.claim_daily，只做「活跃度」领取；刷体力 / 邮件 / 战令后续）。状态驱动：领奖弹窗 → 100 宝箱亮起(Y) → 第一行「领取」(点一次领完所有行) → 已在活跃行迹页且无事可做 → 离开手册。界面情报见 review/cards/*daily*。注意：点完「领取」后，已领行消失，同一位置变成「前往」，所以领取节点必须先 OCR 到「领取」再点，并限制次数。",
+        "next": [
+            "DailyRewardPopup",
+            "DailyChestReady",
+            "DailyClaimRow1",
+            "DailyPage",
+            "DailyToActivityTab",
+            "DailyOpenGuidebookFromWorld",
+            "DailyOpenGuidebook",
+            "DailySolaTile",
+            "DailySolaTileOCR"
+        ]
+    },
+    "DailyOpenGuidebookFromWorld": {
+        "desc": "大世界（认小地图）后点右上 Terminal。同 NestOpenGuidebookFromWorld，next 进日常链。",
+        "recognition": "TemplateMatch",
+        "roi": [40, 10, 200, 180],
+        "template": "Explore/HUD_Minimap.png",
+        "threshold": 0.55,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyPage",
+            "DailySolaTile",
+            "DailySolaTileOCR",
+            "DailyToActivityTab"
+        ]
+    },
+    "DailyOpenGuidebook": {
+        "desc": "手柄态顶栏 Terminal 图标。同 NestOpenGuidebook，next 进日常链。",
+        "recognition": "TemplateMatch",
+        "roi": [1180, 0, 100, 80],
+        "template": "Guidebook/OpenGuidebookPad.png",
+        "threshold": 0.72,
+        "action": "Click",
+        "target": [1221, 35],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyPage",
+            "DailySolaTile",
+            "DailySolaTileOCR",
+            "DailyToActivityTab"
+        ]
+    },
+    "DailySolaTile": {
+        "desc": "Terminal「索拉指南」磁贴。点开后默认落在「活跃行迹」页（20261101 实测）。",
+        "recognition": "TemplateMatch",
+        "roi": [560, 450, 160, 180],
+        "template": "Guidebook/SolaGuidebookTile.png",
+        "threshold": 0.65,
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyPage",
+            "DailyToActivityTab"
+        ]
+    },
+    "DailySolaTileOCR": {
+        "desc": "「索拉指南」OCR 兜底；点击固定 634,499。",
+        "recognition": "OCR",
+        "roi": [560, 450, 160, 180],
+        "expected": ["索拉指南"],
+        "action": "Click",
+        "target": [634, 499],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyPage",
+            "DailyToActivityTab"
+        ]
+    },
+    "DailyToActivityTab": {
+        "desc": "索拉指南没落在「活跃行迹」而是「素材获取」（左栏双剑已选中）时，点左栏第一个图标回活跃行迹。第一个图标坐标 (50,125) 由 20261101 活跃行迹截图推算（左栏图标间距约 89px，第二个双剑在 (51,214)），未实机验证。",
+        "recognition": "TemplateMatch",
+        "roi": [9, 187, 78, 61],
+        "template": "Guidebook/SolaGuidebookOpened.png",
+        "threshold": 0.7,
+        "action": "Click",
+        "target": [50, 125],
+        "post_wait_freezes": {
+            "time": 500,
+            "timeout": 8000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyPage"
+        ]
+    },
+    "DailyClaimRow1": {
+        "desc": "活跃行迹列表第一行黄色「领取」：点一次即领完所有已完成的行（用户确认，无弹窗）。审查卡 20261101-205748-dailyafterclaim（label DailyClaimButton），点击点 (1124,177)。只在 OCR 到「领取」时点；领完后同位置变「前往」，OCR 不再命中，绝不会误点前往。",
+        "recognition": "OCR",
+        "roi": [1040, 150, 180, 60],
+        "expected": ["领取"],
+        "action": "Click",
+        "max_hit": 3,
+        "post_wait_freezes": {
+            "time": 800,
+            "timeout": 4000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyMain"
+        ]
+    },
+    "DailyChestReady": {
+        "desc": "活跃度 >= 100 时右下「100」宝箱亮起（红点 + 下方 Y 图标）。按 Y 一次领完所有宝箱（用户确认）。模板取自审查卡 20261101-210208（label DailyChest100）。已领 / 未达成时宝箱是对勾或灰色，不会命中。",
+        "recognition": "TemplateMatch",
+        "roi": [1090, 590, 170, 120],
+        "template": "Guidebook/DailyChest100.png",
+        "threshold": 0.8,
+        "action": "ClickKey",
+        "key": 100,
+        "max_hit": 3,
+        "post_delay": 800,
+        "next": [
+            "DailyRewardPopup",
+            "DailyMain"
+        ]
+    },
+    "DailyRewardPopup": {
+        "desc": "领宝箱后的「获得」奖励弹窗（标题「获得」居中，底部 LS 查看 / A 返回）。按 A 关闭。20261101-210312 截图。",
+        "recognition": "OCR",
+        "roi": [540, 150, 200, 70],
+        "expected": ["获得"],
+        "action": "ClickKey",
+        "key": 96,
+        "max_hit": 6,
+        "post_delay": 800,
+        "next": [
+            "DailyMain"
+        ]
+    },
+    "DailyPage": {
+        "desc": "已在「活跃行迹」页（左上标题）。能走到这里说明没有可领的行、也没有亮起的 100 宝箱：已领完或活跃度不足 100，直接离开手册。",
+        "recognition": "OCR",
+        "roi": [50, 25, 160, 45],
+        "expected": ["活跃行迹"],
+        "action": "DoNothing",
+        "next": [
+            "DailyLeave"
+        ]
+    },
+    "DailyLeave": {
+        "desc": "离开手册：点活跃行迹页右上角 ✕ (1204,43)（20261101 实测：关闭后回到「终端」首页），再由 DailyLeaveTerminal 按 A 回大世界。若直接回到了大世界则 DailyWorldCheck 命中。",
+        "recognition": "DirectHit",
+        "action": "Click",
+        "target": [1204, 43],
+        "post_wait_freezes": {
+            "time": 600,
+            "timeout": 5000,
+            "threshold": 0.95
+        },
+        "on_error": [
+            "DailyDone"
+        ],
+        "next": [
+            "DailyWorldCheck",
+            "DailyLeaveTerminal"
+        ]
+    },
+    "DailyLeaveTerminal": {
+        "desc": "活跃行迹关闭后回到「终端」首页（左上标题「终端」）。实测触屏点右上 ✕ (1225,43) 在终端首页不生效（高亮但不关闭），改按 A（底栏「A 返回」）回大世界。",
+        "recognition": "OCR",
+        "roi": [50, 15, 140, 45],
+        "expected": ["终端"],
+        "action": "ClickKey",
+        "key": 96,
+        "max_hit": 2,
+        "post_wait_freezes": {
+            "time": 600,
+            "timeout": 5000,
+            "threshold": 0.95
+        },
+        "next": [
+            "DailyWorldCheck",
+            "DailyDone"
+        ]
+    },
+    "DailyWorldCheck": {
+        "desc": "回到大世界：左下 HUD「地图」文字（同 NestApproach；小地图模板在部分地形只有 <0.55，20261101 实测不可靠）。",
+        "recognition": "OCR",
+        "roi": [20, 660, 140, 50],
+        "expected": ["地图"],
+        "action": "DoNothing",
+        "next": [
+            "DailyDone"
+        ]
+    },
+    "DailyDone": {
+        "desc": "日常奖励领取结束。",
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    }
+}
