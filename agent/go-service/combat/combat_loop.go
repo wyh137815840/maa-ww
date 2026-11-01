@@ -18,8 +18,9 @@ type combatLoopParam struct {
 	ExitNodes         []string `json:"exit_nodes"`
 	MaxDurationMs     int64    `json:"max_duration_ms"`
 	HUDNode           string   `json:"hud_node"`
-	LockEveryN        int      `json:"lock_every_n"`
+	LockEveryN        int      `json:"lock_every_n"` // 0 = only lock at start / retarget (ok-ww style)
 	RetargetTimeoutMs int64    `json:"retarget_timeout_ms"`
+	ExitCheckEveryN   int      `json:"exit_check_every_n"` // settle scan cadence; default 4 rounds
 }
 
 func defaultCombatLoopParam() combatLoopParam {
@@ -33,8 +34,9 @@ func defaultCombatLoopParam() combatLoopParam {
 		},
 		MaxDurationMs:     300000,
 		HUDNode:           "InTacetCombat",
-		LockEveryN:        3,
+		LockEveryN:        0, // was 3 — periodic R3 makes combat stutter
 		RetargetTimeoutMs: 4000,
+		ExitCheckEveryN:   4,
 	}
 }
 
@@ -57,13 +59,32 @@ func parseCombatLoopParam(raw string) combatLoopParam {
 	if override.HUDNode != "" {
 		p.HUDNode = override.HUDNode
 	}
-	if override.LockEveryN > 0 {
-		p.LockEveryN = override.LockEveryN
+	if n, ok := overrideInt(raw, "lock_every_n"); ok {
+		p.LockEveryN = n
 	}
 	if override.RetargetTimeoutMs > 0 {
 		p.RetargetTimeoutMs = override.RetargetTimeoutMs
 	}
+	if override.ExitCheckEveryN > 0 {
+		p.ExitCheckEveryN = override.ExitCheckEveryN
+	}
 	return p
+}
+
+func overrideInt(raw, key string) (int, bool) {
+	var m map[string]json.RawMessage
+	if json.Unmarshal([]byte(raw), &m) != nil {
+		return 0, false
+	}
+	v, ok := m[key]
+	if !ok {
+		return 0, false
+	}
+	var n int
+	if json.Unmarshal(v, &n) != nil {
+		return 0, false
+	}
+	return n, true
 }
 
 func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool {
@@ -82,11 +103,15 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 	if arg != nil {
 		param = parseCombatLoopParam(arg.CustomActionParam)
 	}
+	if param.ExitCheckEveryN <= 0 {
+		param.ExitCheckEveryN = 4
+	}
 
 	log.Info().
 		Strs("exit_nodes", param.ExitNodes).
 		Int64("max_duration_ms", param.MaxDurationMs).
-		Int64("retarget_timeout_ms", param.RetargetTimeoutMs).
+		Int("lock_every_n", param.LockEveryN).
+		Int("exit_check_every_n", param.ExitCheckEveryN).
 		Msg("CombatLoop: start")
 
 	pad := NewPad(ctrl)
@@ -99,13 +124,32 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		retargetTO = 4 * time.Second
 	}
 
+	// One initial lock (ok-ww wait_combat middle_click style), not every N rounds.
 	pad.Lock()
-	time.Sleep(150 * time.Millisecond)
+	time.Sleep(120 * time.Millisecond)
 
+	// Lightweight stop: only full settle scan every ExitCheckEveryN rounds / on demand.
+	lastExitCheck := time.Time{}
+	shouldScanExit := func(force bool) bool {
+		if force {
+			return true
+		}
+		if rounds > 0 && rounds%param.ExitCheckEveryN == 0 {
+			return true
+		}
+		if time.Since(lastExitCheck) > 2*time.Second {
+			return true
+		}
+		return false
+	}
 	stop := func() bool {
 		if tasker.Stopping() {
 			return true
 		}
+		if !shouldScanExit(false) {
+			return false
+		}
+		lastExitCheck = time.Now()
 		hit, name := peekExit(ctx, ctrl, param.ExitNodes)
 		if hit {
 			log.Info().Str("node", name).Msg("CombatLoop: exit during perform")
@@ -124,16 +168,19 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 			return true
 		}
 
-		if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
-			log.Info().Str("node", name).Msg("CombatLoop: exit node hit")
-			return true
+		if shouldScanExit(rounds == 0) {
+			lastExitCheck = time.Now()
+			if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
+				log.Info().Str("node", name).Msg("CombatLoop: exit node hit")
+				return true
+			}
 		}
 
 		ctrl.PostScreencap().Wait()
 		img, err := ctrl.CacheImage()
 		if err != nil || img == nil {
 			log.Warn().Err(err).Msg("CombatLoop: screencap failed")
-			time.Sleep(100 * time.Millisecond)
+			time.Sleep(80 * time.Millisecond)
 			continue
 		}
 
@@ -143,7 +190,6 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 		} else {
 			ok := ensureInCombat(ctx, ctrl, pad, retargetTO)
 			if !ok {
-				// Settle may appear while retargeting — check before declaring out-of-combat.
 				if hit, name := peekExit(ctx, ctrl, param.ExitNodes); hit {
 					log.Info().Str("node", name).Msg("CombatLoop: exit node hit after retarget fail")
 					return true
@@ -152,22 +198,18 @@ func (a *CombatLoopAction) Run(ctx *maa.Context, arg *maa.CustomActionArg) bool 
 					log.Info().Int("rounds", rounds).Msg("CombatLoop: out of combat → hand off treasure")
 					return true
 				}
-				time.Sleep(200 * time.Millisecond)
+				time.Sleep(150 * time.Millisecond)
 				continue
 			}
 			enteredCombat = true
 		}
 
-		waitHUD := func(timeout time.Duration) bool {
-			return waitForCombatHUD(ctx, ctrl, tasker, param.ExitNodes, timeout)
-		}
-
 		if param.LockEveryN > 0 && rounds%param.LockEveryN == 0 {
 			pad.Lock()
-			time.Sleep(80 * time.Millisecond)
+			time.Sleep(60 * time.Millisecond)
 		}
 
-		next, aborted := NewBaseChar(pad, slot).Perform(waitHUD, stop)
+		next, aborted := NewBaseChar(pad, slot).Perform(stop)
 		slot = next
 		rounds++
 		if aborted {

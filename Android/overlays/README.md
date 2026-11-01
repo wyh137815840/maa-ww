@@ -14,4 +14,9 @@
 | --- | --- |
 | `maafw/remote/internal/GamepadForwarder.kt` | `app/src/main/java/com/aliothmoon/maafw/remote/internal/GamepadForwarder.kt` |
 
-该 Forwarder 增加摇杆文件泵：读 `/data/local/tmp/maaww_stick`（`x y hold_ms`），供 Go `WalkToTacetTreasure` 使用。
+该 Forwarder 增加摇杆文件泵：周期性读 `/data/local/tmp/maaww_stick`（单行 `x y hold_ms`），解析后注入左摇杆。
+
+- **写入**：Go agent（`WalkToTacetTreasure` / `pulseStick`）用 `os.WriteFile` 写该文件（常见为 app/agent 子进程 uid，权限靠 `0666`；**不要**依赖 `Controller.PostShell`——AndroidNativeController 不支持 Shell）。
+- **消费**：MaaFw 进程内 overlay `GamepadForwarder` 文件泵读取并 `injectAxis`；与 Go **不是同一进程**，WriteFile 成功≠角色已移动。
+
+路径常量：`/data/local/tmp/maaww_stick`（Go `stickCmdPath`）。

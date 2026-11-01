@@ -302,17 +302,24 @@ object GamepadForwarder {
         while (running && !Thread.currentThread().isInterrupted) {
             try {
                 if (file.isFile && file.length() > 0) {
-                    val line = file.readText().trim().lines().firstOrNull().orEmpty()
+                    val raw = file.readBytes()
                     file.writeText("")
+                    val line = raw.toString(Charsets.UTF_8).trim().lines().firstOrNull().orEmpty()
+                    probe("stick read len=${raw.size} line=$line")
                     val parts = line.split(Regex("\\s+"))
                     if (parts.size >= 2) {
                         val x = parts[0].toIntOrNull() ?: 0
                         val y = parts[1].toIntOrNull() ?: 0
                         val hold = (parts.getOrNull(2)?.toLongOrNull() ?: 280L).coerceIn(50L, 2000L)
                         if (injectAxis(x, y)) {
+                            probe("stick pulse x=$x y=$y hold=$hold")
                             sleepQuiet(hold)
                             injectAxisNeutral()
+                        } else {
+                            probe("stick pulse FAILED x=$x y=$y")
                         }
+                    } else if (line.isNotEmpty()) {
+                        probe("stick bad line: $line")
                     }
                 } else {
                     sleepQuiet(20)

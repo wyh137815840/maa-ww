@@ -238,26 +238,44 @@
         "next": ["StartupPadWatch"]
     },
     "StartupPadWatch": {
-        "desc": "手柄轮询封闭环：只认 PadReady 或按 A。禁止再挂读条节点（读条会把流程拐进 Wait 并永久丢切换）。",
+        "desc": "手柄轮询环：先认 PadReady* / 副本领取软恢复，再按 A。禁止挂读条。",
         "recognition": "DirectHit",
         "action": "DoNothing",
         "timeout": 160000,
         "next": [
+            "LeaveInstanceMenuOCR",
+            "ConfirmLeaveInstanceByOCR",
+            "ConfirmLeaveInstance",
+            "InInstanceClaimHint",
+            "InInstanceExitIcon",
+            "InInstancePadMenu",
             "StartupPadReady",
+            "StartupPadReadyRT",
+            "StartupPadReadyDPad",
+            "StartupPadReadyMenu",
             "StartupPadSwitchOnce"
         ]
     },
     "StartupPadSwitchOnce": {
-        "desc": "非手柄：按物理 Xbox A。最多 15 次。",
+        "desc": "非手柄：按物理 Xbox A。最多 8 次。离开弹窗上 A=返回，故 next 先出本确认。",
         "recognition": "DirectHit",
         "action": {"type": "ClickKey", "param": {"key": 96}},
         "repeat": 2,
         "post_delay": 600,
-        "max_hit": 15,
+        "max_hit": 8,
         "timeout": 8000,
         "next": [
             "StartupPadConfirm",
+            "LeaveInstanceMenuOCR",
+            "ConfirmLeaveInstanceByOCR",
+            "ConfirmLeaveInstance",
+            "InInstanceClaimHint",
+            "InInstanceExitIcon",
+            "InInstancePadMenu",
             "StartupPadReady",
+            "StartupPadReadyRT",
+            "StartupPadReadyDPad",
+            "StartupPadReadyMenu",
             "StartupPadCheckWait"
         ]
     },
@@ -271,26 +289,72 @@
         "timeout": 3500,
         "post_wait_freezes": {"time": 400, "timeout": 5000, "threshold": 0.95},
         "next": [
+            "LeaveInstanceMenuOCR",
+            "ConfirmLeaveInstanceByOCR",
+            "ConfirmLeaveInstance",
+            "InInstanceClaimHint",
             "StartupPadReady",
+            "StartupPadReadyRT",
+            "StartupPadReadyDPad",
+            "StartupPadReadyMenu",
             "StartupPadCheckWait"
         ]
     },
     "StartupPadCheckWait": {
-        "desc": "等 10s：只查 PadReady / 再按 A。读条不得插入此环。",
+        "desc": "短等：先「确认离开」/软出本，再 PadReady* / 按 A（离开弹窗上勿盲按 A）。",
         "recognition": "DirectHit",
         "action": "DoNothing",
-        "post_delay": 10000,
+        "post_delay": 4000,
         "next": [
+            "LeaveInstanceMenuOCR",
+            "ConfirmLeaveInstanceByOCR",
+            "ConfirmLeaveInstance",
+            "InInstanceClaimHint",
+            "InInstanceExitIcon",
+            "InInstancePadMenu",
             "StartupPadReady",
+            "StartupPadReadyRT",
+            "StartupPadReadyDPad",
+            "StartupPadReadyMenu",
             "StartupPadSwitchOnce"
         ]
     },
     "StartupPadReady": {
-        "desc": "手柄 HUD 检查点：左下 View+「地图」。仅在 PadWatch 链路成功结束，不放进 StartUpGameWait。",
+        "desc": "手柄 HUD：左下 View+「地图」。ROI 收紧；阈值降到 0.58（奥丁旧日志 0.70 常 MATCH 不 HIT）。",
         "recognition": "TemplateMatch",
-        "roi": [0, 640, 160, 80],
+        "roi": [18, 667, 74, 32],
         "template": "Explore/PadHUD_Ready.png",
-        "threshold": 0.70,
+        "threshold": 0.58,
+        "action": "DoNothing",
+        "next": []
+    },
+    "StartupPadReadyRT": {
+        "desc": "手柄 HUD：右下 RT 键位提示。",
+        "recognition": "TemplateMatch",
+        "roi": [1160, 600, 120, 120],
+        "template": "Explore/PadHUD_RT.png",
+        "threshold": 0.65,
+        "action": "DoNothing",
+        "next": []
+    },
+    "StartupPadReadyDPad": {
+        "desc": "手柄 HUD：左下 D-Pad / 地图旁。",
+        "recognition": "TemplateMatch",
+        "roi": [30, 650, 180, 70],
+        "template": "Explore/PadHUD_DPad.png",
+        "threshold": 0.65,
+        "action": "DoNothing",
+        "next": []
+    },
+    "StartupPadReadyMenu": {
+        "desc": "手柄 HUD：右上菜单 X / Pad 入口。",
+        "recognition": "TemplateMatch",
+        "roi": [1180, 0, 100, 80],
+        "template": [
+            "Explore/PadHUD_MenuX.png",
+            "Guidebook/OpenGuidebookPad.png"
+        ],
+        "threshold": 0.68,
         "action": "DoNothing",
         "next": []
     },

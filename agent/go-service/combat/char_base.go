@@ -7,26 +7,22 @@ import (
 )
 
 // BaseChar is a timing-only port of ok-ww BaseChar.do_perform under gamepad mode.
-// No CD OCR / CharFactory — fire skills on cadence then swap.
+// ok-ww default rotation: wait_intro → echo → liberation → resonance else heavy → switch.
+// Continues normal attack during short waits (ok-ww continues_normal_attack), instead of
+// long idle sleeps that make combat feel "hit once then stall".
 type BaseChar struct {
-	pad         *Pad
-	slot        int
-	attackCount int
-	heavyHold   time.Duration
+	pad  *Pad
+	slot int
 }
 
 func NewBaseChar(pad *Pad, slot int) *BaseChar {
-	return &BaseChar{
-		pad:         pad,
-		slot:        slot,
-		attackCount: 4,
-		heavyHold:   450 * time.Millisecond,
-	}
+	return &BaseChar{pad: pad, slot: slot}
 }
 
 // Perform runs one field rotation then returns (nextSlot, stoppedEarly).
-// stop is checked between skills so settle/claim can abort mid-rotation.
-func (c *BaseChar) Perform(waitHUD func(timeout time.Duration) bool, stop func() bool) (int, bool) {
+// stop is checked sparingly (ok-ww checks combat between skills via next_frame,
+// not a full settle-node scan after every key).
+func (c *BaseChar) Perform(stop func() bool) (int, bool) {
 	if c == nil || c.pad == nil {
 		return 0, false
 	}
@@ -41,65 +37,52 @@ func (c *BaseChar) Perform(waitHUD func(timeout time.Duration) bool, stop func()
 		return false
 	}
 
-	for i := 0; i < 2; i++ {
-		if check() {
-			return c.slot, true
-		}
-		c.pad.Attack()
-		time.Sleep(80 * time.Millisecond)
-	}
-
-	if check() {
+	// Intro settle: keep attacking (ok-ww wait_intro / continues_normal_attack).
+	c.continuesAttack(400*time.Millisecond, 90*time.Millisecond, check)
+	if aborted {
 		return c.slot, true
 	}
+
 	c.pad.Echo()
-	time.Sleep(120 * time.Millisecond)
-
-	if check() {
+	c.continuesAttack(180*time.Millisecond, 80*time.Millisecond, check)
+	if aborted {
 		return c.slot, true
 	}
+
 	c.pad.Liberation()
-	if waitHUD != nil {
-		waitHUD(5 * time.Second)
-	} else {
-		time.Sleep(800 * time.Millisecond)
-	}
-	if check() {
+	// Liberation cutscene: keep clicking instead of blank waitHUD(5s).
+	c.continuesAttack(900*time.Millisecond, 100*time.Millisecond, check)
+	if aborted {
 		return c.slot, true
 	}
 
 	c.pad.Resonance()
-	time.Sleep(150 * time.Millisecond)
-
-	n := c.attackCount
-	if n < 1 {
-		n = 3
-	}
-	for i := 0; i < n; i++ {
-		if check() {
-			return c.slot, true
-		}
-		c.pad.Attack()
-		time.Sleep(90 * time.Millisecond)
-	}
-
-	if check() {
+	c.continuesAttack(200*time.Millisecond, 80*time.Millisecond, check)
+	if aborted {
 		return c.slot, true
 	}
-	c.pad.Heavy(c.heavyHold)
-	time.Sleep(80 * time.Millisecond)
 
-	if check() {
+	// Forte-ish heavy (ok-ww heavy_click_forte when resonance not available — we always tap once).
+	c.pad.Heavy(380 * time.Millisecond)
+	c.continuesAttack(120*time.Millisecond, 80*time.Millisecond, check)
+	if aborted {
 		return c.slot, true
 	}
-	c.pad.Interact()
-	time.Sleep(60 * time.Millisecond)
 
-	if check() {
-		return c.slot, true
-	}
 	next := (c.slot + 1) % 3
 	c.pad.SwapSlot(next)
-	time.Sleep(200 * time.Millisecond)
+	// Brief swap recovery with attacks (ok-ww may add continues_normal_attack when swap too fast).
+	c.continuesAttack(220*time.Millisecond, 90*time.Millisecond, check)
 	return next, aborted
+}
+
+func (c *BaseChar) continuesAttack(duration, interval time.Duration, stop func() bool) {
+	deadline := time.Now().Add(duration)
+	for time.Now().Before(deadline) {
+		if stop != nil && stop() {
+			return
+		}
+		c.pad.Attack()
+		time.Sleep(interval)
+	}
 }

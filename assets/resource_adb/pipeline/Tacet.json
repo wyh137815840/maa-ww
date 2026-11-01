@@ -1,7 +1,14 @@
 {
     "TacetMain": {
-        "desc": "无音区顺序（标注/odin-nav）：Terminal→索拉→(活跃行迹则)双剑Extra→Opened验证素材获取→无音清剿Tab→选行/直接挑战→开战→结算。禁止未点 Tab 就点 Go。",
+        "desc": "无音区顺序：先处理副本离开弹窗/软出本，再 Terminal→索拉→…→开战→结算。禁止未点 Tab 就点 Go。",
         "next": [
+            "TacetLeaveConfirmOCR",
+            "TacetConfirmLeave",
+            "TacetConfirmLeaveByOCR",
+            "TacetLeaveInstanceIcon",
+            "TacetPadMenuLeave",
+            "TacetClaimReward",
+            "TacetClaimRewardByOCR",
             "TacetDismissActivity",
             "OpenGuidebookFromWorld",
             "OpenGuidebook",
@@ -23,7 +30,6 @@
             "TacetTreasureSeen",
             "TacetWalkToTreasure",
             "TacetChallengeComplete",
-            "TacetClaimReward",
             "TacetClaimStaminaDoubleBlocked",
             "TacetClaimStaminaDouble",
             "TacetExit"
@@ -162,6 +168,9 @@
             "threshold": 0.95
         },
         "next": [
+            "TacetLeaveConfirmOCR",
+            "TacetConfirmLeave",
+            "TacetConfirmLeaveByOCR",
             "SolaGuidebookTile",
             "SolaGuidebookTileOCR",
             "TacetDismissActivity",
@@ -377,7 +386,7 @@
                     ],
                     "max_duration_ms": 300000,
                     "hud_node": "InTacetCombat",
-                    "lock_every_n": 3,
+                    "lock_every_n": 0,
                     "retarget_timeout_ms": 4000
                 }
             }
@@ -386,9 +395,6 @@
             "TacetSettleSuccessOCR",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
-            "TacetTreasureDist",
-            "TacetTreasureDistOCR",
-            "TacetTreasureSeen",
             "TacetWalkToTreasure",
             "TacetChallengeComplete",
             "TacetExit",
@@ -418,7 +424,7 @@
                     ],
                     "max_duration_ms": 300000,
                     "hud_node": "InTacetCombat",
-                    "lock_every_n": 3,
+                    "lock_every_n": 0,
                     "retarget_timeout_ms": 4000
                 }
             }
@@ -427,9 +433,6 @@
             "TacetSettleSuccessOCR",
             "TacetClaimReward",
             "TacetClaimRewardByOCR",
-            "TacetTreasureDist",
-            "TacetTreasureDistOCR",
-            "TacetTreasureSeen",
             "TacetWalkToTreasure",
             "TacetChallengeComplete",
             "TacetExit",
@@ -536,27 +539,25 @@
             "TacetClaimRewardByOCR",
             "TacetClaimStaminaDoubleBlocked",
             "TacetClaimStaminaDouble",
-            "TacetTreasureDist",
-            "TacetWalkToTreasure",
             "TacetExit",
             "TacetContinue"
         ],
         "timeout": 120000
     },
     "TacetTreasureDist": {
-        "desc": "战后宝箱距离标（胸口图标+N米）。实截 on_error 6米。",
+        "desc": "战后宝箱距离标（胸口图标+N米）。模板仅保留图标+「N米」；0.55 易误匹配场景纹理，提至 0.65。",
         "recognition": "TemplateMatch",
-        "roi": [200, 120, 880, 480],
+        "roi": [360, 100, 560, 400],
         "template": "Guidebook/TacetTreasureDist.png",
-        "threshold": 0.55,
+        "threshold": 0.65,
         "action": "DoNothing",
         "next": ["TacetWalkToTreasure"]
     },
     "TacetTreasureDistOCR": {
-        "desc": "宝箱距离 OCR「米」。",
+        "desc": "宝箱距离 OCR：优先「数字+米」整段（如 6米）；仍保留单「米」兜底。",
         "recognition": "OCR",
-        "roi": [200, 120, 880, 480],
-        "expected": ["米"],
+        "roi": [360, 100, 560, 400],
+        "expected": ["6米", "米"],
         "action": "DoNothing",
         "next": ["TacetWalkToTreasure"]
     },
